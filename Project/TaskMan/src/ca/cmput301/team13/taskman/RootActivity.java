@@ -1,7 +1,7 @@
 /*
  * This file is part of TaskMan
  *
- * TODO: add copyright notice.
+ * Copyright (C) 2012 Jed Barlow, Mark Galloway, Taylor Lloyd, Braeden Petruk
  *
  * TaskMan is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
