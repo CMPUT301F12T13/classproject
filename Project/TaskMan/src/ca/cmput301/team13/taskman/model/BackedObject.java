@@ -1,6 +1,6 @@
 package ca.cmput301.team13.taskman.model;
 
-public abstract class BackedObject {
+abstract class BackedObject {
 	private int id;
 	private VirtualRepository repo;
 	boolean delaySave = false;
