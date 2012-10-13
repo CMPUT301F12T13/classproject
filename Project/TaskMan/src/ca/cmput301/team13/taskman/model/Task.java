@@ -20,6 +20,7 @@
 package ca.cmput301.team13.taskman.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Task extends BackedObject{
 	private String title;
@@ -34,8 +35,8 @@ public class Task extends BackedObject{
 	 * @param requirements - A List of requirements dependent on the task
 	 * @param repo - the repository in which we are stored
 	 */
-	Task(int id, String title, String description, ArrayList<Requirement> requirements, VirtualRepository repo) {
-		super(id, repo);
+	Task(int id, Date created, Date lastModified, User creator, String title, String description, ArrayList<Requirement> requirements, VirtualRepository repo) {
+		super(id, created, lastModified, creator, repo);
 		this.title = title;
 		this.description = description;
 		this.requirements = requirements;

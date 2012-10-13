@@ -19,14 +19,20 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.util.Date;
+
 abstract class BackedObject {
 	private int id;
+	private Date created;
+	private Date lastModified;
+	private User creator;
 	private VirtualRepository repo;
 	boolean delaySave = false;
 	
-	BackedObject(int id, VirtualRepository repo) {
+	BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
 		this.id = id;
 		this.repo = repo;
+		this.creator = creator;
 	}
 	
 	/**
@@ -34,12 +40,20 @@ abstract class BackedObject {
 	 * @return Whether or not the save was successful
 	 */
 	boolean saveChanges() {
+		lastModified = new Date();
 		if(delaySave)
 			return true; //If we're delaying, no errors occurred here
 		
 		return repo.saveUpdate(this);
 	}
 	
+	/**
+	 * Optionally temporarily turn off immediate updates to the persistent store.
+	 * This is a good idea, for example, when about to make a large quantity of changes.
+	 * Immediately forces a save when re-enabled.
+	 * @param delay - whether or not to push updates, default: true
+	 * @return whether or not the operation was successful
+	 */
 	public boolean delaySaves(boolean delay) {
 		delaySave = delay;
 		if(!delay) 
@@ -47,9 +61,28 @@ abstract class BackedObject {
 		return true;
 	}
 	
-	
+	/**
+	 * Access the ID of this object
+	 * @return the id
+	 */
 	int getId() {
 		return id;
+	}
+	
+	/**
+	 * Access the date/time when this object was first created
+	 * @return the date
+	 */
+	public Date getCreatedDate() {
+		return created;
+	}
+	
+	/**
+	 * Access the date/time when this object was last modified
+	 * @return the date
+	 */
+	public Date getLastModifiedDate() {
+		return lastModified;
 	}
 	
 }

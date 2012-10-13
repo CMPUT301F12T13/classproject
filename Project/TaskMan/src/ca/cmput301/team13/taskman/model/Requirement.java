@@ -20,10 +20,20 @@
 package ca.cmput301.team13.taskman.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Requirement extends BackedObject{
+	//Content Mask Stuff
+	public static enum contentType {
+		text,
+		image,
+		audio
+	};
+	
+	//private state variables
 	private String description;
 	private ArrayList<Fulfillment> fulfillments;
+	private contentType desiredContent;
 
 	/**
 	 * Construct a Requirement with backing in the persistent store
@@ -32,8 +42,8 @@ public class Requirement extends BackedObject{
 	 * @param fulfillments - the list of fulfillments of the requirement
 	 * @param repo - the repository backing this object
 	 */
-	Requirement(int id, String description, ArrayList<Fulfillment> fulfillments, VirtualRepository repo) {
-		super(id, repo);
+	Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, ArrayList<Fulfillment> fulfillments, VirtualRepository repo) {
+		super(id, created, lastModified, creator, repo);
 		this.description = description;
 		this.fulfillments = fulfillments;
 	}
@@ -95,6 +105,10 @@ public class Requirement extends BackedObject{
 	 */
 	public Fulfillment getFulfillment(int index) {
 		return fulfillments.get(index);
+	}
+	
+	public contentType getDesiredContent() {
+		return desiredContent;
 	}
 
 }

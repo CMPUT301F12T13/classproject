@@ -19,6 +19,8 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.util.Date;
+
 public class Fulfillment extends BackedObject {
 
 	/**
@@ -26,8 +28,8 @@ public class Fulfillment extends BackedObject {
 	 * @param id
 	 * @param repo
 	 */
-	Fulfillment(int id, VirtualRepository repo) {
-		super(id, repo);
+	Fulfillment(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
+		super(id, created, lastModified, creator, repo);
 		// TODO Auto-generated constructor stub
 	}
 
