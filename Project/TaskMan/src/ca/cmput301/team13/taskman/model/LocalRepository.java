@@ -105,15 +105,15 @@ public class LocalRepository {
 		values.put(RepoHelper.DESC_COL, "");
 		values.put(RepoHelper.CONTENTTYPE_COL, contentType.ordinal());
 		values.put(RepoHelper.CREATOR_COL, creator.toString());
-		long insertId = db.insert(RepoHelper.TASKS_TBL, null, values);
+		long insertId = db.insert(RepoHelper.REQS_TBL, null, values);
 		
 		if(insertId == -1) {
 			Log.w("LogStore", "Failed to write LogEntry into database.");
 			throw new RuntimeException("Database Write Failure.");
 		}
 		
-		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
-				RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
+		Cursor cursor = db.query(RepoHelper.REQS_TBL,
+				RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
 				null, null, null);
 		cursor.moveToFirst();
 		
@@ -132,6 +132,68 @@ public class LocalRepository {
 		
 		cursor.close();
 		return r;
+	}
+	
+	/**
+	 * Updates the backing structure to acknowledge any changes that have occurred
+	 * @param t the Task to update
+	 */
+	public void updateTask(Task t) {
+		ContentValues values = new ContentValues();
+		values.put(RepoHelper.CREATED_COL, t.getCreatedDate().getTime());
+		values.put(RepoHelper.LASTMODIFIED_COL, t.getLastModifiedDate().getTime());
+		values.put(RepoHelper.TITLE_COL, t.getTitle());
+		values.put(RepoHelper.DESC_COL, t.getDescription());
+		values.put(RepoHelper.CREATOR_COL, t.getCreator().toString());
+		
+		int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
+		
+		if(updateCount != 1) 
+			throw new RuntimeException("Database update failed!");
+	}
+	
+	/**
+	 * Update the backing structure to acknowledge any changes that have occurred
+	 * @param r the Requirement to update
+	 */
+	public void updateRequirement(Requirement r) {
+		ContentValues values = new ContentValues();
+		values.put(RepoHelper.CREATED_COL, r.getCreatedDate().getTime());
+		values.put(RepoHelper.LASTMODIFIED_COL, r.getLastModifiedDate().getTime());
+		values.put(RepoHelper.TASK_COL, r.getId());
+		values.put(RepoHelper.DESC_COL, "");
+		values.put(RepoHelper.CONTENTTYPE_COL, r.getDesiredContent().ordinal());
+		values.put(RepoHelper.CREATOR_COL, r.getCreator().toString());
+		
+		int updateCount = db.update(RepoHelper.REQS_TBL, values, RepoHelper.ID_COL + "=" + r.getId(), null);
+		
+		if(updateCount != 1) 
+			throw new RuntimeException("Database update failed!");
+	}
+	
+	public ArrayList<Requirement> loadRequirementsForTask(Task t) {
+		ArrayList<Requirement> reqs = new ArrayList<Requirement>();
+		
+		Cursor cursor = db.query(RepoHelper.REQS_TBL,
+				RepoHelper.REQS_COLS, RepoHelper.TASK_COL + " = " + t.getId(), null,
+				null, null, null);
+		cursor.moveToFirst();
+		
+		do {
+			Requirement r = new Requirement(
+					cursor.getInt(0),//ID
+					new Date(cursor.getLong(5)),//Date Created
+					new Date(cursor.getLong(6)),//Date Last Modified
+					new User(cursor.getString(4)),//Creator
+					cursor.getString(3),//Description
+					Requirement.contentType.values()[cursor.getInt(2)],//Content Type
+					new ArrayList<Fulfillment>(),//TODO: load current fulfillments
+					vr
+					);
+			reqs.add(r);
+		} while (cursor.moveToNext());
+		
+		return reqs;
 	}
 }
 

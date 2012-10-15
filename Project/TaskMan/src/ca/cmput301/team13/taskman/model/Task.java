@@ -26,6 +26,9 @@ public class Task extends BackedObject{
 	private String title;
 	private String description;
 	private ArrayList<Requirement> requirements;
+	//Implementation of requirements handoff
+	boolean reqsLoaded = false;
+	int reqCount = 0;
 	
 	/**
 	 * Construct a Task with backing in a persistent store
@@ -39,7 +42,32 @@ public class Task extends BackedObject{
 		super(id, created, lastModified, creator, repo);
 		this.title = title;
 		this.description = description;
+		reqsLoaded = true;
 		this.requirements = requirements;
+	}
+	
+	/**
+	 * Construct a Task with backing in a persistent store, without preloaded requirements
+	 * @param id - the ID of the Task
+	 * @param title - the title of the task
+	 * @param description - the description of the task
+	 * @param reqCount - The number of requirements this task has
+	 * @param repo - the repository in which we are stored
+	 */
+	Task(int id, Date created, Date lastModified, User creator, String title, String description, int reqCount, VirtualRepository repo) {
+		super(id, created, lastModified, creator, repo);
+		this.title = title;
+		this.description = description;
+		reqsLoaded = false;
+		this.reqCount = reqCount;
+	}
+	
+	private void loadRequirements() {
+		if(!reqsLoaded) {
+			//TODO: ask repo to load our list of requirements
+			requirements = new ArrayList<Requirement>();
+			reqsLoaded = true;
+		}
 	}
 	
 	/**
@@ -84,6 +112,9 @@ public class Task extends BackedObject{
 	 * @return success of save
 	 */
 	public boolean addRequirement(Requirement req) {
+		if(!reqsLoaded)
+			loadRequirements();
+		
 		requirements.add(req);
 		return saveChanges();
 	}
@@ -94,6 +125,9 @@ public class Task extends BackedObject{
 	 * @return success of both the remove, and the save
 	 */
 	public boolean removeRequirement(Requirement req) {
+		if(!reqsLoaded)
+			loadRequirements();
+		
 		boolean success = requirements.remove(req);
 		//TODO: Req should probably be destroyed here
 		
@@ -107,6 +141,8 @@ public class Task extends BackedObject{
 	 * @return the number of requirements associated with this Task
 	 */
 	public int getRequirementCount() {
+		if(!reqsLoaded)
+			return reqCount;
 		return requirements.size();
 	}
 	
@@ -116,6 +152,9 @@ public class Task extends BackedObject{
 	 * @return the associated Requirement
 	 */
 	public Requirement getRequirement(int index) {
+		if(!reqsLoaded)
+			loadRequirements();
+		
 		return requirements.get(index);
 	}
 }

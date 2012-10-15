@@ -85,4 +85,12 @@ abstract class BackedObject {
 		return lastModified;
 	}
 	
+	/**
+	 * 
+	 * @return the User that created this Object
+	 */
+	public User getCreator() {
+		return creator;
+	}
+	
 }
