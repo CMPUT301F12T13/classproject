@@ -32,7 +32,7 @@ import android.util.Log;
 
 public class LocalRepository {
 	//Database connection
-	private SQLiteDatabase db;
+	private SQLiteDatabase db = null;
 	//Database constants and actions
 	private RepoHelper helper;
 	//Virtual Repository link
@@ -46,9 +46,19 @@ public class LocalRepository {
 	public void open() throws SQLException {
 		db = helper.getWritableDatabase();
 	}
+	
+	public void openTestConnection() {
+		db = SQLiteDatabase.create(null);
+	}
 
 	public void close() {
 		helper.close();
+	}
+	
+	private void assertOpen() {
+		if (db == null) throw new RuntimeException("" +
+				"LocalRepository: The repo's DB connection needs to be instantiated " +
+				"before creating a task. Call open() first.");
 	}
 	
 	/**
@@ -57,6 +67,9 @@ public class LocalRepository {
 	 * @return the Task, with no non-housekeeping values yet set
 	 */
 	public Task createTask(User creator) {
+		assertOpen();
+		
+		Task t = null;
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, new Date().getTime());
 		values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
@@ -73,18 +86,19 @@ public class LocalRepository {
 		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
 				RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
 				null, null, null);
-		cursor.moveToFirst();
 		
-		Task t = new Task(
-				cursor.getInt(0),//ID
-				new Date(cursor.getLong(4)),//Date Created
-				new Date(cursor.getLong(5)),//Date Last Modified
-				new User(cursor.getString(3)),//Creator
-				cursor.getString(1),//Title
-				cursor.getString(2),//Description
-				new ArrayList<Requirement>(),//Current requirements
-				vr
-				);
+		if (cursor.moveToFirst()) {
+			t = new Task(
+					cursor.getInt(0),//ID
+					new Date(cursor.getLong(4)),//Date Created
+					new Date(cursor.getLong(5)),//Date Last Modified
+					new User(cursor.getString(3)),//Creator
+					cursor.getString(1),//Title
+					cursor.getString(2),//Description
+					new ArrayList<Requirement>(),//Current requirements
+					vr
+					);
+		}
 		
 		cursor.close();
 		return t;
@@ -98,6 +112,7 @@ public class LocalRepository {
 	 * @return the Requirement, with no non-housekeeping values yet set
 	 */
 	public Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
+		assertOpen();
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, new Date().getTime());
 		values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
@@ -139,6 +154,7 @@ public class LocalRepository {
 	 * @param t the Task to update
 	 */
 	public void updateTask(Task t) {
+		assertOpen();
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, t.getCreatedDate().getTime());
 		values.put(RepoHelper.LASTMODIFIED_COL, t.getLastModifiedDate().getTime());
@@ -157,6 +173,7 @@ public class LocalRepository {
 	 * @param r the Requirement to update
 	 */
 	public void updateRequirement(Requirement r) {
+		assertOpen();
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, r.getCreatedDate().getTime());
 		values.put(RepoHelper.LASTMODIFIED_COL, r.getLastModifiedDate().getTime());
@@ -171,29 +188,107 @@ public class LocalRepository {
 			throw new RuntimeException("Database update failed!");
 	}
 	
+	/**
+	 * Load a list of tasks, restricted by the defined TaskFilter
+	 * @param	filter		TaskFilter			The filter by which to restrict results
+	 * @return				ArrayList<Task>		The list of tasks received from the DB
+	 */
+	public ArrayList<Task> loadTasks(TaskFilter filter) {
+		assertOpen();
+		ArrayList<Task> tasks = new ArrayList<Task>();
+		
+		Cursor cursor = db.query(RepoHelper.TASKS_TBL, RepoHelper.TASKS_COLS, filter.toString(), null, null, null, null);
+		
+		if (cursor.moveToFirst()) {
+			do {
+				Task t = new Task(
+						cursor.getInt(0),//ID
+						new Date(cursor.getLong(4)),//Date Created
+						new Date(cursor.getLong(5)),//Date Last Modified
+						new User(cursor.getString(3)),//Creator
+						cursor.getString(1),//Title
+						cursor.getString(2),//Description
+						new ArrayList<Requirement>(),//Current requirements
+						vr
+						);
+				tasks.add(t);
+			} while (cursor.moveToNext());
+		}
+		
+		return tasks;
+	}
+	
+	/**
+	 * Load a *local* list of tasks, restricted by the defined TaskFilter
+	 * @param	filter		TaskFilter			The filter by which to restrict results
+	 * @return				ArrayList<Task>		The list of tasks received from the DB
+	 */
+	public ArrayList<Task> loadLocalTasks(TaskFilter filter) {
+		//TODO: Implement this!
+		return new ArrayList<Task>();
+	}
+	
+	/**
+	 * Loads a list of Requirements for the specified Task
+	 * @param	t 	Task 						The Task to find Requirements for
+	 * @return		ArrayList<Requirement>		The list of Requirements for the specified Task
+	 */
 	public ArrayList<Requirement> loadRequirementsForTask(Task t) {
+		assertOpen();
 		ArrayList<Requirement> reqs = new ArrayList<Requirement>();
 		
 		Cursor cursor = db.query(RepoHelper.REQS_TBL,
 				RepoHelper.REQS_COLS, RepoHelper.TASK_COL + " = " + t.getId(), null,
 				null, null, null);
-		cursor.moveToFirst();
 		
-		do {
-			Requirement r = new Requirement(
-					cursor.getInt(0),//ID
-					new Date(cursor.getLong(5)),//Date Created
-					new Date(cursor.getLong(6)),//Date Last Modified
-					new User(cursor.getString(4)),//Creator
-					cursor.getString(3),//Description
-					Requirement.contentType.values()[cursor.getInt(2)],//Content Type
-					new ArrayList<Fulfillment>(),//TODO: load current fulfillments
-					vr
-					);
-			reqs.add(r);
-		} while (cursor.moveToNext());
+		//If we have requirements, load them
+		if(cursor.moveToFirst()) {
+			do {
+				Requirement r = new Requirement(
+						cursor.getInt(0),//ID
+						new Date(cursor.getLong(5)),//Date Created
+						new Date(cursor.getLong(6)),//Date Last Modified
+						new User(cursor.getString(4)),//Creator
+						cursor.getString(3),//Description
+						Requirement.contentType.values()[cursor.getInt(2)],//Content Type
+						new ArrayList<Fulfillment>(),//TODO: load current fulfillments
+						vr
+						);
+				reqs.add(r);
+			} while (cursor.moveToNext());
+		}
 		
 		return reqs;
+	}
+	
+	/**
+	 * Loads a list of fulfillments for the specified requirement
+	 * @param	r 	Requirement 				The requirement to find fulfillments for
+	 * @return		ArrayList<Fulfillment>		The list of fulfillments for the specified requirement	
+	 */
+	public ArrayList<Fulfillment> loadFulfillments(Requirement r) {
+		assertOpen();
+		ArrayList<Fulfillment> fulfillments = new ArrayList<Fulfillment>();
+		
+		Cursor cursor = db.query(RepoHelper.REQS_TBL,
+				RepoHelper.REQS_COLS, RepoHelper.REQ_COL + " = " + r.getId(), null,
+				null, null, null);
+		
+		//If we have requirements, load them
+		if(cursor.moveToFirst()) {
+			do {
+				Fulfillment f = new Fulfillment(
+						cursor.getInt(0),//ID
+						new Date(cursor.getLong(5)),//Date Created
+						new Date(cursor.getLong(6)),//Date Last Modified
+						new User(cursor.getString(4)),//Creator
+						vr
+						);
+				fulfillments.add(f);
+			} while (cursor.moveToNext());
+		}
+		
+		return fulfillments;
 	}
 }
 
@@ -215,7 +310,7 @@ class RepoHelper  extends SQLiteOpenHelper{
 	public static final String CONTENT_COL = "content";
 	//Columns as found in tables
 	public static final String[] TASKS_COLS = {ID_COL, TITLE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
-	private static final String[] TASKS_COLTYPES = {"integer primary key autoincrement", "text not null", "integer not null", "integer not null"};
+	private static final String[] TASKS_COLTYPES = {"integer primary key autoincrement", "text not null", "integer not null", "integer not null", "integer not null", "integer not null"};
 	public static final String[] REQS_COLS = {ID_COL, TASK_COL, CONTENTTYPE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
 	private static final String[] REQS_COLTYPES = {"integer primary key autoincrement", "integer not null", "text not null", "text not null", "text not null", "integer not null", "integer not null"};
 	public static final String[] FULS_COLS = {ID_COL, REQ_COL, CONTENT_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
