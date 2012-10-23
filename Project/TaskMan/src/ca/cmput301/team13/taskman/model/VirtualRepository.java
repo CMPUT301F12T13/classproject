@@ -21,6 +21,8 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.ArrayList;
 
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -39,6 +41,37 @@ public class VirtualRepository {
 	 */
 	public ArrayList<Task> getTasksForFilter(TaskFilter tf) {
 		return local.loadTasks(tf);
+	}
+	
+	/**
+	 * Creates a Requirement and links it to a Task
+	 * @param creator The User creating the requirement (null to use Task's creator)
+	 * @param t The Task to add the Requirement to
+	 * @param content The content type specified by the Requirement
+	 * @return
+	 */
+	public Requirement addRequirementToTask(User creator, Task t, contentType content) {
+		if(creator == null) {
+			creator = t.getCreator();
+		}
+		Requirement r = local.createRequirement(creator, t, content);
+		t.addRequirement(r);
+		return r;
+	}
+	
+	/**
+	 * Creates a Fulfillment and links it to a Requirement
+	 * @param creator The User creating the fulfillment (null to use Requirement's creator)
+	 * @param r The Requirement to add the Fulfillment to
+	 * @return
+	 */
+	public Fulfillment addFulfillmentToRequirement(User creator, Requirement r) {
+		if(creator == null) {
+			creator = r.getCreator();
+		}
+		Fulfillment f = local.createFulfillment(creator, r);
+		r.addFulfillment(f);
+		return f;
 	}
 	
 
