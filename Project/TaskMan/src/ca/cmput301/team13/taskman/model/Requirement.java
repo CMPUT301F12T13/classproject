@@ -34,6 +34,10 @@ public class Requirement extends BackedObject{
 	private String description;
 	private ArrayList<Fulfillment> fulfillments;
 	private contentType desiredContent;
+	
+	//lazy-loading variables
+	private int fulfillmentCount;
+	private boolean loaded = false;
 
 	/**
 	 * Construct a Requirement with backing in the persistent store
@@ -46,6 +50,21 @@ public class Requirement extends BackedObject{
 		super(id, created, lastModified, creator, repo);
 		this.description = description;
 		this.fulfillments = fulfillments;
+		this.loaded = true;
+	}
+	
+	/**
+	 * Construct a Requirement with backing in the persistent store
+	 * @param id - the id of the requirement
+	 * @param description - the description of the requirement
+	 * @param fulfillments - the list of fulfillments of the requirement
+	 * @param repo - the repository backing this object
+	 */
+	Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
+		super(id, created, lastModified, creator, repo);
+		this.description = description;
+		this.fulfillmentCount = fulfillmentCount;
+		this.loaded = false;
 	}
 	
 	/**
@@ -72,6 +91,9 @@ public class Requirement extends BackedObject{
 	 * @return success of save
 	 */
 	public boolean addFulfillment(Fulfillment ful) {
+		if(!loaded) {
+			loadFulfillments();
+		} 
 		fulfillments.add(ful);
 		return saveChanges();
 	}
@@ -82,6 +104,10 @@ public class Requirement extends BackedObject{
 	 * @return success of both the remove, and the save
 	 */
 	public boolean removeFulfillment(Fulfillment ful) {
+		if(!loaded) {
+			loadFulfillments();
+		}
+		
 		boolean success = fulfillments.remove(ful);
 		//TODO: ful should probably be destroyed here
 		
@@ -95,6 +121,9 @@ public class Requirement extends BackedObject{
 	 * @return the number of fulfillments associated with this requirement
 	 */
 	public int getFullfillmentCount() {
+		if(!loaded) {
+			return fulfillmentCount;
+		}
 		return fulfillments.size();
 	}
 	
@@ -104,11 +133,26 @@ public class Requirement extends BackedObject{
 	 * @return the associated Fulfillment
 	 */
 	public Fulfillment getFulfillment(int index) {
+		if(!loaded) {
+			loadFulfillments();
+		}
 		return fulfillments.get(index);
 	}
 	
+	/**
+	 * 
+	 * @return the Content Type expected by this Requirement
+	 */
 	public contentType getDesiredContent() {
 		return desiredContent;
+	}
+	
+	private void loadFulfillments() {
+		//TODO: Actually ask the repo for our fulfillments
+		if(!loaded) {
+			fulfillments = new ArrayList<Fulfillment>();
+			loaded = true;
+		}
 	}
 
 }

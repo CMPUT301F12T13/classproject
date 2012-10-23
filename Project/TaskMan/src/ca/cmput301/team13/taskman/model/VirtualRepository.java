@@ -19,15 +19,47 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.util.Log;
+
 public class VirtualRepository {
+	private LocalRepository local;
+
+	public VirtualRepository(Context context) {
+		local = new LocalRepository(context, this);
+	}
+	
+	/**
+	 * Obtains a list of Tasks for display
+	 * 
+	 * @param filter The TaskFilter with which to obtain Tasks
+	 * @return an ArrayList of compatible Tasks
+	 */
+	public ArrayList<Task> getTasksForFilter(TaskFilter tf) {
+		return local.loadTasks(tf);
+	}
+	
 
 	/**
 	 * Saves any changes to the notifying object to the permanent store
 	 * @param backedObject - the object with changes
 	 */
 	boolean saveUpdate(BackedObject backedObject) {
-		//Pretend the changes were saved.
-		return true; 
+		if(backedObject instanceof Task) {
+			local.updateTask((Task)backedObject);
+			return true;
+		} else if(backedObject instanceof Requirement) {
+			local.updateRequirement((Requirement)backedObject);
+			return true;
+		} else if(backedObject instanceof Fulfillment) {
+			local.updateFulfillment((Fulfillment)backedObject);
+			return true;
+		}
+		//If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?
+		Log.w("VirtualRepository", "Attempted to save changes to unknown object: "+backedObject.getClass().toString());
+		return false;
 	}
 
 }

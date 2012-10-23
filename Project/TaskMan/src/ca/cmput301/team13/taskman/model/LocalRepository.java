@@ -149,6 +149,11 @@ public class LocalRepository {
 		return r;
 	}
 	
+	Fulfillment createFulfillment(User creator, Requirement req) {
+		//TODO: implement
+		return null;
+	}
+	
 	/**
 	 * Updates the backing structure to acknowledge any changes that have occurred
 	 * @param t the Task to update
@@ -188,6 +193,11 @@ public class LocalRepository {
 			throw new RuntimeException("Database update failed!");
 	}
 	
+	void updateFulfillment(Fulfillment backedObject) {
+		// TODO: Implement fulfillment update
+		
+	}
+	
 	/**
 	 * Load a list of tasks, restricted by the defined TaskFilter
 	 * @param	filter		TaskFilter			The filter by which to restrict results
@@ -216,16 +226,6 @@ public class LocalRepository {
 		}
 		
 		return tasks;
-	}
-	
-	/**
-	 * Load a *local* list of tasks, restricted by the defined TaskFilter
-	 * @param	filter		TaskFilter			The filter by which to restrict results
-	 * @return				ArrayList<Task>		The list of tasks received from the DB
-	 */
-	ArrayList<Task> loadLocalTasks(TaskFilter filter) {
-		//TODO: Implement this!
-		return new ArrayList<Task>();
 	}
 	
 	/**
@@ -281,6 +281,7 @@ public class LocalRepository {
 						cursor.getInt(0),//ID
 						new Date(cursor.getLong(5)),//Date Created
 						new Date(cursor.getLong(6)),//Date Last Modified
+						r.getDesiredContent(), //Content type
 						new User(cursor.getString(4)),//Creator
 						vr
 						);
@@ -290,6 +291,7 @@ public class LocalRepository {
 		
 		return fulfillments;
 	}
+
 }
 
 class RepoHelper  extends SQLiteOpenHelper{
