@@ -1,14 +1,72 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/bgColor" >
 
-    <TextView
+    <View
+        android:id="@+id/strut"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/mytasks_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world"
-        tools:context=".RootActivity" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/strut"
+        android:text="My Tasks" />
+
+    <Button
+        android:id="@+id/alltasks_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/strut"
+        android:layout_alignParentRight="true"
+        android:text="All Tasks" />
+
+    <RelativeLayout
+        android:id="@+id/filter_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mytasks_btn"
+        android:background="@color/bgMinorColor" >
+
+        <Button
+            android:id="@+id/txtfilter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:text="Txt" />
+
+        <Button
+            android:id="@+id/imgfilter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_toLeftOf="@+id/txtfilter_btn"
+            android:text="Img" />
+
+        <Button
+            android:id="@+id/audfilter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@+id/txtfilter_btn"
+            android:text="Aud" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/task_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/filter_layout"
+        android:background="@color/bgListColor"
+         >
+    </ListView>
 
 </RelativeLayout>
