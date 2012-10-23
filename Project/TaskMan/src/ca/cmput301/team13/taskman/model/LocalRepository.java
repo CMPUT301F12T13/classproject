@@ -43,7 +43,7 @@ public class LocalRepository {
 		this.vr = vr;
 	}
 
-	public void open() throws SQLException {
+	void open() throws SQLException {
 		db = helper.getWritableDatabase();
 	}
 	
@@ -51,11 +51,11 @@ public class LocalRepository {
 		db = SQLiteDatabase.create(null);
 	}
 
-	public void close() {
+	void close() {
 		helper.close();
 	}
 	
-	private void assertOpen() {
+	void assertOpen() {
 		if (db == null) throw new RuntimeException("" +
 				"LocalRepository: The repo's DB connection needs to be instantiated " +
 				"before creating a task. Call open() first.");
@@ -66,7 +66,7 @@ public class LocalRepository {
 	 * @param creator The User that has created the Task
 	 * @return the Task, with no non-housekeeping values yet set
 	 */
-	public Task createTask(User creator) {
+	Task createTask(User creator) {
 		assertOpen();
 		
 		Task t = null;
@@ -111,7 +111,7 @@ public class LocalRepository {
 	 * @param contentType The desired content type of the requirement
 	 * @return the Requirement, with no non-housekeeping values yet set
 	 */
-	public Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
+	Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
 		assertOpen();
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, new Date().getTime());
@@ -153,7 +153,7 @@ public class LocalRepository {
 	 * Updates the backing structure to acknowledge any changes that have occurred
 	 * @param t the Task to update
 	 */
-	public void updateTask(Task t) {
+	void updateTask(Task t) {
 		assertOpen();
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, t.getCreatedDate().getTime());
@@ -172,7 +172,7 @@ public class LocalRepository {
 	 * Update the backing structure to acknowledge any changes that have occurred
 	 * @param r the Requirement to update
 	 */
-	public void updateRequirement(Requirement r) {
+	void updateRequirement(Requirement r) {
 		assertOpen();
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, r.getCreatedDate().getTime());
@@ -193,7 +193,7 @@ public class LocalRepository {
 	 * @param	filter		TaskFilter			The filter by which to restrict results
 	 * @return				ArrayList<Task>		The list of tasks received from the DB
 	 */
-	public ArrayList<Task> loadTasks(TaskFilter filter) {
+	ArrayList<Task> loadTasks(TaskFilter filter) {
 		assertOpen();
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		
@@ -223,7 +223,7 @@ public class LocalRepository {
 	 * @param	filter		TaskFilter			The filter by which to restrict results
 	 * @return				ArrayList<Task>		The list of tasks received from the DB
 	 */
-	public ArrayList<Task> loadLocalTasks(TaskFilter filter) {
+	ArrayList<Task> loadLocalTasks(TaskFilter filter) {
 		//TODO: Implement this!
 		return new ArrayList<Task>();
 	}
@@ -233,7 +233,7 @@ public class LocalRepository {
 	 * @param	t 	Task 						The Task to find Requirements for
 	 * @return		ArrayList<Requirement>		The list of Requirements for the specified Task
 	 */
-	public ArrayList<Requirement> loadRequirementsForTask(Task t) {
+	ArrayList<Requirement> loadRequirementsForTask(Task t) {
 		assertOpen();
 		ArrayList<Requirement> reqs = new ArrayList<Requirement>();
 		
@@ -266,7 +266,7 @@ public class LocalRepository {
 	 * @param	r 	Requirement 				The requirement to find fulfillments for
 	 * @return		ArrayList<Fulfillment>		The list of fulfillments for the specified requirement	
 	 */
-	public ArrayList<Fulfillment> loadFulfillments(Requirement r) {
+	ArrayList<Fulfillment> loadFulfillments(Requirement r) {
 		assertOpen();
 		ArrayList<Fulfillment> fulfillments = new ArrayList<Fulfillment>();
 		
