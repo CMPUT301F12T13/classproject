@@ -34,29 +34,31 @@
         android:layout_below="@+id/mytasks_btn"
         android:background="@color/bgMinorColor" >
 
-        <Button
+        <ImageButton
             android:id="@+id/txtfilter_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="3dp"
-            android:text="Txt" />
+            android:src="@drawable/txticon" 
+            android:contentDescription="Text Filter" />
 
-        <Button
+        <ImageButton
             android:id="@+id/imgfilter_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_toLeftOf="@+id/txtfilter_btn"
-            android:text="Img" />
+            android:src="@drawable/imgicon" 
+            android:contentDescription="Image Filter" 
+            />
 
-        <Button
+        <ImageButton
             android:id="@+id/audfilter_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_toRightOf="@+id/txtfilter_btn"
-            android:text="Aud" />
+            android:src="@drawable/audicon"
+            android:contentDescription="Audio Filter" 
+            />
     </RelativeLayout>
 
     <ListView
@@ -64,6 +66,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_below="@+id/filter_layout"
         android:background="@color/bgListColor"
          >
