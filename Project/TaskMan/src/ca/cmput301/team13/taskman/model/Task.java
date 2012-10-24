@@ -64,8 +64,7 @@ public class Task extends BackedObject{
 	
 	private void loadRequirements() {
 		if(!reqsLoaded) {
-			//TODO: ask repo to load our list of requirements
-			requirements = new ArrayList<Requirement>();
+			requirements = repo.getRequirementsForTask(this);
 			reqsLoaded = true;
 		}
 	}

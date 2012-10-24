@@ -150,7 +150,7 @@ public class Requirement extends BackedObject{
 	private void loadFulfillments() {
 		//TODO: Actually ask the repo for our fulfillments
 		if(!loaded) {
-			fulfillments = new ArrayList<Fulfillment>();
+			fulfillments = repo.getFulfillmentsForRequirement(this);
 			loaded = true;
 		}
 	}

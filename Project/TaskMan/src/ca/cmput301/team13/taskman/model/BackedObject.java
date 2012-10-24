@@ -26,7 +26,7 @@ abstract class BackedObject {
 	private Date created;
 	private Date lastModified;
 	private User creator;
-	private VirtualRepository repo;
+	VirtualRepository repo;
 	boolean delaySave = false;
 	
 	BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {

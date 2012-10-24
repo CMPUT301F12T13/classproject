@@ -330,6 +330,7 @@ public class LocalRepository {
 						new User(cursor.getString(4)),//Creator
 						vr
 						);
+				//TODO: Attach actual data onto fulfillment, instead of just saying what it should be.
 				fulfillments.add(f);
 			} while (cursor.moveToNext());
 		}

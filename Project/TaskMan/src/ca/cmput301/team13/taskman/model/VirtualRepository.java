@@ -94,5 +94,23 @@ public class VirtualRepository {
 		Log.w("VirtualRepository", "Attempted to save changes to unknown object: "+backedObject.getClass().toString());
 		return false;
 	}
+	
+	/**
+	 * Get the list of Requirements for a given Task
+	 * @param t The task for which to return Requirements
+	 * @return
+	 */
+	ArrayList<Requirement> getRequirementsForTask(Task t) {
+		return local.loadRequirementsForTask(t);
+	}
+	
+	/**
+	 * Get the list of Fulfillments for a given Requirement
+	 * @param r The requirement for which to return Fulfillments
+	 * @return
+	 */
+	ArrayList<Fulfillment> getFulfillmentsForRequirement(Requirement r) {
+		return local.loadFulfillments(r);
+	}
 
 }
