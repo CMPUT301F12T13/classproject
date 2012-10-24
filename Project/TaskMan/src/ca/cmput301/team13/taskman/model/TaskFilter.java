@@ -56,7 +56,7 @@ public class TaskFilter {
 	public boolean isVisible(Task task) {
 		int numRequirements = task.getRequirementCount();
 		for (int i=0; i<numRequirements; i++) {
-			if (!this.activeFilters.contains(task.getRequirement(i).getDesiredContent())) {
+			if (!this.activeFilters.contains(task.getRequirement(i).getContentType())) {
 				return false;
 			}
 		}

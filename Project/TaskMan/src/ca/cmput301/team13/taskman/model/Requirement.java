@@ -143,7 +143,7 @@ public class Requirement extends BackedObject{
 	 * 
 	 * @return the Content Type expected by this Requirement
 	 */
-	public contentType getDesiredContent() {
+	public contentType getContentType() {
 		return desiredContent;
 	}
 	

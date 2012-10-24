@@ -150,8 +150,38 @@ public class LocalRepository {
 	}
 	
 	Fulfillment createFulfillment(User creator, Requirement req) {
-		//TODO: implement
-		return null;
+		assertOpen();
+		ContentValues values = new ContentValues();
+		values.put(RepoHelper.CREATED_COL, new Date().getTime());
+		values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
+		values.put(RepoHelper.REQ_COL, req.getId());
+		values.put(RepoHelper.CONTENTTYPE_COL, req.getContentType().ordinal());
+		values.put(RepoHelper.CREATOR_COL, creator.toString());
+		long insertId = db.insert(RepoHelper.REQS_TBL, null, values);
+		
+		if(insertId == -1) {
+			Log.w("LogStore", "Failed to write LogEntry into database.");
+			throw new RuntimeException("Database Write Failure.");
+		}
+		
+		Cursor cursor = db.query(RepoHelper.REQS_TBL,
+				RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
+				null, null, null);
+		cursor.moveToFirst();
+		
+		Fulfillment f = new Fulfillment(
+				cursor.getInt(0),//ID
+				new Date(cursor.getLong(5)),//Date Created
+				new Date(cursor.getLong(6)),//Date Last Modified
+				Requirement.contentType.values()[cursor.getInt(2)],//Content Type
+				new User(cursor.getString(4)),//Creator
+				vr
+				);
+		
+		req.addFulfillment(f);
+		
+		cursor.close();
+		return f;
 	}
 	
 	/**
@@ -182,9 +212,9 @@ public class LocalRepository {
 		ContentValues values = new ContentValues();
 		values.put(RepoHelper.CREATED_COL, r.getCreatedDate().getTime());
 		values.put(RepoHelper.LASTMODIFIED_COL, r.getLastModifiedDate().getTime());
-		values.put(RepoHelper.TASK_COL, r.getId());
-		values.put(RepoHelper.DESC_COL, "");
-		values.put(RepoHelper.CONTENTTYPE_COL, r.getDesiredContent().ordinal());
+		values.put(RepoHelper.ID_COL, r.getId());
+		values.put(RepoHelper.DESC_COL, r.getDescription());
+		values.put(RepoHelper.CONTENTTYPE_COL, r.getContentType().ordinal());
 		values.put(RepoHelper.CREATOR_COL, r.getCreator().toString());
 		
 		int updateCount = db.update(RepoHelper.REQS_TBL, values, RepoHelper.ID_COL + "=" + r.getId(), null);
@@ -193,9 +223,24 @@ public class LocalRepository {
 			throw new RuntimeException("Database update failed!");
 	}
 	
-	void updateFulfillment(Fulfillment backedObject) {
-		// TODO: Implement fulfillment update
+	/**
+	 * Update the backing structure to acknowledge any changes that have occurred
+	 * @param f the Fulfillment to update
+	 */
+	void updateFulfillment(Fulfillment f) {
+		assertOpen();
+		ContentValues values = new ContentValues();
+		values.put(RepoHelper.CREATED_COL, f.getCreatedDate().getTime());
+		values.put(RepoHelper.LASTMODIFIED_COL, f.getLastModifiedDate().getTime());
+		values.put(RepoHelper.ID_COL, f.getId());
+		//TODO: Logic to convert typed Fulfillment content into a blob
 		
+		values.put(RepoHelper.CREATOR_COL, f.getCreator().toString());
+		
+		int updateCount = db.update(RepoHelper.FULS_TBL, values, RepoHelper.ID_COL + "=" + f.getId(), null);
+		
+		if(updateCount != 1) 
+			throw new RuntimeException("Database update failed!");
 	}
 	
 	/**
@@ -281,7 +326,7 @@ public class LocalRepository {
 						cursor.getInt(0),//ID
 						new Date(cursor.getLong(5)),//Date Created
 						new Date(cursor.getLong(6)),//Date Last Modified
-						r.getDesiredContent(), //Content type
+						r.getContentType(), //Content type
 						new User(cursor.getString(4)),//Creator
 						vr
 						);
