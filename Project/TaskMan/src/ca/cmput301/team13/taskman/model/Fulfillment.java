@@ -142,5 +142,9 @@ public class Fulfillment extends BackedObject {
 		}
 		saveChanges();
 	}
+	
+	public contentType getContentType() {
+		return content;
+	}
 
 }
