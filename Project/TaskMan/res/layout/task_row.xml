@@ -11,6 +11,7 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/audicon" />
 
+    
     <ImageView
         android:id="@+id/txtImg"
         android:layout_width="16dp"
