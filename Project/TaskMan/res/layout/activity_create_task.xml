@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="40dp"
+        android:background="@color/bgMinorColor"
+	    android:gravity="center_vertical"
+	    android:orientation="vertical" >
+
+		<TextView
+		    android:id="@+id/create_title"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="  Create a Task"
+		    android:textAppearance="?android:attr/textAppearanceMedium"
+		    android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+            <TextView android:id="@+id/basic_info"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:textColor="#00CCFF"   
+                android:text="  Basic Information" />
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+		        android:layout_height="2dp"
+		        android:background="#00CCFF"
+		        android:orientation="vertical" >
+            </LinearLayout>
+        
+            <EditText android:id="@+id/entry_title"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:hint="Title" />
+            
+            <EditText android:id="@+id/entry_description"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:hint="Description" />
+
+            <TextView
+                android:id="@+id/basic_info"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:paddingTop="10dp"
+                android:text="  Requirements"
+                android:textColor="#00CCFF" />
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#00CCFF"
+                android:orientation="vertical" >
+            </LinearLayout>    
+                                      
+    </LinearLayout>	
+    
+    <RelativeLayout
+        android:id="@+id/filter_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bgMinorColor" >
+
+        <ImageButton
+            android:id="@+id/txtfilter_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/txticon" 
+            android:contentDescription="Text Filter" />
+
+        <ImageButton
+            android:id="@+id/imgfilter_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@+id/txtfilter_btn"
+            android:src="@drawable/imgicon" 
+            android:contentDescription="Image Filter" 
+            />
+
+        <ImageButton
+            android:id="@+id/audfilter_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@+id/txtfilter_btn"
+            android:src="@drawable/audicon"
+            android:contentDescription="Audio Filter" 
+            />
+    </RelativeLayout>
+	
+</LinearLayout>
