@@ -36,7 +36,7 @@ public class VirtualRepository {
 	/**
 	 * Obtains a list of Tasks for display
 	 * 
-	 * @param filter The TaskFilter with which to obtain Tasks
+	 * @param tf The TaskFilter with which to obtain Tasks
 	 * @return an ArrayList of compatible Tasks
 	 */
 	public ArrayList<Task> getTasksForFilter(TaskFilter tf) {

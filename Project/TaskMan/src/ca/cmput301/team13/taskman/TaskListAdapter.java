@@ -1,13 +1,17 @@
 package ca.cmput301.team13.taskman;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import ca.cmput301.team13.taskman.model.LocalRepository;
+import ca.cmput301.team13.taskman.model.TaskCreatedComparator;
 import ca.cmput301.team13.taskman.model.TaskFilter;
 import ca.cmput301.team13.taskman.model.Task;
 import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
+import android.content.Context;
 import android.database.DataSetObserver;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -20,19 +24,30 @@ public class TaskListAdapter implements Adapter {
 
 	private VirtualRepository repo;
 	private ArrayList<Task> tasks;
+	private ArrayList<DataSetObserver> observers;
+	private LayoutInflater inflater;
 
 	// Task Filters
 	private TaskFilter taskFilter;
+	
+	//View types
+	enum viewType {
+		Header,
+		Task
+	};
 
 	/**
 	 * Construct a TaskListAdapter
 	 * @param vr The virtual repository instance
 	 */
-	public TaskListAdapter(VirtualRepository vr) {
+	public TaskListAdapter(VirtualRepository vr, Context context) {
 		repo = vr;
 		taskFilter = new TaskFilter();
+		observers = new ArrayList<DataSetObserver>();
+		inflater = LayoutInflater.from(context);
 
-		// update();
+		//Get our initial data
+		update();
 	}
 
 	/**
@@ -40,39 +55,66 @@ public class TaskListAdapter implements Adapter {
 	 */
 	public void update() {
 		tasks = repo.getTasksForFilter(taskFilter);
-
-		// TODO: order tasks based on date
-		// TODO: order tasks based on fulfillment
+		sortByCreatedDate();
+		notifyObservers();
 	}
 
-	public int getItemViewType(int arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getItemViewType(int viewIndex) {
+		//TODO: Differentiate headers from Tasks
+		return viewType.Task.ordinal();
 	}
 
-	public View getView(int arg0, View arg1, ViewGroup arg2) {
-		// TODO Auto-generated method stub
-		return null;
+	public View getView(int viewIndex, View convertView, ViewGroup parent) {
+		View newView;
+		if(convertView != null) {
+			//Re-use the given view
+			newView = convertView;
+		} else {
+			//Instantiate a new view
+			newView = inflater.inflate(R.layout.task_row, null);
+		}
+		//TODO: support header entries
+		
+		//TODO: Set all the pertinent values
+		return newView;
 	}
 
 	public int getViewTypeCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return viewType.values().length;
 	}
 
 	public boolean hasStableIds() {
-		// TODO Auto-generated method stub
+		//Our ids are dependant on array index, which changes on sort.
 		return false;
 	}
 
-	public void registerDataSetObserver(DataSetObserver arg0) {
-		// TODO: Will we actually use this?
+	/**
+	 * Implementation is not Thread-safe.
+	 */
+	public void registerDataSetObserver(DataSetObserver dso) {
+		// TODO: This is used to tell the UI that a reload would be a good idea
+		observers.add(dso);
 	}
 
-	public void unregisterDataSetObserver(DataSetObserver arg0) {
-		// TODO: Will we actually use this?
+	/**
+	 * Implementation is not Thread-safe
+	 */
+	public void unregisterDataSetObserver(DataSetObserver dso) {
+		// TODO: This is used to tell the UI that a reload would be a good idea
+		observers.remove(dso);
+	}
+	
+	private void sortByCreatedDate() {
+		//This as its own method may be unnecessary. THoughts?
+		Collections.sort(tasks, new TaskCreatedComparator());
 	}
 
+	private void notifyObservers() {
+		for(DataSetObserver dso : observers) {
+			dso.onChanged();
+		}
+	}
+	
 	public int getCount()        { return tasks.size(); }
 	public Object getItem(int i) { return tasks.get(i); }
 	public long getItemId(int i) { return i; }
