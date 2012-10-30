@@ -4,8 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_root">RootActivity</string>
+
     <color name="bgColor">#FF777777</color>
     <color name="bgMinorColor">#FF333333</color>
     <color name="bgListColor">#FFDDDDDD</color>
+
+    <string name="title_activity_task">TaskActivity</string>
 
 </resources>
