@@ -59,6 +59,14 @@
             android:src="@drawable/audicon"
             android:contentDescription="Audio Filter" 
             />
+        
+        <Button
+            android:id="@+id/addTask_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:text="+"
+            />
     </RelativeLayout>
 
     <ListView
