@@ -22,11 +22,14 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ca.cmput301.team13.taskman.TaskMan;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-public class Task extends BackedObject{
+public class Task extends BackedObject implements Parcelable{
 
-	private static final long serialVersionUID = 8116959792790135894L;
 	
 	private String title;
 	private String description;
@@ -167,4 +170,24 @@ public class Task extends BackedObject{
 	public String toString() {
 		return "Task(ID:"+getId()+")";
 	}
+
+	//Parcelable implementation
+	public int describeContents() {
+		return 0;
+	}
+
+	public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(getId());
+    }
+
+    public static final Parcelable.Creator<Task> CREATOR
+            = new Parcelable.Creator<Task>() {
+        public Task createFromParcel(Parcel in) {
+            return TaskMan.getInstance().getRepository().getTask(in.readInt());
+        }
+
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
 }

@@ -365,6 +365,38 @@ public class LocalRepository {
 		return fulfillments;
 	}
 
+	
+	/**
+	 * Get the Task corresponding to the given Task Id
+	 * @param taskId the ID
+	 * @return the Task
+	 */
+	
+	Task getTask(int taskId) {
+		
+		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
+				RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = " + taskId, null,
+				null, null, null);
+		
+		if (cursor.moveToFirst()) {
+			Task t = new Task(
+					cursor.getInt(0),//ID
+					new Date(cursor.getLong(4)),//Date Created
+					new Date(cursor.getLong(5)),//Date Last Modified
+					new User(cursor.getString(3)),//Creator
+					cursor.getString(1),//Title
+					cursor.getString(2),//Description
+					new ArrayList<Requirement>(),//Current requirements
+					vr
+					);
+			cursor.close();
+			return t;
+		} else {
+			cursor.close();
+			return null;
+		}
+	}
+
 }
 
 class RepoHelper  extends SQLiteOpenHelper{

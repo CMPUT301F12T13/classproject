@@ -144,4 +144,13 @@ public class VirtualRepository {
 		return local.loadFulfillmentsForRequirement(r);
 	}
 
+	/**
+	 * Get the Task corresponding to the given Task Id
+	 * @param taskId the ID
+	 * @return the Task
+	 */
+	public Task getTask(int taskId) {
+		return local.getTask(taskId);
+	}
+
 }

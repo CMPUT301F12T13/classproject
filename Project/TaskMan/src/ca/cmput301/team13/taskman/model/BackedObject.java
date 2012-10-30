@@ -19,12 +19,10 @@
 
 package ca.cmput301.team13.taskman.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
-abstract class BackedObject implements Serializable{
+abstract class BackedObject {
 	
-	private static final long serialVersionUID = 1318486266114497498L;
 	
 	private int id;
 	private Date created;
