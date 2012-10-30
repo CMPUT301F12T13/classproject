@@ -25,6 +25,9 @@ import java.util.Date;
 import android.util.Log;
 
 public class Task extends BackedObject{
+
+	private static final long serialVersionUID = 8116959792790135894L;
+	
 	private String title;
 	private String description;
 	private ArrayList<Requirement> requirements;

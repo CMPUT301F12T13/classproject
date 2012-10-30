@@ -152,6 +152,12 @@ public class LocalRepository {
 		return r;
 	}
 	
+	/**
+	 * Creates a new Fulfillment, with no content yet set
+	 * @param creator The User that has created the Fulfillment
+	 * @param req The Requirement to add the FUlfillment to
+	 * @return the Fulfillment, with no content yet attached
+	 */
 	Fulfillment createFulfillment(User creator, Requirement req) {
 		assertOpen();
 		ContentValues values = new ContentValues();
@@ -308,7 +314,7 @@ public class LocalRepository {
 						new User(cursor.getString(4)),//Creator
 						cursor.getString(3),//Description
 						Requirement.contentType.values()[cursor.getInt(2)],//Content Type
-						new ArrayList<Fulfillment>(),//TODO: load current fulfillments
+						loadFulfillments(cursor.getInt(0), Requirement.contentType.values()[cursor.getInt(2)]),//load current fulfillments
 						vr
 						);
 				reqs.add(r);
@@ -323,12 +329,21 @@ public class LocalRepository {
 	 * @param	r 	Requirement 				The requirement to find fulfillments for
 	 * @return		ArrayList<Fulfillment>		The list of fulfillments for the specified requirement	
 	 */
-	ArrayList<Fulfillment> loadFulfillments(Requirement r) {
+	ArrayList<Fulfillment> loadFulfillmentsForRequirement(Requirement r) {
+		return loadFulfillments(r.getId(), r.getContentType());
+	}
+	
+	/**
+	 * Loads a list of fulfillments for the specified requirement ID
+	 * @param	r 	Requirement 				The requirement to find fulfillments for
+	 * @return		ArrayList<Fulfillment>		The list of fulfillments for the specified requirement	
+	 */
+	private ArrayList<Fulfillment> loadFulfillments(int reqId, contentType reqContentType) {
 		assertOpen();
 		ArrayList<Fulfillment> fulfillments = new ArrayList<Fulfillment>();
 		
 		Cursor cursor = db.query(RepoHelper.REQS_TBL,
-				RepoHelper.REQS_COLS, RepoHelper.REQ_COL + " = " + r.getId(), null,
+				RepoHelper.REQS_COLS, RepoHelper.REQ_COL + " = " + reqId, null,
 				null, null, null);
 		
 		//If we have requirements, load them
@@ -338,7 +353,7 @@ public class LocalRepository {
 						cursor.getInt(0),//ID
 						new Date(cursor.getLong(5)),//Date Created
 						new Date(cursor.getLong(6)),//Date Last Modified
-						r.getContentType(), //Content type
+						reqContentType, //Content type
 						new User(cursor.getString(4)),//Creator
 						vr
 						);

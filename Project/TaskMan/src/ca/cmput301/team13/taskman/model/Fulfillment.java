@@ -24,14 +24,15 @@ import java.util.Date;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 import android.graphics.Bitmap;
-import android.media.MediaRecorder;
 import android.util.Log;
 
 public class Fulfillment extends BackedObject {
+
+	private static final long serialVersionUID = 8187581137953780691L;
+	
 	private contentType content;
 	private Bitmap image;
 	private String text;
-	private String audioFile;
 	private short[] audioBuffer;
 	
 	/**

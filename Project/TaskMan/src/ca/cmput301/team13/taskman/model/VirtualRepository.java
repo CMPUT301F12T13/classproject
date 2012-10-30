@@ -35,6 +35,36 @@ public class VirtualRepository {
 	}
 	
 	/**
+	 * Creates a new Task, with no title, description, or requirements
+	 * @param creator The User that has created the Task
+	 * @return the Task, with no non-housekeeping values yet set
+	 */
+	Task createTask(User creator) {
+		return local.createTask(creator);
+	}
+	
+	/**
+	 * Creates a new Requirement, with no description or fulfillments
+	 * @param creator The User that has created the Requirement 
+	 * @param task The Task to add the Requirement to
+	 * @param contentType The desired content type of the requirement
+	 * @return the Requirement, with no non-housekeeping values yet set
+	 */
+	Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
+		return local.createRequirement(creator, task, contentType);
+	}
+	
+	/**
+	 * Creates a new Fulfillment, with no content yet set
+	 * @param creator The User that has created the Fulfillment
+	 * @param req The Requirement to add the FUlfillment to
+	 * @return the Fulfillment, with no content yet attached
+	 */
+	Fulfillment createFulfillment(User creator, Requirement req) {
+		return local.createFulfillment(creator, req);
+	}
+	
+	/**
 	 * Obtains a list of Tasks for display
 	 * 
 	 * @param tf The TaskFilter with which to obtain Tasks
@@ -111,7 +141,7 @@ public class VirtualRepository {
 	 * @return
 	 */
 	ArrayList<Fulfillment> getFulfillmentsForRequirement(Requirement r) {
-		return local.loadFulfillments(r);
+		return local.loadFulfillmentsForRequirement(r);
 	}
 
 }
