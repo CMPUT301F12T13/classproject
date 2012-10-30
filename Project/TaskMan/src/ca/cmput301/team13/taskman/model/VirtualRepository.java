@@ -39,7 +39,7 @@ public class VirtualRepository {
 	 * @param creator The User that has created the Task
 	 * @return the Task, with no non-housekeeping values yet set
 	 */
-	Task createTask(User creator) {
+	public Task createTask(User creator) {
 		return local.createTask(creator);
 	}
 	
@@ -50,7 +50,7 @@ public class VirtualRepository {
 	 * @param contentType The desired content type of the requirement
 	 * @return the Requirement, with no non-housekeeping values yet set
 	 */
-	Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
+	public Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
 		return local.createRequirement(creator, task, contentType);
 	}
 	
@@ -60,7 +60,7 @@ public class VirtualRepository {
 	 * @param req The Requirement to add the FUlfillment to
 	 * @return the Fulfillment, with no content yet attached
 	 */
-	Fulfillment createFulfillment(User creator, Requirement req) {
+	public Fulfillment createFulfillment(User creator, Requirement req) {
 		return local.createFulfillment(creator, req);
 	}
 	
