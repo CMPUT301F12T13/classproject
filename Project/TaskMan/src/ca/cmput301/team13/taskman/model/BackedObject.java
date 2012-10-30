@@ -33,6 +33,8 @@ abstract class BackedObject {
 		this.id = id;
 		this.repo = repo;
 		this.creator = creator;
+		this.created = created;
+		this.lastModified = lastModified;
 	}
 	
 	/**

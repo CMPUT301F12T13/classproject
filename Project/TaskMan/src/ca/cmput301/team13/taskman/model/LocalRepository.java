@@ -22,6 +22,8 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -45,6 +47,7 @@ public class LocalRepository {
 
 	void open() throws SQLException {
 		db = helper.getWritableDatabase();
+		
 	}
 	
 	public void openTestConnection() {
@@ -263,7 +266,7 @@ public class LocalRepository {
 						new User(cursor.getString(3)),//Creator
 						cursor.getString(1),//Title
 						cursor.getString(2),//Description
-						new ArrayList<Requirement>(),//Current requirements
+						loadRequirements(cursor.getInt(0)),//Current requirements
 						vr
 						);
 				tasks.add(t);
@@ -279,11 +282,20 @@ public class LocalRepository {
 	 * @return		ArrayList<Requirement>		The list of Requirements for the specified Task
 	 */
 	ArrayList<Requirement> loadRequirementsForTask(Task t) {
+		return loadRequirements(t.getId());
+	}
+	
+	/**
+	 * Loads a list of Requirements for the specified Task
+	 * @param	taskId 	integer 					The Task ID to find Requirements for
+	 * @return			ArrayList<Requirement>		The list of Requirements for the specified Task
+	 */
+	private ArrayList<Requirement> loadRequirements(int taskId) {
 		assertOpen();
 		ArrayList<Requirement> reqs = new ArrayList<Requirement>();
 		
 		Cursor cursor = db.query(RepoHelper.REQS_TBL,
-				RepoHelper.REQS_COLS, RepoHelper.TASK_COL + " = " + t.getId(), null,
+				RepoHelper.REQS_COLS, RepoHelper.TASK_COL + " = " + taskId, null,
 				null, null, null);
 		
 		//If we have requirements, load them
@@ -408,6 +420,16 @@ class RepoHelper  extends SQLiteOpenHelper{
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w("SQLite Helper", "Upgrading database from version " + oldVersion + " to "
 				+ newVersion + ", wiping Database");
+		db.execSQL("DROP TABLE IF EXISTS " + TASKS_TBL);
+		db.execSQL("DROP TABLE IF EXISTS " + REQS_TBL);
+		db.execSQL("DROP TABLE IF EXISTS " + FULS_TBL);
+		onCreate(db);
+	}
+	
+	@Override
+	public void onOpen(SQLiteDatabase db) {
+		//For now, we probably don't want persistence, as things may be changing.
+		Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
 		db.execSQL("DROP TABLE IF EXISTS " + TASKS_TBL);
 		db.execSQL("DROP TABLE IF EXISTS " + REQS_TBL);
 		db.execSQL("DROP TABLE IF EXISTS " + FULS_TBL);

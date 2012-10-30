@@ -22,13 +22,22 @@ package ca.cmput301.team13.taskman;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.widget.ListView;
 
 public class RootActivity extends Activity {
+	ListView taskList;
+	TaskListAdapter taskAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_root);
+        
+        //Setup our list...
+        taskList = (ListView)findViewById(R.id.task_list);
+        taskAdapter = new TaskListAdapter(TaskMan.getInstance().getRepository(), this);
+        taskList.setAdapter(taskAdapter);
+        
     }
 
     @Override

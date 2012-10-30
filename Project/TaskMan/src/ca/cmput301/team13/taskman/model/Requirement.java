@@ -50,6 +50,7 @@ public class Requirement extends BackedObject{
 		super(id, created, lastModified, creator, repo);
 		this.description = description;
 		this.fulfillments = fulfillments;
+		this.desiredContent = desiredContent;
 		this.loaded = true;
 	}
 	
@@ -64,6 +65,7 @@ public class Requirement extends BackedObject{
 		super(id, created, lastModified, creator, repo);
 		this.description = description;
 		this.fulfillmentCount = fulfillmentCount;
+		this.desiredContent = desiredContent;
 		this.loaded = false;
 	}
 	
@@ -153,6 +155,10 @@ public class Requirement extends BackedObject{
 			fulfillments = repo.getFulfillmentsForRequirement(this);
 			loaded = true;
 		}
+	}
+	
+	public String toString() {
+		return "Req(ID:"+getId()+")";
 	}
 
 }

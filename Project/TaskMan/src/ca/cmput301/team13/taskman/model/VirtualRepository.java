@@ -31,6 +31,7 @@ public class VirtualRepository {
 
 	public VirtualRepository(Context context) {
 		local = new LocalRepository(context, this);
+		local.open();
 	}
 	
 	/**

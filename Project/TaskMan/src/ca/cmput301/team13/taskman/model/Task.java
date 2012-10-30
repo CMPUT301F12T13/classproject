@@ -22,6 +22,8 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.util.Log;
+
 public class Task extends BackedObject{
 	private String title;
 	private String description;
@@ -63,6 +65,7 @@ public class Task extends BackedObject{
 	}
 	
 	private void loadRequirements() {
+		Log.w(toString(),"Performing lazy-load");
 		if(!reqsLoaded) {
 			requirements = repo.getRequirementsForTask(this);
 			reqsLoaded = true;
@@ -115,6 +118,7 @@ public class Task extends BackedObject{
 			loadRequirements();
 		
 		requirements.add(req);
+		Log.w(toString(),"Added Requirement: "+req);
 		return saveChanges();
 	}
 	
@@ -155,5 +159,9 @@ public class Task extends BackedObject{
 			loadRequirements();
 		
 		return requirements.get(index);
+	}
+	
+	public String toString() {
+		return "Task(ID:"+getId()+")";
 	}
 }
