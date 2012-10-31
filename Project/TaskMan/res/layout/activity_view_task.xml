@@ -1,6 +1,60 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/bgMinorColor"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/task_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Some Task Name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+            <TextView android:id="@+id/req_fulfillments"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="bottom"
+                android:textColor="#00CCFF"   
+                android:text="  Required Fulfillments" />
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#00CCFF"
+                android:orientation="vertical" >
+            </LinearLayout>
+            
+            <TextView android:id="@+id/activity"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="bottom"
+                android:textColor="#00CCFF"   
+                android:text="  Activity" />
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#00CCFF"
+                android:orientation="vertical" >
+            </LinearLayout>
+            
+            
+    </LinearLayout>    
+
+</LinearLayout>

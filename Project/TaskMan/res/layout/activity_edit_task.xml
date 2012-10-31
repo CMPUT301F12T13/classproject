@@ -28,9 +28,9 @@
         android:orientation="vertical" >
 
             <TextView android:id="@+id/basic_info"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:gravity="center_vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="bottom"
                 android:textColor="#00CCFF"   
                 android:text="  Basic Information" />
         
@@ -43,20 +43,19 @@
         
             <EditText android:id="@+id/entry_title"
                 android:layout_width="fill_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:hint="Title" />
             
             <EditText android:id="@+id/entry_description"
                 android:layout_width="fill_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:hint="Description" />
 
             <TextView
                 android:id="@+id/basic_info"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:gravity="center_vertical"
-                android:paddingTop="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="bottom"
                 android:text="  Requirements"
                 android:textColor="#00CCFF" />
         
