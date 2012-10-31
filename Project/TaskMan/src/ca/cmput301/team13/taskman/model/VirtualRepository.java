@@ -152,5 +152,30 @@ public class VirtualRepository {
 	public Task getTask(int taskId) {
 		return local.getTask(taskId);
 	}
+	
+	/**
+	 * Remove a Specified Task from the backing store. All references to the Task object should be discarded
+	 * @param t The Task
+	 */
+	public void removeTask(Task t) {
+		local.removeTask(t);
+	}
+	
+	/**
+	 * Remove a Specified Requirement from the backing store. All references to the Requirement object should be discarded
+	 * @param r The Requirement
+	 */
+	public void removeRequirement(Requirement r) {
+		local.removeRequirement(r);
+	}
+	
+	/**
+	 * Remove a Specified Fulfillment from the backing store. All references to the Fulfillment object should be discarded
+	 * @param f The Fulfillment
+	 */
+	public void removeFulfillment(Fulfillment f) {
+		local.removeFulfillment(f);
+	}
+
 
 }

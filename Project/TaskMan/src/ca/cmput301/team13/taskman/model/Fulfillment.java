@@ -147,5 +147,9 @@ public class Fulfillment extends BackedObject {
 	public contentType getContentType() {
 		return content;
 	}
+	
+	public String toString() {
+		return "Fulfillment(ID:"+getId()+")";
+	}
 
 }

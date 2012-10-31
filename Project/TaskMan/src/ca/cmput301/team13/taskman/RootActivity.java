@@ -69,7 +69,7 @@ public class RootActivity extends Activity implements OnClickListener {
 			Bundle b = new Bundle();
 			//Tuck in pertinent information for the TaskActivity
 			b.putParcelable("task", TaskMan.getInstance().getRepository().createTask(TaskMan.getInstance().getUser()));
-			b.putString("mode", "edit");
+			b.putString("mode", "create");
 			//Create the intent and execute it
 			Intent i = new Intent(this, TaskActivity.class);
 			i.putExtras(b);

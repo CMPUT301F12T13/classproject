@@ -396,6 +396,33 @@ public class LocalRepository {
 			return null;
 		}
 	}
+	
+	/**
+	 * Remove a Specified Task from the backing store. All references to the Task object should be discarded
+	 * @param t The Task
+	 */
+	void removeTask(Task t) {
+		//TODO: Implement
+		Log.w("LocalRepository", "Unimplemented method called: removeTask("+t+")");
+	}
+	
+	/**
+	 * Remove a Specified Requirement from the backing store. All references to the Requirement object should be discarded
+	 * @param r The Requirement
+	 */
+	void removeRequirement(Requirement r) {
+		//TODO: Implement
+		Log.w("LocalRepository", "Unimplemented method called: removeRequirement("+r+")");
+	}
+	
+	/**
+	 * Remove a Specified Fulfillment from the backing store. All references to the Fulfillment object should be discarded
+	 * @param f The Fulfillment
+	 */
+	void removeFulfillment(Fulfillment f) {
+		//TODO: Implement
+		Log.w("LocalRepository", "Unimplemented method called: removeFulfillment("+f+")");
+	}
 
 }
 
