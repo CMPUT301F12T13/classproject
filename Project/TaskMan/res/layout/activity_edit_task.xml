@@ -22,17 +22,17 @@
 		    android:textColor="#FFFFFF" />
 
 		<Button
-	        android:id="@+id/view_entries"
+	        android:id="@+id/save_button"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
+	        android:layout_weight="0.5"
 	        android:layout_gravity="center"
 	        android:textColor="#FFFFFF"
 	        android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="Save" />
 		
 		<Button
-	        android:id="@+id/view_entries"
+	        android:id="@+id/cancel_button"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="0.5"
