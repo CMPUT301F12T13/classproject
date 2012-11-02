@@ -11,5 +11,6 @@
 
     <string name="title_activity_task">TaskActivity</string>
     <string name="title_activity_audio_capture">AudioCaptureActivity</string>
+    <string name="title_activity_camera_capture">CameraCaptureActivity</string>
 
 </resources>
