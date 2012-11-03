@@ -79,14 +79,6 @@ public class TaskActivity extends Activity implements OnClickListener {
 			//Destroy the associated Task before returning
 			TaskMan.getInstance().getRepository().removeTask(task);
 			//This means that pressing Save should switch the mode to "edit", before leaving the Activity
-		} else if(getMode().equals("edit")){
-			//Propagate all Changes to the Task object
-			task.delaySaves(true);
-			task.setTitle(((EditText)findViewById(R.id.entry_title)).getText().toString());
-			task.setDescription(((EditText)findViewById(R.id.entry_description)).getText().toString());
-			task.delaySaves(false);
-			
-			
 		}
 	}
 	
@@ -108,20 +100,17 @@ public class TaskActivity extends Activity implements OnClickListener {
 		super.finish();
 	}
 	
+	/**
+	 * Return to the previous activity without saving
+	 */
 	private void cancelTask() {
-		TaskMan.getInstance().getRepository().removeTask(task);
 		super.finish();
-	}
-	
-	@Override
-	public void onBackPressed() {
-		cancelTask();
 	}
 	
 	public void onClick(View source) {
 		if(source.equals(findViewById(R.id.save_button))) {
 			saveTask();
-		}else if(source.equals(findViewById(R.id.cancel_button))) {
+		} else if(source.equals(findViewById(R.id.cancel_button))) {
 			cancelTask();
 		} else if  (source.getId() == R.id.req_addTxt_btn) {
 			TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text);
