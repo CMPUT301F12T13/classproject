@@ -97,7 +97,7 @@
         android:background="@color/bgMinorColor" >
 
         <ImageButton
-            android:id="@+id/txtfilter_btn"
+            android:id="@+id/req_addTxt_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
@@ -105,7 +105,7 @@
             android:contentDescription="Text Filter" />
 
         <ImageButton
-            android:id="@+id/imgfilter_btn"
+            android:id="@+id/req_addImg_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_toLeftOf="@+id/txtfilter_btn"
@@ -114,7 +114,7 @@
             />
 
         <ImageButton
-            android:id="@+id/audfilter_btn"
+            android:id="@+id/req_addAud_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_toRightOf="@+id/txtfilter_btn"
