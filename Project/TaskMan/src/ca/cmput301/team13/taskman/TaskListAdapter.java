@@ -92,7 +92,7 @@ public class TaskListAdapter implements ListAdapter {
 			else audio = true; 
 		}
 		
-		//TODO: Set all the pertinent values
+		//Set all the pertinent values
 		((TextView)newView.findViewById(R.id.title_lbl)).setText(task.getTitle());
 		newView.findViewById(R.id.txtImg).setVisibility((text ? View.VISIBLE : View.INVISIBLE));
 		newView.findViewById(R.id.imgImg).setVisibility((image ? View.VISIBLE : View.INVISIBLE));

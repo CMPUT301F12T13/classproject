@@ -19,16 +19,21 @@
 
 package ca.cmput301.team13.taskman;
 
+import ca.cmput301.team13.taskman.model.Task;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class RootActivity extends Activity implements OnClickListener {
+public class RootActivity extends Activity implements OnClickListener, OnItemClickListener {
 	ListView taskList;
 	TaskListAdapter taskAdapter;
 
@@ -41,6 +46,7 @@ public class RootActivity extends Activity implements OnClickListener {
         taskList = (ListView)findViewById(R.id.task_list);
         taskAdapter = new TaskListAdapter(TaskMan.getInstance().getRepository(), this);
         taskList.setAdapter(taskAdapter);
+        taskList.setOnItemClickListener(this);
         
         ((Button)findViewById(R.id.addTask_btn)).setOnClickListener(this);
         
@@ -77,4 +83,17 @@ public class RootActivity extends Activity implements OnClickListener {
 			
 		}
 	}
+
+	public void onItemClick(AdapterView<?> list, View source, int position,
+			long id) {
+		Log.w("RootActivity", "Element "+position+" clicked.");
+		Bundle b = new Bundle();
+		b.putParcelable("task", (Task) taskAdapter.getItem(position));
+		b.putString("mode", "view");
+		
+		Intent i = new Intent(this, TaskActivity.class);
+		i.putExtras(b);
+		startActivity(i);
+	}
+
 }

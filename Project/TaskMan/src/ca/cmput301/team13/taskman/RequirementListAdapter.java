@@ -13,6 +13,8 @@ import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +56,7 @@ public class RequirementListAdapter implements ListAdapter {
 		this.task = task;
 		observers = new ArrayList<DataSetObserver>();
 		inflater = LayoutInflater.from(context);
-
+		
 		//Get our initial data
 		update();
 	}
@@ -106,6 +108,25 @@ public class RequirementListAdapter implements ListAdapter {
 			}
 			
 		});
+		
+		//Enable the fields to be edited
+		((EditText)newView.findViewById(R.id.reqDescriptionEdit)).addTextChangedListener(new TextWatcher(){
+	        
+	        public void afterTextChanged(Editable editable) {
+	            req.setDescription(editable.toString());
+	        }
+
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				//Do nothing
+			}
+
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				//Do Nothing
+				
+			}
+	    });
 		return newView;
 	}
 

@@ -366,8 +366,8 @@ public class LocalRepository {
 		assertOpen();
 		ArrayList<Fulfillment> fulfillments = new ArrayList<Fulfillment>();
 		
-		Cursor cursor = db.query(RepoHelper.REQS_TBL,
-				RepoHelper.REQS_COLS, RepoHelper.REQ_COL + " = " + reqId, null,
+		Cursor cursor = db.query(RepoHelper.FULS_TBL,
+				RepoHelper.FULS_COLS, RepoHelper.REQ_COL + " = " + reqId, null,
 				null, null, null);
 		
 		//If we have requirements, load them
