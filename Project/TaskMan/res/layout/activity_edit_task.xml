@@ -108,7 +108,7 @@
             android:id="@+id/req_addImg_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/txtfilter_btn"
+            android:layout_toLeftOf="@+id/req_addTxt_btn"
             android:src="@drawable/imgicon" 
             android:contentDescription="Image Filter" 
             />
@@ -117,7 +117,7 @@
             android:id="@+id/req_addAud_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toRightOf="@+id/txtfilter_btn"
+            android:layout_toRightOf="@+id/req_addTxt_btn"
             android:src="@drawable/audicon"
             android:contentDescription="Audio Filter" 
             />
