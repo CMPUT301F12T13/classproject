@@ -8,6 +8,8 @@
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -28,6 +30,21 @@
         <activity
             android:name=".TaskActivity"
             android:label="@string/title_activity_task" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AudioCaptureActivity"
+            android:label="@string/title_activity_audio_capture" >
+            <intent-filter>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ImageCaptureActivity"
+            android:label="@string/title_activity_camera_capture" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
