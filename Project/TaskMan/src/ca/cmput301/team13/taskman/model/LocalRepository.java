@@ -426,7 +426,10 @@ public class LocalRepository {
 	 * @param t The Task
 	 */
 	void removeTask(Task t) {
-		System.out.println("removing task");
+		int numRequirements = t.getRequirementCount();
+		for(int i=0; i<numRequirements; i++) {
+			removeRequirement(t.getRequirement(i));
+		}
 		db.delete(RepoHelper.TASKS_TBL, RepoHelper.ID_COL + " = " + t.getId(), null);
 	}
 	
@@ -435,8 +438,11 @@ public class LocalRepository {
 	 * @param r The Requirement
 	 */
 	void removeRequirement(Requirement r) {
-		//TODO: Implement
-		Log.w("LocalRepository", "Unimplemented method called: removeRequirement("+r+")");
+		int numFulfillments = r.getFullfillmentCount();
+		for(int i=0; i<numFulfillments; i++) {
+			removeFulfillment(r.getFulfillment(i));
+		}
+		db.delete(RepoHelper.REQS_TBL, RepoHelper.ID_COL + " = " + r.getId(), null);
 	}
 	
 	/**
@@ -444,8 +450,7 @@ public class LocalRepository {
 	 * @param f The Fulfillment
 	 */
 	void removeFulfillment(Fulfillment f) {
-		//TODO: Implement
-		Log.w("LocalRepository", "Unimplemented method called: removeFulfillment("+f+")");
+		db.delete(RepoHelper.FULS_TBL, RepoHelper.ID_COL + " = " + f.getId(), null);
 	}
 
 }
