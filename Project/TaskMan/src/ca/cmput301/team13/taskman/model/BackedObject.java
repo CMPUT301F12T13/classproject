@@ -21,6 +21,11 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.Date;
 
+import ca.cmput301.team13.taskman.TaskMan;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 abstract class BackedObject {
 	
 	
