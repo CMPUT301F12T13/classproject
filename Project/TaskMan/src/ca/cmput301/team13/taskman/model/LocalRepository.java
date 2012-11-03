@@ -19,6 +19,8 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -30,6 +32,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 public class LocalRepository {
@@ -47,7 +50,6 @@ public class LocalRepository {
 
 	void open() throws SQLException {
 		db = helper.getWritableDatabase();
-		
 	}
 	
 	public void openTestConnection() {
@@ -166,24 +168,24 @@ public class LocalRepository {
 		values.put(RepoHelper.REQ_COL, req.getId());
 		values.put(RepoHelper.CONTENTTYPE_COL, req.getContentType().ordinal());
 		values.put(RepoHelper.CREATOR_COL, creator.toString());
-		long insertId = db.insert(RepoHelper.REQS_TBL, null, values);
+		long insertId = db.insert(RepoHelper.FULS_TBL, null, values);
 		
 		if(insertId == -1) {
 			Log.w("LogStore", "Failed to write LogEntry into database.");
 			throw new RuntimeException("Database Write Failure.");
 		}
 		
-		Cursor cursor = db.query(RepoHelper.REQS_TBL,
-				RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
+		Cursor cursor = db.query(RepoHelper.FULS_TBL,
+				RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
 				null, null, null);
 		cursor.moveToFirst();
 		
 		Fulfillment f = new Fulfillment(
 				cursor.getInt(0),//ID
-				new Date(cursor.getLong(5)),//Date Created
-				new Date(cursor.getLong(6)),//Date Last Modified
-				Requirement.contentType.values()[cursor.getInt(2)],//Content Type
-				new User(cursor.getString(4)),//Creator
+				new Date(cursor.getLong(4)),//Date Created
+				new Date(cursor.getLong(5)),//Date Last Modified
+				Requirement.contentType.values()[cursor.getInt(6)],//Content Type
+				new User(cursor.getString(3)),//Creator
 				vr
 				);
 		
@@ -242,7 +244,29 @@ public class LocalRepository {
 		values.put(RepoHelper.CREATED_COL, f.getCreatedDate().getTime());
 		values.put(RepoHelper.LASTMODIFIED_COL, f.getLastModifiedDate().getTime());
 		values.put(RepoHelper.ID_COL, f.getId());
+		
 		//TODO: Logic to convert typed Fulfillment content into a blob
+		switch(f.getContentType()) {
+			case text:
+				//Store a byte array for the text
+				values.put(RepoHelper.CONTENT_COL, f.getText().getBytes());
+			break;
+			case audio:
+				//Directly convert the short[] to byte[]
+				short[] audio = f.getAudio();
+				ByteBuffer audioBytes = ByteBuffer.allocate(audio.length);
+				for(int i=0; i<audio.length; i++) {
+					audioBytes.putShort(audio[i]);
+				}
+				values.put(RepoHelper.CONTENT_COL, audioBytes.array());
+			break;
+			case image:
+				//Compress and store the image
+				ByteArrayOutputStream imageWriter = new ByteArrayOutputStream();
+				f.getImage().compress(Bitmap.CompressFormat.JPEG, 70, imageWriter);
+				values.put(RepoHelper.CONTENT_COL, imageWriter.toByteArray());
+			break;
+		}
 		
 		values.put(RepoHelper.CREATOR_COL, f.getCreator().toString());
 		
@@ -446,9 +470,9 @@ class RepoHelper  extends SQLiteOpenHelper{
 	public static final String[] TASKS_COLS = {ID_COL, TITLE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
 	private static final String[] TASKS_COLTYPES = {"integer primary key autoincrement", "text not null", "integer not null", "integer not null", "integer not null", "integer not null"};
 	public static final String[] REQS_COLS = {ID_COL, TASK_COL, CONTENTTYPE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
-	private static final String[] REQS_COLTYPES = {"integer primary key autoincrement", "integer not null", "text not null", "text not null", "text not null", "integer not null", "integer not null"};
-	public static final String[] FULS_COLS = {ID_COL, REQ_COL, CONTENT_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
-	private static final String[] FULS_COLTYPES = {"integer primary key autoincrement", "integer not null", "blob", "text not null", "integer not null", "integer not null"};
+	private static final String[] REQS_COLTYPES = {"integer primary key autoincrement", "integer not null", "integer not null", "text not null", "text not null", "integer not null", "integer not null"};
+	public static final String[] FULS_COLS = {ID_COL, REQ_COL, CONTENT_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, CONTENTTYPE_COL};
+	private static final String[] FULS_COLTYPES = {"integer primary key autoincrement", "integer not null", "blob", "text not null", "integer not null", "integer not null", "integer not null"};
     //The name of our database, and SQL Schema version
 	private static final String DBNAME = "taskman.db";
 	private static final int VERSION = 1;
