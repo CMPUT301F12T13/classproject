@@ -22,7 +22,6 @@ package ca.cmput301.team13.taskman;
 import utils.Notifications;
 import ca.cmput301.team13.taskman.model.Task;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
@@ -34,39 +33,38 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class RootActivity extends Activity implements OnClickListener, OnItemClickListener {
-	ListView taskList;
-	TaskListAdapter taskAdapter;
+    ListView taskList;
+    TaskListAdapter taskAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_root);
-        
+
         //Setup our list...
         taskList = (ListView)findViewById(R.id.task_list);
         taskAdapter = new TaskListAdapter(TaskMan.getInstance().getRepository(), this);
         taskList.setAdapter(taskAdapter);
         taskList.setOnItemClickListener(this);
-        
+
         ((Button)findViewById(R.id.addTask_btn)).setOnClickListener(this);
-        ((Button)findViewById(R.id.alltasks_btn)).setOnClickListener(this);        
-        ((ImageButton)findViewById(R.id.imgfilter_btn)).setOnClickListener(this);        
-        ((ImageButton)findViewById(R.id.audfilter_btn)).setOnClickListener(this);        
-        ((ImageButton)findViewById(R.id.txtfilter_btn)).setOnClickListener(this);        
+        ((Button)findViewById(R.id.alltasks_btn)).setOnClickListener(this);
+        ((ImageButton)findViewById(R.id.imgfilter_btn)).setOnClickListener(this);
+        ((ImageButton)findViewById(R.id.audfilter_btn)).setOnClickListener(this);
+        ((ImageButton)findViewById(R.id.txtfilter_btn)).setOnClickListener(this);
     }
-    
+
     @Override
     public void onPause() {
-    	super.onPause();
+        super.onPause();
     }
-    
+
     @Override
     public void onResume() {
-    	super.onResume();
-    	taskAdapter.update();
+        super.onResume();
+        taskAdapter.update();
     }
 
     @Override
@@ -75,43 +73,43 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         return true;
     }
 
-	public void onClick(View source) {
-		if(source.equals(findViewById(R.id.addTask_btn))) {
-			Bundle b = new Bundle();
-			//Tuck in pertinent information for the TaskActivity
-			b.putParcelable("task", TaskMan.getInstance().getRepository().createTask(TaskMan.getInstance().getUser()));
-			b.putString("mode", "create");
-			//Create the intent and execute it
-			Intent i = new Intent(this, TaskActivity.class);
-			i.putExtras(b);
-			startActivity(i);
-		
-		//Handle not-implemented feature notification
-		}else if(source.equals(findViewById(R.id.alltasks_btn)) || 
-				 source.equals(findViewById(R.id.imgfilter_btn)) ||
-				 source.equals(findViewById(R.id.audfilter_btn)) ||
-				 source.equals(findViewById(R.id.txtfilter_btn))) {
-			Notifications.showToast(getApplicationContext(), Notifications.NOT_IMPLEMENTED);
-		}
-	}
+    public void onClick(View source) {
+        if(source.equals(findViewById(R.id.addTask_btn))) {
+            Bundle b = new Bundle();
+            //Tuck in pertinent information for the TaskActivity
+            b.putParcelable("task", TaskMan.getInstance().getRepository().createTask(TaskMan.getInstance().getUser()));
+            b.putString("mode", "create");
+            //Create the intent and execute it
+            Intent i = new Intent(this, TaskActivity.class);
+            i.putExtras(b);
+            startActivity(i);
 
-	public void onItemClick(AdapterView<?> list, View source, int position,
-			long id) {
-		Log.w("RootActivity", "Element "+position+" clicked.");
-		Bundle b = new Bundle();
-		Task task = (Task) taskAdapter.getItem(position);
-		b.putParcelable("task", task);
-		
-		//If the user is the creator, open in "edit" more; else, open in "view" mode 
-		if(task.getCreator().equals(TaskMan.getInstance().getUser())) {
-			b.putString("mode", "edit");
-		} else {
-			b.putString("mode", "view");
-		}
-		
-		Intent i = new Intent(this, TaskActivity.class);
-		i.putExtras(b);
-		startActivity(i);
-	}
+            //Handle not-implemented feature notification
+        }else if(source.equals(findViewById(R.id.alltasks_btn)) ||
+                source.equals(findViewById(R.id.imgfilter_btn)) ||
+                source.equals(findViewById(R.id.audfilter_btn)) ||
+                source.equals(findViewById(R.id.txtfilter_btn))) {
+            Notifications.showToast(getApplicationContext(), Notifications.NOT_IMPLEMENTED);
+        }
+    }
+
+    public void onItemClick(AdapterView<?> list, View source, int position,
+            long id) {
+        Log.w("RootActivity", "Element "+position+" clicked.");
+        Bundle b = new Bundle();
+        Task task = (Task) taskAdapter.getItem(position);
+        b.putParcelable("task", task);
+
+        //If the user is the creator, open in "edit" more; else, open in "view" mode
+        if(task.getCreator().equals(TaskMan.getInstance().getUser())) {
+            b.putString("mode", "edit");
+        } else {
+            b.putString("mode", "view");
+        }
+
+        Intent i = new Intent(this, TaskActivity.class);
+        i.putExtras(b);
+        startActivity(i);
+    }
 
 }

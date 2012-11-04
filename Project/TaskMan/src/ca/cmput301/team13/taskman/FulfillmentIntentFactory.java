@@ -24,37 +24,37 @@ import android.content.Intent;
 import ca.cmput301.team13.taskman.model.Requirement;
 
 public class FulfillmentIntentFactory {
-	
-	private Activity source;
-	
-	/**
-	 * Creates an instance of FulfillmentIntentFactory.
-	 * @param src The intent that owns the factory
-	 */
-	FulfillmentIntentFactory(Activity src) {
-		source = src;
-	}
-	
-	/**
-	 * Creates an intent for launching an appropriate
-	 * fulfillment activity for a given requirement.
-	 * @param req The requirement to use to select an activity
-	 * @return An intent to launch the fulfillment activity
-	 */
-	public Intent createIntent(Requirement req) {
-		Intent i = null;
-		
-		if (req.getContentType() == Requirement.contentType.image) {
-			i = new Intent(source, ImageCaptureActivity.class);
-		}
-		else if(req.getContentType() == Requirement.contentType.audio) {
-			i = new Intent(source, AudioCaptureActivity.class);
-		}
-		else if(req.getContentType() == Requirement.contentType.text) {
-			// TODO: don't have this activity yet.
-		}
-		
-		i.putExtra("requirement", req);
-		return i;
-	}
+
+    private Activity source;
+
+    /**
+     * Creates an instance of FulfillmentIntentFactory.
+     * @param src The intent that owns the factory
+     */
+    FulfillmentIntentFactory(Activity src) {
+        source = src;
+    }
+
+    /**
+     * Creates an intent for launching an appropriate
+     * fulfillment activity for a given requirement.
+     * @param req The requirement to use to select an activity
+     * @return An intent to launch the fulfillment activity
+     */
+    public Intent createIntent(Requirement req) {
+        Intent i = null;
+
+        if (req.getContentType() == Requirement.contentType.image) {
+            i = new Intent(source, ImageCaptureActivity.class);
+        }
+        else if(req.getContentType() == Requirement.contentType.audio) {
+            i = new Intent(source, AudioCaptureActivity.class);
+        }
+        else if(req.getContentType() == Requirement.contentType.text) {
+            // TODO: don't have this activity yet.
+        }
+
+        i.putExtra("requirement", req);
+        return i;
+    }
 }

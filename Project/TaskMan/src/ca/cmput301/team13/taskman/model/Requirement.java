@@ -24,144 +24,145 @@ import java.util.Date;
 
 public class Requirement extends BackedObject{
 
-	private static final long serialVersionUID = 1792613431433747003L;
+    private static final long serialVersionUID = 1792613431433747003L;
 
-	//Content Mask Stuff
-	public static enum contentType {
-		text,
-		image,
-		audio
-	};
-	
-	//private state variables
-	private String description;
-	private ArrayList<Fulfillment> fulfillments;
-	private contentType desiredContent;
-	
-	//lazy-loading variables
-	private int fulfillmentCount;
-	private boolean loaded = false;
+    //Content Mask Stuff
+    public static enum contentType {
+        text,
+        image,
+        audio
+    };
 
-	/**
-	 * Construct a Requirement with backing in the persistent store
-	 * @param id - the id of the requirement
-	 * @param description - the description of the requirement
-	 * @param fulfillments - the list of fulfillments of the requirement
-	 * @param repo - the repository backing this object
-	 */
-	Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, ArrayList<Fulfillment> fulfillments, VirtualRepository repo) {
-		super(id, created, lastModified, creator, repo);
-		this.description = description;
-		this.fulfillments = fulfillments;
-		this.desiredContent = desiredContent;
-		this.loaded = true;
-	}
-	
-	/**
-	 * Construct a Requirement with backing in the persistent store
-	 * @param id - the id of the requirement
-	 * @param description - the description of the requirement
-	 * @param fulfillments - the list of fulfillments of the requirement
-	 * @param repo - the repository backing this object
-	 */
-	Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
-		super(id, created, lastModified, creator, repo);
-		this.description = description;
-		this.fulfillmentCount = fulfillmentCount;
-		this.desiredContent = desiredContent;
-		this.loaded = false;
-	}
-	
-	/**
-	 * 
-	 * @return the description of the Requirement
-	 */
-	public String getDescription() {
-		return description;
-	}
-	
-	/**
-	 * Changes the description, and saves the changes
-	 * @param description the new description of the requirement
-	 * @return success of save
-	 */
-	public boolean setDescription(String description) {
-		this.description = description;
-		return saveChanges();
-	}
-	
-	/**
-	 * Adds a fulfillment, and saves the changes
-	 * @param ful the fulfillment to add to the requirement
-	 * @return success of save
-	 */
-	public boolean addFulfillment(Fulfillment ful) {
-		if(!loaded) {
-			loadFulfillments();
-		} 
-		fulfillments.add(ful);
-		return saveChanges();
-	}
-	
-	/**
-	 * Removes a fulfillment, and saves the changes
-	 * @param ful the fulfillment to remove from the requirement
-	 * @return success of both the remove, and the save
-	 */
-	public boolean removeFulfillment(Fulfillment ful) {
-		if(!loaded) {
-			loadFulfillments();
-		}
-		
-		boolean success = fulfillments.remove(ful);
-		//TODO: ful should probably be destroyed here
-		
-		if(success)
-			return saveChanges();
-		return false;
-	}
-	
-	/**
-	 * 
-	 * @return the number of fulfillments associated with this requirement
-	 */
-	public int getFullfillmentCount() {
-		if(!loaded) {
-			return fulfillmentCount;
-		}
-		return fulfillments.size();
-	}
-	
-	/**
-	 * 
-	 * @param index the index of the desired Fulfillment
-	 * @return the associated Fulfillment
-	 */
-	public Fulfillment getFulfillment(int index) {
-		if(!loaded) {
-			loadFulfillments();
-		}
-		return fulfillments.get(index);
-	}
-	
-	/**
-	 * 
-	 * @return the Content Type expected by this Requirement
-	 */
-	public contentType getContentType() {
-		return desiredContent;
-	}
-	
-	private void loadFulfillments() {
-		//TODO: Actually ask the repo for our fulfillments
-		if(!loaded) {
-			fulfillments = repo.getFulfillmentsForRequirement(this);
-			loaded = true;
-		}
-	}
-	
-	public String toString() {
-		return "Req(ID:"+getId()+")";
-	}
+    //private state variables
+    private String description;
+    private ArrayList<Fulfillment> fulfillments;
+    private contentType desiredContent;
+
+    //lazy-loading variables
+    private int fulfillmentCount;
+    private boolean loaded = false;
+
+    /**
+     * Construct a Requirement with backing in the persistent store
+     * @param id - the id of the requirement
+     * @param description - the description of the requirement
+     * @param fulfillments - the list of fulfillments of the requirement
+     * @param repo - the repository backing this object
+     */
+    Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, ArrayList<Fulfillment> fulfillments, VirtualRepository repo) {
+        super(id, created, lastModified, creator, repo);
+        this.description = description;
+        this.fulfillments = fulfillments;
+        this.desiredContent = desiredContent;
+        this.loaded = true;
+    }
+
+    /**
+     * Construct a Requirement with backing in the persistent store
+     * @param id - the id of the requirement
+     * @param description - the description of the requirement
+     * @param fulfillments - the list of fulfillments of the requirement
+     * @param repo - the repository backing this object
+     */
+    Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
+        super(id, created, lastModified, creator, repo);
+        this.description = description;
+        this.fulfillmentCount = fulfillmentCount;
+        this.desiredContent = desiredContent;
+        this.loaded = false;
+    }
+
+    /**
+     * 
+     * @return the description of the Requirement
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Changes the description, and saves the changes
+     * @param description the new description of the requirement
+     * @return success of save
+     */
+    public boolean setDescription(String description) {
+        this.description = description;
+        return saveChanges();
+    }
+
+    /**
+     * Adds a fulfillment, and saves the changes
+     * @param ful the fulfillment to add to the requirement
+     * @return success of save
+     */
+    public boolean addFulfillment(Fulfillment ful) {
+        if(!loaded) {
+            loadFulfillments();
+        }
+        fulfillments.add(ful);
+        return saveChanges();
+    }
+
+    /**
+     * Removes a fulfillment, and saves the changes
+     * @param ful the fulfillment to remove from the requirement
+     * @return success of both the remove, and the save
+     */
+    public boolean removeFulfillment(Fulfillment ful) {
+        if(!loaded) {
+            loadFulfillments();
+        }
+
+        boolean success = fulfillments.remove(ful);
+        //TODO: ful should probably be destroyed here
+
+        if(success)
+            return saveChanges();
+        return false;
+    }
+
+    /**
+     * 
+     * @return the number of fulfillments associated with this requirement
+     */
+    public int getFullfillmentCount() {
+        if(!loaded) {
+            return fulfillmentCount;
+        }
+        return fulfillments.size();
+    }
+
+    /**
+     * 
+     * @param index the index of the desired Fulfillment
+     * @return the associated Fulfillment
+     */
+    public Fulfillment getFulfillment(int index) {
+        if(!loaded) {
+            loadFulfillments();
+        }
+        return fulfillments.get(index);
+    }
+
+    /**
+     * 
+     * @return the Content Type expected by this Requirement
+     */
+    public contentType getContentType() {
+        return desiredContent;
+    }
+
+    private void loadFulfillments() {
+        //TODO: Actually ask the repo for our fulfillments
+        if(!loaded) {
+            fulfillments = repo.getFulfillmentsForRequirement(this);
+            loaded = true;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Req(ID:"+getId()+")";
+    }
 
 }
