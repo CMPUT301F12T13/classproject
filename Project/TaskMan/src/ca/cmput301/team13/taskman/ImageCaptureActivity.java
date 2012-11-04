@@ -35,7 +35,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class ImageCaptureActivity extends Activity implements OnClickListener {
+public class ImageCaptureActivity extends FulfillmentActivity implements OnClickListener {
 	
 	Uri imageFileUri;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
