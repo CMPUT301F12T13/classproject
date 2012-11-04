@@ -34,20 +34,25 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+import utils.Notifications;
 
 public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private static final int COLLECTION_ACTIVITY_REQUEST_CODE = 300;
     private MediaRecorder recorder;
     private boolean recording;
+    private String fileName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audio_fulfillment);
+        
+        //setup our listeners
         ((Button)findViewById(R.id.record_button)).setOnClickListener(this);
         ((Button)findViewById(R.id.collection_button)).setOnClickListener(this);
+        ((Button)findViewById(R.id.save_button)).setOnClickListener(this);
+        ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);        
     }
 
     @Override
@@ -67,6 +72,11 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             ((Button)findViewById(R.id.record_button)).setText("Start Recording");
         }
     }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,7 +84,10 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         return true;
     }
 
-
+    /**
+     * Delegates action based on which listener has been clicked
+     * @param source 
+     */
     public void onClick(View source) {
         if(source.equals(findViewById(R.id.record_button))) {
             if(recording == false){
@@ -84,6 +97,10 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             } else {
                 recording = false;
                 recorder.stop();
+                recorder.release();
+                
+                //TODO: need to figure out what to do with audio file here
+                
                 ((TextView) findViewById(R.id.audio_view)).setText("Recording stopped.");
                 ((Button)findViewById(R.id.record_button)).setText("Record Again");
             }
@@ -92,7 +109,11 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             audioFromCollection();
         }
     }
-
+    
+    /**
+     * Takes the user to the built-in audio selector where an existing audio file can
+     * be selected for use
+     */
     private void audioFromCollection() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("audio/*");
@@ -105,7 +126,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         if (!folderF.exists()) {
             folderF.mkdir();
         }
-        String fileName = folder + "/" + String.valueOf(System.currentTimeMillis()) + ".3gp";
+        fileName = folder + "/" + String.valueOf(System.currentTimeMillis()) + ".3gp";
 
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -127,33 +148,22 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == COLLECTION_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-
-                Toast.makeText(AudioCaptureActivity.this,
-                        "Audio Selection Successful", Toast.LENGTH_SHORT)
-                        .show();
+                Notifications.showToast(getApplicationContext(), "Audio Selection Successful");
 
                 Uri audioFileUri = data.getData();
-
                 InputStream audioStream = null;
                 try {
                     audioStream = getContentResolver().openInputStream(audioFileUri);
                 } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
-                //TODO: need to figure out what to do with audio file
-
-                //fulfillment.setAudio( ????? );
-                //successful = true;
+                //TODO: need to figure out what to do with audio file here
+                
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(AudioCaptureActivity.this,
-                        "Audio Selection Cancelled", Toast.LENGTH_SHORT)
-                        .show();
+                Notifications.showToast(getApplicationContext(), "Audio Selection Cancelled");
             } else {
-                Toast.makeText(AudioCaptureActivity.this,
-                        "Some sort of error" + resultCode, Toast.LENGTH_SHORT)
-                        .show();
+                Notifications.showToast(getApplicationContext(), "Audio Selection Error" + resultCode);
             }
         }
     }
