@@ -19,8 +19,6 @@
         android:ems="10"
         android:inputType="textMultiLine"
         android:textSize="15dp" >
-
-        <requestFocus />
     </EditText>
 
     <Button

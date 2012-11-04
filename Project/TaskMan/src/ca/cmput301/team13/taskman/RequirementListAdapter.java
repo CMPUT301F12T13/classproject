@@ -1,16 +1,8 @@
 package ca.cmput301.team13.taskman;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-import ca.cmput301.team13.taskman.model.LocalRepository;
-import ca.cmput301.team13.taskman.model.Requirement;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
-import ca.cmput301.team13.taskman.model.TaskCreatedComparator;
-import ca.cmput301.team13.taskman.model.TaskFilter;
-import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.User;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
+import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.text.Editable;
@@ -19,14 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.TextView;
+import ca.cmput301.team13.taskman.model.Requirement;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+import ca.cmput301.team13.taskman.model.Task;
+import ca.cmput301.team13.taskman.model.TaskFilter;
 
 /**
  * Provides a list of requirements from the virtual repo to list views
@@ -36,6 +30,7 @@ public class RequirementListAdapter implements ListAdapter {
 	private Task task;
 	private ArrayList<DataSetObserver> observers;
 	private LayoutInflater inflater;
+	private Activity activity;
 
 	// Task Filters
 	private TaskFilter taskFilter;
@@ -56,9 +51,12 @@ public class RequirementListAdapter implements ListAdapter {
 		this.task = task;
 		observers = new ArrayList<DataSetObserver>();
 		inflater = LayoutInflater.from(context);
-		
 		//Get our initial data
 		update();
+	}
+	
+	public void setActivity(Activity activity) {
+		this.activity = activity;
 	}
 	
 	public void update() {
@@ -109,11 +107,24 @@ public class RequirementListAdapter implements ListAdapter {
 			
 		});
 		
+		/*((EditText)newView.findViewById(R.id.reqDescriptionEdit)).setOnFocusChangeListener(new OnFocusChangeListener() {
+			public void onFocusChange(View v, boolean hasFocus) {
+				EditText descriptionEditor = (EditText)v;
+				if(!hasFocus) {
+					req.setDescription(descriptionEditor.getText().toString());
+				}
+			}
+		});*/
+		
 		//Enable the fields to be edited
 		((EditText)newView.findViewById(R.id.reqDescriptionEdit)).addTextChangedListener(new TextWatcher(){
 	        
+			//TODO: Perhaps increase efficiency by saving when the field loses focus?
 	        public void afterTextChanged(Editable editable) {
-	            req.setDescription(editable.toString());
+	        	String t = editable.toString();
+	            if(req.setDescription(editable.toString())){
+	            	System.out.println("saved");
+	            }
 	        }
 
 			public void beforeTextChanged(CharSequence arg0, int arg1,
@@ -124,7 +135,6 @@ public class RequirementListAdapter implements ListAdapter {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				//Do Nothing
-				
 			}
 	    });
 		return newView;

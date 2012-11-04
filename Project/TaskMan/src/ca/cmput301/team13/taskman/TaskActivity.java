@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
@@ -27,6 +28,7 @@ public class TaskActivity extends Activity implements OnClickListener {
         
         task = (Task) extras.getParcelable("task");
         
+        //If we're in an editing mode, populate the editing controls and consider the appropriate layout
         if (getMode().equals("edit") || getMode().equals("create")) {
         	setContentView(R.layout.activity_edit_task);
         	setEditingFields();
@@ -34,6 +36,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         } else {
         	setContentView(R.layout.activity_view_task);
         }
+        //Prevent loss of focus when selecting an EditText field
+        ((ListView)findViewById(R.id.requirement_list)).setDescendantFocusability(ListView.FOCUS_AFTER_DESCENDANTS);
+        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
         ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
     }
 
@@ -98,6 +103,13 @@ public class TaskActivity extends Activity implements OnClickListener {
 		}
 		setMode("edit");
 		super.finish();
+	}
+	
+	private void saveRequirementList() {
+		int numRequirements = adapter.getCount();
+		for(int i=0; i<numRequirements; i++) {
+//			adapter.getItem(i)
+		}
 	}
 	
 	/**
