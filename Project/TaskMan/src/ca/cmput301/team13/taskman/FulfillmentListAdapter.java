@@ -28,7 +28,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.MediaController;
 import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
 import ca.cmput301.team13.taskman.model.Fulfillment;
@@ -43,7 +45,6 @@ import ca.cmput301.team13.taskman.model.VirtualRepository;
  */
 public class FulfillmentListAdapter implements ListAdapter {
 
-    private VirtualRepository repo;
     private Task task;
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
@@ -59,9 +60,8 @@ public class FulfillmentListAdapter implements ListAdapter {
      * Construct a TaskListAdapter
      * @param vr The virtual repository instance
      */
-    public FulfillmentListAdapter(Task task, VirtualRepository vr, Context context) {
+    public FulfillmentListAdapter(Task task, Context context) {
         this.task = task;
-    	repo = vr;
         observers = new ArrayList<DataSetObserver>();
         inflater = LayoutInflater.from(context);
         fulfillments = new ArrayList<Fulfillment>();
@@ -99,8 +99,39 @@ public class FulfillmentListAdapter implements ListAdapter {
             newView = convertView;
         } else {
             //Instantiate a new view
-            newView = inflater.inflate(R.layout.task_row, null);
+            if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
+            	newView = inflater.inflate(R.layout.ful_text_elem, null);
+            	
+            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
+            	newView = inflater.inflate(R.layout.ful_img_elem, null);
+            	
+            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
+            	newView = inflater.inflate(R.layout.ful_aud_elem, null);
+            	
+            } else {
+            	Log.w("FulfillmentListAdapter", "Unknown content type");
+            	newView = inflater.inflate(R.layout.ful_text_elem, null);
+            }
         }
+        
+        //Setup the attributes of the view
+        //TODO: DateFormatter
+        ((TextView)newView.findViewById(R.id.fulTime)).setText("On ----:");
+        
+        if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
+        	((TextView)newView.findViewById(R.id.ful_text)).setText(
+        			((Fulfillment)getItem(viewIndex)).getText());
+        	
+        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
+        	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(
+        			((Fulfillment)getItem(viewIndex)).getImage());
+        	
+        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
+        	//Ignore Audio for now
+        	//((MediaController)newView.findViewById(R.id.ful_audio)).set
+        	
+        }
+        
         return newView;
     }
 
