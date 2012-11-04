@@ -23,13 +23,18 @@ import android.app.Activity;
 import android.content.Intent;
 import ca.cmput301.team13.taskman.model.Requirement;
 
+/**
+ * FulfillmentIntentFactory creates intents for launching fulfillment
+ * activities (activities that extend FulfillmentActivity).
+ */
 public class FulfillmentIntentFactory {
 
     private Activity source;
 
     /**
      * Creates an instance of FulfillmentIntentFactory.
-     * @param src The intent that owns the factory
+     * @param src The intent that owns the factory; is
+     * used to create the intents.
      */
     FulfillmentIntentFactory(Activity src) {
         source = src;
