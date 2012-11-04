@@ -21,6 +21,7 @@ package ca.cmput301.team13.taskman;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -78,12 +79,21 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ImageButton)findViewById(R.id.req_addImg_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addAud_btn)).setOnClickListener(this);
         //TODO: Set the requirements
-        adapter = new RequirementListAdapter(task, mode, this);
+        adapter = new RequirementListAdapter(task, "edit", this);
         ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
     }
 
     private void setViewingFields() {
-        ((TextView)findViewById(R.id.task_name)).setText(task.getTitle());
+        //Show title and description
+        ((TextView)findViewById(R.id.task_name_text)).setText(task.getTitle());
+        ((TextView)findViewById(R.id.task_desc_text)).setText(task.getDescription());
+        
+        //Hide edit button if not the creator
+        ((Button)findViewById(R.id.task_edit_btn)).setVisibility(
+                task.getCreator().equals(TaskMan.getInstance().getUser()) ? View.VISIBLE : View.GONE);
+        ((Button)findViewById(R.id.task_edit_btn)).setOnClickListener(this);
+        
+        //Setup the Requirements List
         adapter = new RequirementListAdapter(task, mode, this);
         ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
     }
@@ -158,6 +168,13 @@ public class TaskActivity extends Activity implements OnClickListener {
         } else if  (source.getId() == R.id.req_addAud_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio);
             adapter.update();
+        } else if  (source.getId() == R.id.task_edit_btn) {
+            Bundle b = new Bundle();
+            b.putParcelable("task", task);
+            b.putString("mode", "edit");
+            Intent i = new Intent(this, TaskActivity.class);
+            i.putExtras(b);
+            startActivity(i);
         } else {
             InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);

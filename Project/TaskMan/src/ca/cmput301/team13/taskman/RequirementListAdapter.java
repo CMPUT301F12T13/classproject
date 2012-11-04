@@ -34,12 +34,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.TaskFilter;
 
 /**
  * Provides a list of requirements from the virtual repo to list views
@@ -49,10 +49,7 @@ public class RequirementListAdapter implements ListAdapter {
     private Task task;
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
-    private Activity activity;
-
-    // Task Filters
-    private TaskFilter taskFilter;
+    private String mode;
 
     //View types
     enum viewType {
@@ -68,14 +65,11 @@ public class RequirementListAdapter implements ListAdapter {
      */
     public RequirementListAdapter(Task task, String mode, Context context) {
         this.task = task;
+        this.mode = mode;
         observers = new ArrayList<DataSetObserver>();
         inflater = LayoutInflater.from(context);
         //Get our initial data
         update();
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
     }
 
     public void update() {
@@ -86,7 +80,51 @@ public class RequirementListAdapter implements ListAdapter {
         return 0;
     }
 
+    
     public View getView(int viewIndex, View convertView, ViewGroup parent) {
+        if(mode.equals("edit")) {
+            return getEditView(viewIndex, convertView, parent);
+        } else if (mode.equals("view")) {
+            return getStaticView(viewIndex, convertView, parent);
+        }
+        Log.w("RequirementListAdapter", "Cannot generate valid View for mode: "+mode);
+        return null;
+    }
+    
+    public View getStaticView(int viewIndex, View convertView, ViewGroup parent) {
+        View newView;
+        if(convertView != null) {
+            //Re-use the given view
+            newView = convertView;
+        } else {
+            //Instantiate a new view
+            newView = inflater.inflate(R.layout.req_view_elem, null);
+        }
+        final Requirement req = (Requirement)getItem(viewIndex);
+
+        ((TextView)newView.findViewById(R.id.reqDescriptionText)).setText(req.getDescription());
+        //Figure out what Image resource to set
+        int resource;
+        if(req.getContentType() == contentType.text) {
+            resource = R.drawable.txticon;
+        }
+        else if (req.getContentType() == contentType.image) {
+            resource = R.drawable.imgicon;
+        }
+        else if (req.getContentType() == contentType.audio)  {
+            resource = R.drawable.audicon;
+        }
+        else {
+            Log.w("RequirementListAdapter", "Unknown Content Type: "+req.getContentType());
+            resource = R.drawable.txticon;
+        }
+        //Set the image
+        ((ImageView)newView.findViewById(R.id.reqContentImg)).setImageResource(resource);
+
+        return newView;
+    }
+    
+    public View getEditView(int viewIndex, View convertView, ViewGroup parent) {
         View newView;
         if(convertView != null) {
             //Re-use the given view
