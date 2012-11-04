@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 import android.content.ContentValues;
@@ -200,6 +201,9 @@ public class LocalRepository {
      * @param t the Task to update
      */
     void updateTask(Task t) {
+    	ArrayList<Requirement> existingRequirements;
+    	int numTaskRequirements = t.getRequirementCount();
+    	
         assertOpen();
         ContentValues values = new ContentValues();
         values.put(RepoHelper.CREATED_COL, t.getCreatedDate().getTime());
@@ -207,6 +211,23 @@ public class LocalRepository {
         values.put(RepoHelper.TITLE_COL, t.getTitle());
         values.put(RepoHelper.DESC_COL, t.getDescription());
         values.put(RepoHelper.CREATOR_COL, t.getCreator().toString());
+        
+        existingRequirements = loadRequirements(t.getId());
+        
+        //TODO: Increase efficiency here using HashMaps as Requirement lists?
+        for(Requirement r : existingRequirements) {
+        	boolean keep = false;
+        	for(int i=0; i<numTaskRequirements; i++) {
+        		//If the Requirement is still present after editing, keep it
+        		if(t.getRequirement(i).getId() == r.getId()) {
+        			keep = true;
+        		}
+        	}
+        	//If it's been removed, remove it from the Repo
+        	if(!keep) {
+        		removeRequirement(r);
+        	}
+        }
 
         int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
 
@@ -219,6 +240,9 @@ public class LocalRepository {
      * @param r the Requirement to update
      */
     void updateRequirement(Requirement r) {
+    	ArrayList<Fulfillment> existingFulfillments;
+    	int numFulfillments = r.getFullfillmentCount();
+    	
         assertOpen();
         ContentValues values = new ContentValues();
         values.put(RepoHelper.CREATED_COL, r.getCreatedDate().getTime());
@@ -227,6 +251,23 @@ public class LocalRepository {
         values.put(RepoHelper.DESC_COL, r.getDescription());
         values.put(RepoHelper.CONTENTTYPE_COL, r.getContentType().ordinal());
         values.put(RepoHelper.CREATOR_COL, r.getCreator().toString());
+        
+        existingFulfillments = loadFulfillments(r.getId(), r.getContentType());
+        
+      //TODO: Increase efficiency here using HashMaps as Requirement lists?
+        for(Fulfillment f : existingFulfillments) {
+        	boolean keep = false;
+        	for(int i=0; i<numFulfillments; i++) {
+        		//If the Requirement is still present after editing, keep it
+        		if(r.getFulfillment(i).getId() == f.getId()) {
+        			keep = true;
+        		}
+        	}
+        	//If it's been removed, remove it from the Repo
+        	if(!keep) {
+        		removeRequirement(r);
+        	}
+        }
 
         int updateCount = db.update(RepoHelper.REQS_TBL, values, RepoHelper.ID_COL + "=" + r.getId(), null);
 
@@ -511,7 +552,7 @@ public class LocalRepository {
         for(int i=0; i<numRequirements; i++) {
             removeRequirement(t.getRequirement(i));
         }
-        db.delete(RepoHelper.TASKS_TBL, RepoHelper.ID_COL + " = " + t.getId(), null);
+    	db.delete(RepoHelper.TASKS_TBL, RepoHelper.ID_COL + " = " + t.getId(), null);
     }
 
     /**
