@@ -41,8 +41,20 @@ public abstract class FulfillmentActivity extends Activity {
 
     @Override
     public void onStop() {
+        super.onStop();
         if (!successful) {
             requirement.removeFulfillment(fulfillment);
         }
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        
     }
 }
