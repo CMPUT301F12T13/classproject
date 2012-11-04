@@ -23,6 +23,11 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -97,7 +102,21 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     	if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
     		if (resultCode == RESULT_OK) {
     			ImageView preview = (ImageView)findViewById(R.id.image_view);
-    			preview.setImageDrawable(Drawable.createFromPath(imageFileUri.getPath()));
+    			Drawable img = Drawable.createFromPath(imageFileUri.getPath());
+    			preview.setImageDrawable(img);
+    			
+    			// Convert the image to a bitmap
+    			// TODO: check if img is always a BitmapDrawable
+    			Bitmap b = Bitmap.createBitmap(
+    					img.getIntrinsicWidth(),
+    					img.getIntrinsicHeight(),
+    					Config.ARGB_8888);
+    			Canvas c = new Canvas(b);
+    			img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
+    			img.draw(c);
+    			
+    			fulfillment.setImage(b);
+    			successful = true;
     		} else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(ImageCaptureActivity.this,
                 		"Photo Cancelled", Toast.LENGTH_SHORT)
