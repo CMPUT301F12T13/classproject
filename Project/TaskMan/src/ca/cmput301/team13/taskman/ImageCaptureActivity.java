@@ -20,6 +20,8 @@
 package ca.cmput301.team13.taskman;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,11 +43,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 public class ImageCaptureActivity extends FulfillmentActivity implements OnClickListener {
-	
-	Uri imageFileUri;
-	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     
-	@Override
+    Uri imageFileUri;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 200;
+    
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_fulfillment);
@@ -57,7 +60,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
 
     @Override
     public void onResume() {
-    	super.onResume();
+        super.onResume();
     }
     
     @Override
@@ -70,62 +73,95 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
         getMenuInflater().inflate(R.menu.image_fulfillment, menu);
         return true;
     }
-    
-    
+
+
     public void onClick(View source) {
-		if(source.equals(findViewById(R.id.take_button))) {
-			takeAPhoto();
-		}
-		else if (source.equals(findViewById(R.id.gallery_button))){
-			//TODO: implement gallery selection
-		}
-	}
+        if(source.equals(findViewById(R.id.take_button))) {
+            takeAPhoto();
+        }
+        else if (source.equals(findViewById(R.id.gallery_button))){
+            selectAPhoto();
+        }
+    }
+    
+    public void selectAPhoto(){
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, GALLERY_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
     
     public void takeAPhoto() {
-    	Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    	
-    	String folder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp";
-    	File folderF = new File(folder);   	
-    	if (!folderF.exists()) {
-    		folderF.mkdir();
-    	}
-    	
-    	String imageFilePath = folder + "/" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-    	File imageFile = new File(imageFilePath);
-    	imageFileUri = Uri.fromFile(imageFile);
-    
-    	intent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
-    	startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        String folder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp";
+        File folderF = new File(folder);   	
+        if (!folderF.exists()) {
+            folderF.mkdir();
+        }
+        
+        String imageFilePath = folder + "/" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        File imageFile = new File(imageFilePath);
+        imageFileUri = Uri.fromFile(imageFile);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-    		if (resultCode == RESULT_OK) {
-    			ImageView preview = (ImageView)findViewById(R.id.image_view);
-    			Drawable img = Drawable.createFromPath(imageFileUri.getPath());
-    			preview.setImageDrawable(img);
-    			
-    			// Convert the image to a bitmap
-    			// TODO: check if img is always a BitmapDrawable
-    			Bitmap b = Bitmap.createBitmap(
-    					img.getIntrinsicWidth(),
-    					img.getIntrinsicHeight(),
-    					Config.ARGB_8888);
-    			Canvas c = new Canvas(b);
-    			img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
-    			img.draw(c);
-    			
-    			fulfillment.setImage(b);
-    			successful = true;
-    		} else if (resultCode == RESULT_CANCELED) {
+        ImageView preview = (ImageView)findViewById(R.id.image_view);
+        
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Drawable img = Drawable.createFromPath(imageFileUri.getPath());
+                
+                // Convert the image to a bitmap
+                // TODO: check if img is always a BitmapDrawable
+                Bitmap b = Bitmap.createBitmap(
+                        img.getIntrinsicWidth(),
+                        img.getIntrinsicHeight(),
+                        Config.ARGB_8888);
+                Canvas c = new Canvas(b);
+                img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
+                img.draw(c);
+                
+                preview.setImageBitmap(b);
+                
+                fulfillment.setImage(b);
+                successful = true;
+            } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(ImageCaptureActivity.this,
-                		"Photo Cancelled", Toast.LENGTH_SHORT)
+                        "Photo Cancelled", Toast.LENGTH_SHORT)
                         .show();
-    		} else {
+            } else {
                 Toast.makeText(ImageCaptureActivity.this,
-                		"Some sort of error" + resultCode, Toast.LENGTH_SHORT)
+                        "Some sort of error" + resultCode, Toast.LENGTH_SHORT)
                         .show();
-    		}
-    	}
+            }
+        } else if (requestCode == GALLERY_IMAGE_ACTIVITY_REQUEST_CODE){
+            if (resultCode == RESULT_OK) {
+                imageFileUri = data.getData();
+        
+                InputStream imageStream = null;
+                try {
+                    imageStream = getContentResolver().openInputStream(imageFileUri);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                Bitmap bm = BitmapFactory.decodeStream(imageStream);
+                preview.setImageBitmap(bm);
+                
+                fulfillment.setImage(bm);
+                successful = true;
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(ImageCaptureActivity.this,
+                        "Photo Selection Cancelled", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                Toast.makeText(ImageCaptureActivity.this,
+                        "Error choosing Photo" + resultCode, Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
     }
 }

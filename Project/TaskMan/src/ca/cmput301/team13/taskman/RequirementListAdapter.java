@@ -20,6 +20,7 @@
 package ca.cmput301.team13.taskman;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,15 +28,16 @@ import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
@@ -50,7 +52,6 @@ public class RequirementListAdapter implements ListAdapter {
 	private ArrayList<DataSetObserver> observers;
 	private LayoutInflater inflater;
 	private Activity activity;
-	private String mode; 
 
 	// Task Filters
 	private TaskFilter taskFilter;
@@ -69,7 +70,6 @@ public class RequirementListAdapter implements ListAdapter {
 	 */
 	public RequirementListAdapter(Task task, String mode, Context context) {
 		this.task = task;
-		this.mode = mode;
 		observers = new ArrayList<DataSetObserver>();
 		inflater = LayoutInflater.from(context);
 		//Get our initial data
@@ -93,16 +93,17 @@ public class RequirementListAdapter implements ListAdapter {
 		if(convertView != null) {
 			//Re-use the given view
 			newView = convertView;
+			//Just ask it to update the position of the Watcher
+			RequirementTextWatcher.getWatcher(viewIndex, newView, this);
 		} else {
 			//Instantiate a new view
-			if(this.mode.equals("edit") || this.mode.equals("create")) {
-				newView = inflater.inflate(R.layout.req_edit_elem, null);
-			} else {
-				newView = inflater.inflate(R.layout.req_view_elem, null);
-			}
+			newView = inflater.inflate(R.layout.req_edit_elem, null);
+			//Setup the EditText watcher
+			((EditText)newView.findViewById(R.id.reqDescriptionEdit)).addTextChangedListener(RequirementTextWatcher.getWatcher(viewIndex, newView, this));
 		}
 		final Requirement req = (Requirement)getItem(viewIndex);
 		
+		((EditText)newView.findViewById(R.id.reqDescriptionEdit)).setText(req.getDescription());
 		//Figure out what Image resource to set
 		int resource;
 		if(req.getContentType() == contentType.text) {
@@ -121,45 +122,16 @@ public class RequirementListAdapter implements ListAdapter {
 		//Set the image
 		((ImageView)newView.findViewById(R.id.reqContentImg)).setImageResource(resource);
 		
-		if(this.mode.equals("edit") || this.mode.equals("create")) {
-			((EditText)newView.findViewById(R.id.reqDescriptionEdit)).setText(req.getDescription());
+		//Enable the delete button
+		((Button)newView.findViewById(R.id.reqDeleteBtn)).setOnClickListener(new OnClickListener() {
+
+			public void onClick(View source) {
+				task.removeRequirement(req);
+				update();
+			}
 			
-			//Enable the delete button
-			((Button)newView.findViewById(R.id.reqDeleteBtn)).setOnClickListener(new OnClickListener() {
-	
-				public void onClick(View source) {
-					task.removeRequirement(req);
-					update();
-				}
-				
-			});
-			
-			//Enable the fields to be edited
-			((EditText)newView.findViewById(R.id.reqDescriptionEdit)).addTextChangedListener(new TextWatcher(){
-		        
-				//TODO: Perhaps increase efficiency by saving when the field loses focus?
-		        public void afterTextChanged(Editable editable) {
-		            req.setDescription(editable.toString());
-		        }
-	
-				public void beforeTextChanged(CharSequence arg0, int arg1,
-						int arg2, int arg3) {
-					//Do nothing
-				}
-	
-				public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-						int arg3) {
-					//Do Nothing
-				}
-		    });
-		} else {
-			((TextView)newView.findViewById(R.id.reqDescription)).setText("test");
-			((Button)newView.findViewById(R.id.reqFulfill)).setOnClickListener(new OnClickListener() {
-				public void onClick(View source) {
-					System.out.println("Fulfill!");
-				}
-			});
-		}
+		});
+		
 		return newView;
 	}
 
@@ -205,5 +177,48 @@ public class RequirementListAdapter implements ListAdapter {
 
 	public boolean isEnabled(int index) {
 		return true;
+	}
+}
+
+class RequirementTextWatcher implements TextWatcher {
+	private RequirementListAdapter rla;
+	private int position;
+	
+	private static HashMap<View,RequirementTextWatcher> watchers;
+	
+	public static RequirementTextWatcher getWatcher(int position, View v, RequirementListAdapter rla) {
+		if(watchers == null) watchers = new HashMap<View,RequirementTextWatcher>();
+		
+		RequirementTextWatcher w = watchers.get(v);
+		
+		if(w == null) {
+			w = new RequirementTextWatcher(position, rla);
+			watchers.put(v, w);
+		} else {
+			w.position = position;
+		}
+		
+		return w;
+		
+	}
+	
+	public RequirementTextWatcher(int position, RequirementListAdapter rla) {
+		this.position = position;
+		this.rla = rla;
+	}
+	
+    public void afterTextChanged(Editable editable) {
+    	String t = editable.toString();
+    	((Requirement)rla.getItem(position)).setDescription(editable.toString());
+    }
+
+	public void beforeTextChanged(CharSequence arg0, int arg1,
+			int arg2, int arg3) {
+		//Do nothing
+	}
+
+	public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+			int arg3) {
+		//Do Nothing
 	}
 }

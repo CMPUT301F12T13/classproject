@@ -433,7 +433,7 @@ public class LocalRepository {
 	 */
 	Requirement getRequirement(int requirementId) {
 		
-		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
+		Cursor cursor = db.query(RepoHelper.REQS_TBL,
 				RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + requirementId, null,
 				null, null, null);
 		
@@ -445,7 +445,7 @@ public class LocalRepository {
 					new User(cursor.getString(4)),//Creator
 					cursor.getString(3),//Description,
 					Requirement.contentType.values()[cursor.getInt(2)],
-					new ArrayList<Fulfillment>(),//Current requirements
+					getFulfillmentCount(requirementId),
 					vr
 					);
 			cursor.close();
@@ -456,6 +456,21 @@ public class LocalRepository {
 		}
 	}
 	
+	private int getFulfillmentCount(int requirementId) {
+		Cursor cursor = db.query(RepoHelper.FULS_TBL,
+				new String[] {"COUNT(*)"}, RepoHelper.REQ_COL + " = " + requirementId, null,
+				null, null, null);
+		
+		if (cursor.moveToFirst()) {
+			int count = cursor.getInt(0);//Count
+			cursor.close();
+			return count;
+		} else {
+			cursor.close();
+			return 0;
+		}
+	}
+
 	/**
 	 * Get the Fulfillment corresponding to the given Fulfillment Id
 	 * @param fulfillmentId the ID
@@ -463,7 +478,7 @@ public class LocalRepository {
 	 */
 	Fulfillment getFulfillment(int fulfillmentId) {
 		
-		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
+		Cursor cursor = db.query(RepoHelper.FULS_TBL,
 				RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = " + fulfillmentId, null,
 				null, null, null);
 		
