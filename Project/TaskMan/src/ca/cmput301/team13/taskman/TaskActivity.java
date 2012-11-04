@@ -28,8 +28,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
 
@@ -52,13 +52,14 @@ public class TaskActivity extends Activity implements OnClickListener {
         	setContentView(R.layout.activity_edit_task);
         	setEditingFields();
         	((Button)findViewById(R.id.save_button)).setOnClickListener(this);
+        	((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
         } else {
         	setContentView(R.layout.activity_view_task);
+        	setViewingFields();
         }
         //Prevent loss of focus when selecting an EditText field
         ((ListView)findViewById(R.id.requirement_list)).setDescendantFocusability(ListView.FOCUS_AFTER_DESCENDANTS);
 //        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
-        ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
     }
 
     private void setEditingFields() {
@@ -80,7 +81,9 @@ public class TaskActivity extends Activity implements OnClickListener {
 	}
     
     private void setViewingFields() {
-    	//TODO: implement Task Viewing
+    	((TextView)findViewById(R.id.task_name)).setText(task.getTitle());
+    	adapter = new RequirementListAdapter(task, mode, this);
+    	((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
     }
 
 	@Override

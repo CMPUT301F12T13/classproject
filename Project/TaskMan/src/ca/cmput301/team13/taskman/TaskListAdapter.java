@@ -22,24 +22,19 @@ package ca.cmput301.team13.taskman;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import ca.cmput301.team13.taskman.model.LocalRepository;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
-import ca.cmput301.team13.taskman.model.TaskCreatedComparator;
-import ca.cmput301.team13.taskman.model.TaskFilter;
-import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.User;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+import ca.cmput301.team13.taskman.model.Task;
+import ca.cmput301.team13.taskman.model.TaskCreatedComparator;
+import ca.cmput301.team13.taskman.model.TaskFilter;
+import ca.cmput301.team13.taskman.model.VirtualRepository;
 
 /**
  * Provides a list of tasks from the virtual repo to list views

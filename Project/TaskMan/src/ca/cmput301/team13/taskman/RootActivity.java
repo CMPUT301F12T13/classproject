@@ -99,8 +99,15 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
 			long id) {
 		Log.w("RootActivity", "Element "+position+" clicked.");
 		Bundle b = new Bundle();
-		b.putParcelable("task", (Task) taskAdapter.getItem(position));
-		b.putString("mode", "view");
+		Task task = (Task) taskAdapter.getItem(position);
+		b.putParcelable("task", task);
+		
+		//If the user is the creator, open in "edit" more; else, open in "view" mode 
+		if(task.getCreator().equals(TaskMan.getInstance().getUser())) {
+			b.putString("mode", "edit");
+		} else {
+			b.putString("mode", "view");
+		}
 		
 		Intent i = new Intent(this, TaskActivity.class);
 		i.putExtras(b);
