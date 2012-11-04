@@ -66,6 +66,8 @@ public class TaskActivity extends Activity implements OnClickListener {
     }
 
     private void setEditingFields() {
+        //Disconnect our Task from the Repository
+        task.delaySaves(true);
         //Set the Title
         ((EditText)findViewById(R.id.entry_title)).setText(task.getTitle());
         //Set the Description
@@ -80,6 +82,8 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ImageButton)findViewById(R.id.req_addAud_btn)).setOnClickListener(this);
         //TODO: Set the requirements
         adapter = new RequirementListAdapter(task, "edit", this);
+        //Disconnect our Requirements from the repository
+        adapter.delaySaves(true);
         ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
     }
 
@@ -140,12 +144,14 @@ public class TaskActivity extends Activity implements OnClickListener {
         //TODO: Validation? Ensure each Task has a title and a single requirement, at least?
         //Update the parceled Task
         if(getMode().equals("edit") || getMode().equals("create")) {
-            task.delaySaves(true);
             task.setTitle(taskTitle);
             task.setDescription(taskDescription);
+            //Push all changes to the repository
             task.delaySaves(false);
+            adapter.delaySaves(false);
+            //Make sure we don't delete the Task after all this
+            setMode("edit");
         }
-        setMode("edit");
         super.finish();
     }
 

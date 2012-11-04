@@ -229,6 +229,12 @@ public class RequirementListAdapter implements ListAdapter {
     public boolean isEnabled(int index) {
         return true;
     }
+
+    public void delaySaves(boolean delay) {
+        for(int i=0;i<getCount();i++) {
+            ((Requirement)getItem(i)).delaySaves(delay);
+        }
+    }
 }
 
 class RequirementTextWatcher implements TextWatcher {

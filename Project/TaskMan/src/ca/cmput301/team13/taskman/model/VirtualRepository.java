@@ -21,6 +21,7 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.ArrayList;
 
+import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 import android.content.Context;
@@ -185,7 +186,10 @@ public class VirtualRepository {
      * @param t The Task
      */
     public void removeTask(Task t) {
-        local.removeTask(t);
+    	//Only the creator can delete the task
+    	if(t.getCreator().equals(TaskMan.getInstance().getUser())) {
+    		local.removeTask(t);
+    	}
     }
 
     /**
@@ -193,7 +197,10 @@ public class VirtualRepository {
      * @param r The Requirement
      */
     public void removeRequirement(Requirement r) {
-        local.removeRequirement(r);
+    	//Only the creator can delete the Requirement
+    	if(r.getCreator().equals(TaskMan.getInstance().getUser())) {
+    		local.removeRequirement(r);
+    	}
     }
 
     /**
@@ -201,7 +208,10 @@ public class VirtualRepository {
      * @param f The Fulfillment
      */
     public void removeFulfillment(Fulfillment f) {
-        local.removeFulfillment(f);
+    	//Only the creator can delete the Fulfillment
+    	if(f.getCreator().equals(TaskMan.getInstance().getUser())) {
+    		local.removeFulfillment(f);
+    	}
     }
 
 
