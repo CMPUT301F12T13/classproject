@@ -562,7 +562,7 @@ public class LocalRepository {
     void removeRequirement(Requirement r) {
         int numFulfillments = r.getFullfillmentCount();
         for(int i=0; i<numFulfillments; i++) {
-            removeFulfillment(r.getFulfillment(i));
+    		removeFulfillment(r.getFulfillment(i));
         }
         db.delete(RepoHelper.REQS_TBL, RepoHelper.ID_COL + " = " + r.getId(), null);
     }

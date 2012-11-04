@@ -213,6 +213,14 @@ public class VirtualRepository {
     		local.removeFulfillment(f);
     	}
     }
+    
+    public boolean taskExists(Task t) {
+    	if(getTask(t.getId()) == null) {
+    		return false;
+    	} else {
+    		return true;
+    	}
+    }
 
 
 }
