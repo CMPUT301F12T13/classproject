@@ -21,15 +21,12 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.Date;
 
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
-
 import android.graphics.Bitmap;
 import android.util.Log;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class Fulfillment extends BackedObject {
 
-	private static final long serialVersionUID = 8187581137953780691L;
-	
 	private contentType content;
 	private Bitmap image;
 	private String text;

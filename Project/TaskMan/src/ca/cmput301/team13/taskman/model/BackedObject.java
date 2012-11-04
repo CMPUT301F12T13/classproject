@@ -19,11 +19,6 @@
 
 package ca.cmput301.team13.taskman.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 
 import android.os.Parcel;
@@ -124,12 +119,14 @@ abstract class BackedObject {
             = new Parcelable.Creator<BackedObject>() {
         public BackedObject createFromParcel(Parcel in) {
         	BackedObjectParcel parcel = (BackedObjectParcel)in.readSerializable();
+        	//Decide which type of BackedObject needs to be returned
         	if(parcel.backedObjectType.equals(Task.class.getName())) {
         		return TaskMan.getInstance().getRepository().getTask(parcel.id);
         	} else if(parcel.backedObjectType.equals(Requirement.class.getName())) {
         		return TaskMan.getInstance().getRepository().getRequirement(parcel.id);
         	} else if(parcel.backedObjectType.equals(Fulfillment.class.getName())) {
         		return TaskMan.getInstance().getRepository().getFulfillment(parcel.id);
+        	//If none match, perhaps a new BackedObject type has been added and not handled here?
         	} else {
         		throw new RuntimeException("Parceled BackedObject type that isn't supported.");
         	}
