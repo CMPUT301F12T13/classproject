@@ -38,10 +38,12 @@ import utils.Notifications;
 
 public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
+    private Uri audioFileUri;
     private static final int COLLECTION_ACTIVITY_REQUEST_CODE = 300;
     private MediaRecorder recorder;
     private boolean recording;
     private String fileName;
+    private boolean audioSelected = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,14 +60,17 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     @Override
     public void onResume() {
         super.onResume();
+        //make sure the recorder is null and booleans are false
         recorder = null;
         recording = false;
+        audioSelected = false;
         ((TextView) findViewById(R.id.audio_view)).setText("Choose audio from your collection or record one now.");
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        //release the recorder if needed
         if(recorder != null){
             recorder.release();
             recorder = null;
@@ -97,9 +102,8 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             } else {
                 recording = false;
                 recorder.stop();
+                audioSelected = true;
                 recorder.release();
-                
-                //TODO: need to figure out what to do with audio file here
                 
                 ((TextView) findViewById(R.id.audio_view)).setText("Recording stopped.");
                 ((Button)findViewById(R.id.record_button)).setText("Record Again");
@@ -108,6 +112,33 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         else if(source.equals(findViewById(R.id.collection_button))) {
             audioFromCollection();
         }
+    }
+    
+    /**
+     * Send the taken/selected audio to our parent and exit the Activity
+     */
+    public void save() {
+        //test audio has been selected.
+        if (audioSelected) {
+            Notifications.showToast(getApplicationContext(), Notifications.NOT_IMPLEMENTED);
+            //TODO: need to convert what we have to short[];
+            // we have String fileName as a handle to it if it was recorded.
+            // we have Uri audioFileUri as a handle if it was selected from library.
+            
+            
+            //successful = true;
+            finish();
+        } else {
+            Notifications.showToast(getApplicationContext(), "No Audio selected");
+        }
+    }
+    
+    /**
+     * Cancel the Activity
+     */
+    public void cancel() {
+        successful = false;
+        finish();
     }
     
     /**
@@ -120,7 +151,12 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         startActivityForResult(Intent.createChooser(intent,"Select Audio "), COLLECTION_ACTIVITY_REQUEST_CODE);
     }
 
+    /**
+     * Sets the file path for the new audio file, initialises and starts the MediaRecorder
+     * @see android.media.MediaRecorder
+     */
     private void startRecording() {
+        //set a file path for the new audio
         String folder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp";
         File folderF = new File(folder);
         if (!folderF.exists()) {
@@ -128,6 +164,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
         fileName = folder + "/" + String.valueOf(System.currentTimeMillis()) + ".3gp";
 
+        //instantiate the MediaRecorder
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -139,18 +176,27 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        //start the recorder
         recorder.start();
         ((TextView) findViewById(R.id.audio_view)).setText("Recording...");
     }
-
+    
+    /**
+     * Handles the result condition and/or returned data from the Android built-in 
+     * Audio Content selection. 
+     * 
+     * @param requestCode specifies which type of activity we are returning from
+     * @param resultCode signifies the success or fail of the intent
+     * @param data The data returned from the intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == COLLECTION_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Notifications.showToast(getApplicationContext(), "Audio Selection Successful");
-
-                Uri audioFileUri = data.getData();
+                audioSelected = true;
+                
+                audioFileUri = data.getData();
                 InputStream audioStream = null;
                 try {
                     audioStream = getContentResolver().openInputStream(audioFileUri);
@@ -161,8 +207,10 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
                 //TODO: need to figure out what to do with audio file here
                 
             } else if (resultCode == RESULT_CANCELED) {
+                //Audio selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Audio Selection Cancelled");
             } else {
+                //Audio selection had an error
                 Notifications.showToast(getApplicationContext(), "Audio Selection Error" + resultCode);
             }
         }

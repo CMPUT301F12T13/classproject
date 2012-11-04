@@ -25,10 +25,7 @@ import java.io.InputStream;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,7 +39,7 @@ import utils.Notifications;
 
 public class ImageCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
-    Uri imageFileUri;
+    private Uri imageFileUri;
     private Bitmap selectedImage;
     public boolean photoTaken = false;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -167,20 +164,19 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 Notifications.showToast(getApplicationContext(), "Photo Taken");
                 photoTaken = true;
                 
-                Drawable img = Drawable.createFromPath(imageFileUri.getPath());
-                // Convert the image to a bitmap
-                // TODO: check if img is always a BitmapDrawable
-                Bitmap b = Bitmap.createBitmap(
-                        img.getIntrinsicWidth(),
-                        img.getIntrinsicHeight(),
-                        Config.ARGB_8888);
-                Canvas c = new Canvas(b);
-                img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
-                img.draw(c);
+                InputStream imageStream = null;
+                try {
+                    imageStream = getContentResolver().openInputStream(imageFileUri);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                //convert the image to a bitmap
+                Bitmap bm = BitmapFactory.decodeStream(imageStream);
 
                 //set the preview to show the image
-                preview.setImageBitmap(b);
-                setSelectedImage(b);
+                preview.setImageBitmap(bm);
+                setSelectedImage(bm);
             } else if (resultCode == RESULT_CANCELED) {
                 //Photo Taking was Cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Cancelled");
@@ -210,8 +206,10 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 preview.setImageBitmap(bm);
                 setSelectedImage(bm);
             } else if (resultCode == RESULT_CANCELED) {
+                //Photo selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Selection Cancelled");
             } else {
+                //Photo selection had an error
                 Notifications.showToast(getApplicationContext(), "Error choosing Photo" + resultCode);
             }
         }
