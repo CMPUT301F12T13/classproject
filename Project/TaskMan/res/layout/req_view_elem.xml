@@ -12,22 +12,12 @@
         android:src="@drawable/imgicon" />
 
     <TextView
-        android:id="@+id/reqDescription"
+        android:id="@+id/reqDescriptionText"
         android:layout_width="fill_parent"
         android:layout_height="60dp"
         android:layout_toLeftOf="@+id/reqContentImg"
         android:ems="10"
-        android:inputType="textMultiLine"
+        android:text="Requirement Description"
         android:textSize="15dp" >
     </TextView>
-    
-    <Button
-        android:id="@+id/reqFulfill"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/reqDescriptionEdit"
-        android:layout_marginTop="35dp"
-        android:text="Fulfill" />
-
 </RelativeLayout>

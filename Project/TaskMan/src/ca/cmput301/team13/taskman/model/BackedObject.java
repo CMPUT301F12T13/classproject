@@ -26,114 +26,114 @@ import android.os.Parcelable;
 import ca.cmput301.team13.taskman.TaskMan;
 
 abstract class BackedObject implements Parcelable {
-	
-	
-	private int id;
-	private Date created;
-	private Date lastModified;
-	private User creator;
-	VirtualRepository repo;
-	boolean delaySave = false;
-	
-	BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
-		this.id = id;
-		this.repo = repo;
-		this.creator = creator;
-		this.created = created;
-		this.lastModified = lastModified;
-	}
-	
-	/**
-	 * Save any changes that have occurred to this object
-	 * @return Whether or not the save was successful
-	 */
-	boolean saveChanges() {
-		lastModified = new Date();
-		if(delaySave)
-			return true; //If we're delaying, no errors occurred here
-		
-		return repo.saveUpdate(this);
-	}
-	
-	/**
-	 * Optionally temporarily turn off immediate updates to the persistent store.
-	 * This is a good idea, for example, when about to make a large quantity of changes.
-	 * Immediately forces a save when re-enabled.
-	 * @param delay - whether or not to push updates, default: true
-	 * @return whether or not the operation was successful
-	 */
-	public boolean delaySaves(boolean delay) {
-		delaySave = delay;
-		if(!delay) 
-			return saveChanges();
-		return true;
-	}
-	
-	/**
-	 * Access the ID of this object
-	 * @return the id
-	 */
-	int getId() {
-		return id;
-	}
-	
-	/**
-	 * Access the date/time when this object was first created
-	 * @return the date
-	 */
-	public Date getCreatedDate() {
-		return created;
-	}
-	
-	/**
-	 * Access the date/time when this object was last modified
-	 * @return the date
-	 */
-	public Date getLastModifiedDate() {
-		return lastModified;
-	}
-	
-	/**
-	 * 
-	 * @return the User that created this Object
-	 */
-	public User getCreator() {
-		return creator;
-	}
-	
-	//Parcelable Implementation
-	public int describeContents() {
-		return 0;
-	}
 
-	public void writeToParcel(Parcel out, int flags) {
-		BackedObjectParcel parcel = new BackedObjectParcel(getId(), getClass().getName());
-		out.writeSerializable(parcel);
+
+    private int id;
+    private Date created;
+    private Date lastModified;
+    private User creator;
+    VirtualRepository repo;
+    boolean delaySave = false;
+
+    BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
+        this.id = id;
+        this.repo = repo;
+        this.creator = creator;
+        this.created = created;
+        this.lastModified = lastModified;
     }
-	
-	/**
-	 * Returns a BackedObject conforming with the type of BackedObject that was parceled
-	 * 		- Possible types: Task, Requirement, Fulfillment
-	 */
+
+    /**
+     * Save any changes that have occurred to this object
+     * @return Whether or not the save was successful
+     */
+    boolean saveChanges() {
+        lastModified = new Date();
+        if(delaySave)
+            return true; //If we're delaying, no errors occurred here
+
+        return repo.saveUpdate(this);
+    }
+
+    /**
+     * Optionally temporarily turn off immediate updates to the persistent store.
+     * This is a good idea, for example, when about to make a large quantity of changes.
+     * Immediately forces a save when re-enabled.
+     * @param delay - whether or not to push updates, default: true
+     * @return whether or not the operation was successful
+     */
+    public boolean delaySaves(boolean delay) {
+        delaySave = delay;
+        if(!delay)
+            return saveChanges();
+        return true;
+    }
+
+    /**
+     * Access the ID of this object
+     * @return the id
+     */
+    int getId() {
+        return id;
+    }
+
+    /**
+     * Access the date/time when this object was first created
+     * @return the date
+     */
+    public Date getCreatedDate() {
+        return created;
+    }
+
+    /**
+     * Access the date/time when this object was last modified
+     * @return the date
+     */
+    public Date getLastModifiedDate() {
+        return lastModified;
+    }
+
+    /**
+     * 
+     * @return the User that created this Object
+     */
+    public User getCreator() {
+        return creator;
+    }
+
+    //Parcelable Implementation
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        BackedObjectParcel parcel = new BackedObjectParcel(getId(), getClass().getName());
+        out.writeSerializable(parcel);
+    }
+
+    /**
+     * Returns a BackedObject conforming with the type of BackedObject that was parceled
+     * 		- Possible types: Task, Requirement, Fulfillment
+     */
     public static final Parcelable.Creator<BackedObject> CREATOR
-            = new Parcelable.Creator<BackedObject>() {
+    = new Parcelable.Creator<BackedObject>() {
         public BackedObject createFromParcel(Parcel in) {
-        	BackedObjectParcel parcel = (BackedObjectParcel)in.readSerializable();
-        	//Decide which type of BackedObject needs to be returned
-        	if(parcel.backedObjectType.equals(Task.class.getName())) {
-        		return TaskMan.getInstance().getRepository().getTask(parcel.id);
-        	} else if(parcel.backedObjectType.equals(Requirement.class.getName())) {
-        		return TaskMan.getInstance().getRepository().getRequirement(parcel.id);
-        	} else if(parcel.backedObjectType.equals(Fulfillment.class.getName())) {
-        		return TaskMan.getInstance().getRepository().getFulfillment(parcel.id);
-        	//If none match, perhaps a new BackedObject type has been added and not handled here?
-        	} else {
-        		throw new RuntimeException("Parceled BackedObject type that isn't supported.");
-        	}
+            BackedObjectParcel parcel = (BackedObjectParcel)in.readSerializable();
+            //Decide which type of BackedObject needs to be returned
+            if(parcel.backedObjectType.equals(Task.class.getName())) {
+                return TaskMan.getInstance().getRepository().getTask(parcel.id);
+            } else if(parcel.backedObjectType.equals(Requirement.class.getName())) {
+                return TaskMan.getInstance().getRepository().getRequirement(parcel.id);
+            } else if(parcel.backedObjectType.equals(Fulfillment.class.getName())) {
+                return TaskMan.getInstance().getRepository().getFulfillment(parcel.id);
+                //If none match, perhaps a new BackedObject type has been added and not handled here?
+            } else {
+                throw new RuntimeException("Parceled BackedObject type that isn't supported.");
+            }
         }
 
         public Task[] newArray(int size) {
             return new Task[size];
         }
-    };	
+    };
 }

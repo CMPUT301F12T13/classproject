@@ -20,32 +20,29 @@
 package ca.cmput301.team13.taskman;
 
 import ca.cmput301.team13.taskman.model.Fulfillment;
-import ca.cmput301.team13.taskman.model.LocalRepository;
 import ca.cmput301.team13.taskman.model.Requirement;
-import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
 import android.app.Activity;
 import android.os.Bundle;
 
 public abstract class FulfillmentActivity extends Activity {
-	
-	protected Requirement requirement;
-	protected Fulfillment fulfillment;
-	protected boolean successful;
-	
-	@Override
+
+    protected Requirement requirement;
+    protected Fulfillment fulfillment;
+    protected boolean successful;
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         this.successful = false;
         this.requirement = this.getIntent().getParcelableExtra("requirement");
         TaskMan.getInstance().getRepository().addFulfillmentToRequirement(TaskMan.getInstance().getUser(), requirement);
-	}
-	
-	@Override
-	public void onStop() {
-		if (!successful) {
-			requirement.removeFulfillment(fulfillment);
-		}
-	}
+    }
+
+    @Override
+    public void onStop() {
+        if (!successful) {
+            requirement.removeFulfillment(fulfillment);
+        }
+    }
 }
