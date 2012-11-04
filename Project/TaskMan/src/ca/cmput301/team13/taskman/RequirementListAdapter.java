@@ -126,24 +126,13 @@ public class RequirementListAdapter implements ListAdapter {
 			
 		});
 		
-		/*((EditText)newView.findViewById(R.id.reqDescriptionEdit)).setOnFocusChangeListener(new OnFocusChangeListener() {
-			public void onFocusChange(View v, boolean hasFocus) {
-				EditText descriptionEditor = (EditText)v;
-				if(!hasFocus) {
-					req.setDescription(descriptionEditor.getText().toString());
-				}
-			}
-		});*/
-		
 		//Enable the fields to be edited
 		((EditText)newView.findViewById(R.id.reqDescriptionEdit)).addTextChangedListener(new TextWatcher(){
 	        
 			//TODO: Perhaps increase efficiency by saving when the field loses focus?
 	        public void afterTextChanged(Editable editable) {
 	        	String t = editable.toString();
-	            if(req.setDescription(editable.toString())){
-	            	System.out.println("saved");
-	            }
+	            req.setDescription(editable.toString());
 	        }
 
 			public void beforeTextChanged(CharSequence arg0, int arg1,
