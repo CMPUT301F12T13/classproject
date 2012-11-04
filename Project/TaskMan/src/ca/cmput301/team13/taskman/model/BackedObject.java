@@ -25,7 +25,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import ca.cmput301.team13.taskman.TaskMan;
 
-abstract class BackedObject {
+abstract class BackedObject implements Parcelable {
 	
 	
 	private int id;

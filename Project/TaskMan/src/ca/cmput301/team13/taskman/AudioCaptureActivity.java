@@ -30,7 +30,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class AudioCaptureActivity extends Activity implements OnClickListener {
+public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private MediaRecorder recorder;
 	private boolean recording;
