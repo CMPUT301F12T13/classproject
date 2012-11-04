@@ -208,6 +208,12 @@ public class LocalRepository {
 		values.put(RepoHelper.DESC_COL, t.getDescription());
 		values.put(RepoHelper.CREATOR_COL, t.getCreator().toString());
 		
+		//Save this Task's Requirements, too
+		int numRequirements = t.getRequirementCount();
+		for(int i=0; i<numRequirements; i++) {
+			t.getRequirement(i).saveChanges();
+		}
+		
 		int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
 		
 		if(updateCount != 1) 
@@ -409,7 +415,7 @@ public class LocalRepository {
 					new User(cursor.getString(3)),//Creator
 					cursor.getString(1),//Title
 					cursor.getString(2),//Description
-					new ArrayList<Requirement>(),//Current requirements
+					loadRequirements(cursor.getInt(0)),//Current requirements
 					vr
 					);
 			cursor.close();

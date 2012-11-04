@@ -25,9 +25,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
@@ -53,13 +56,22 @@ public class TaskActivity extends Activity implements OnClickListener {
         	setEditingFields();
         	((Button)findViewById(R.id.save_button)).setOnClickListener(this);
         	((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
+        	((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
         } else {
         	setContentView(R.layout.activity_view_task);
         	setViewingFields();
+        	((ListView)findViewById(R.id.requirement_list)).setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					if(view instanceof Button) {
+						//TODO: Implement handler
+					}
+					
+				}
+        	});
         }
         //Prevent loss of focus when selecting an EditText field
         ((ListView)findViewById(R.id.requirement_list)).setDescendantFocusability(ListView.FOCUS_AFTER_DESCENDANTS);
-//        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
     }
 
     private void setEditingFields() {
