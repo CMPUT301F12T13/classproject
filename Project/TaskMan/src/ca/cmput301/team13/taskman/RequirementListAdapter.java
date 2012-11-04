@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,9 +34,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
@@ -50,6 +50,7 @@ public class RequirementListAdapter implements ListAdapter {
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
     private String mode;
+    private Activity activity;
 
     //View types
     enum viewType {
@@ -63,11 +64,12 @@ public class RequirementListAdapter implements ListAdapter {
      * @param mode The mode ("edit"/"view")
      * @param context The context for which to inflate layouts
      */
-    public RequirementListAdapter(Task task, String mode, Context context) {
+    public RequirementListAdapter(Task task, String mode, Activity activity) {
         this.task = task;
         this.mode = mode;
+        this.activity = activity;
         observers = new ArrayList<DataSetObserver>();
-        inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(activity.getBaseContext());
         //Get our initial data
         update();
     }
@@ -120,8 +122,21 @@ public class RequirementListAdapter implements ListAdapter {
         }
         //Set the image
         ((ImageView)newView.findViewById(R.id.reqContentImg)).setImageResource(resource);
+        
+        //Set Fulfillment handler
+        ((Button)newView.findViewById(R.id.reqFulfillBtn)).setOnClickListener(new OnClickListener() {
+			public void onClick(View source) {
+				openFulfillmentActivity(req);
+			}
+        });
 
         return newView;
+    }
+    
+    private void openFulfillmentActivity(Requirement r) {
+    	FulfillmentIntentFactory fIntentFactory = new FulfillmentIntentFactory(activity);
+		Intent i = fIntentFactory.createIntent(r);
+		activity.startActivity(i);
     }
     
     public View getEditView(int viewIndex, View convertView, ViewGroup parent) {

@@ -20,4 +20,14 @@
         android:text="Requirement Description"
         android:textSize="15dp" >
     </TextView>
+    
+    <Button
+        android:id="@+id/reqFulfillBtn"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:text="Fulfill"
+        android:textSize="15dp"
+        android:layout_marginTop="20dp" >
+    </Button>
+    
 </RelativeLayout>
