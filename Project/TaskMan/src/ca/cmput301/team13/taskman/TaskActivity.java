@@ -57,7 +57,7 @@ public class TaskActivity extends Activity implements OnClickListener {
         }
         //Prevent loss of focus when selecting an EditText field
         ((ListView)findViewById(R.id.requirement_list)).setDescendantFocusability(ListView.FOCUS_AFTER_DESCENDANTS);
-        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
+//        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
         ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
     }
 
