@@ -19,28 +19,38 @@
 
 package ca.cmput301.team13.taskman;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Bitmap.Config;
+import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
+    private static final int COLLECTION_ACTIVITY_REQUEST_CODE = 300;
     private MediaRecorder recorder;
 	private boolean recording;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //TODO: implement bundle grabbing
-        
         setContentView(R.layout.audio_fulfillment);
         ((Button)findViewById(R.id.record_button)).setOnClickListener(this);
         ((Button)findViewById(R.id.collection_button)).setOnClickListener(this);
@@ -85,16 +95,28 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
                 }
         }
         else if(source.equals(findViewById(R.id.collection_button))) {
-            //TODO: implement collection selection
+            audioFromCollection();
         }
     }
     
+    private void audioFromCollection() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("audio/*");
+        startActivityForResult(Intent.createChooser(intent,"Select Audio "), COLLECTION_ACTIVITY_REQUEST_CODE);
+    }
+    
     private void startRecording() {
+        String folder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp";
+        File folderF = new File(folder);    
+        if (!folderF.exists()) {
+            folderF.mkdir();
+        }        
+        String fileName = folder + "/" + String.valueOf(System.currentTimeMillis()) + ".3gp";
+        
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        //recorder.setOutputFile(mFileName);
-        //TODO: send audio to model
+        recorder.setOutputFile(fileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
@@ -107,4 +129,37 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         ((TextView) findViewById(R.id.audio_view)).setText("Recording...");
     }
    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == COLLECTION_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
+                Toast.makeText(AudioCaptureActivity.this,
+                        "Audio Selection Successful", Toast.LENGTH_SHORT)
+                        .show();                
+
+                Uri audioFileUri = data.getData();
+                
+                InputStream audioStream = null;
+                try {
+                    audioStream = getContentResolver().openInputStream(audioFileUri);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+                //TODO: need to figure out what to do with audio file
+                
+                //fulfillment.setAudio( ????? );
+                //successful = true;
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(AudioCaptureActivity.this,
+                        "Audio Selection Cancelled", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                Toast.makeText(AudioCaptureActivity.this,
+                        "Some sort of error" + resultCode, Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
 }

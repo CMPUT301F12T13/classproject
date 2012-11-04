@@ -113,7 +113,6 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Drawable img = Drawable.createFromPath(imageFileUri.getPath());
-                //preview.setImageDrawable(img);
                 
                 // Convert the image to a bitmap
                 // TODO: check if img is always a BitmapDrawable
