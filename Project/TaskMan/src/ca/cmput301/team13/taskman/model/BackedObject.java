@@ -19,12 +19,16 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-
-import ca.cmput301.team13.taskman.TaskMan;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import ca.cmput301.team13.taskman.TaskMan;
 
 abstract class BackedObject {
 	
@@ -102,4 +106,37 @@ abstract class BackedObject {
 		return creator;
 	}
 	
+	//Parcelable Implementation
+	public int describeContents() {
+		return 0;
+	}
+
+	public void writeToParcel(Parcel out, int flags) {
+		BackedObjectParcel parcel = new BackedObjectParcel(getId(), getClass().getName());
+		out.writeSerializable(parcel);
+    }
+	
+	/**
+	 * Returns a BackedObject conforming with the type of BackedObject that was parceled
+	 * 		- Possible types: Task, Requirement, Fulfillment
+	 */
+    public static final Parcelable.Creator<BackedObject> CREATOR
+            = new Parcelable.Creator<BackedObject>() {
+        public BackedObject createFromParcel(Parcel in) {
+        	BackedObjectParcel parcel = (BackedObjectParcel)in.readSerializable();
+        	if(parcel.backedObjectType.equals(Task.class.getName())) {
+        		return TaskMan.getInstance().getRepository().getTask(parcel.id);
+        	} else if(parcel.backedObjectType.equals(Requirement.class.getName())) {
+        		return TaskMan.getInstance().getRepository().getRequirement(parcel.id);
+        	} else if(parcel.backedObjectType.equals(Fulfillment.class.getName())) {
+        		return TaskMan.getInstance().getRepository().getFulfillment(parcel.id);
+        	} else {
+        		throw new RuntimeException("Parceled BackedObject type that isn't supported.");
+        	}
+        }
+
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };	
 }

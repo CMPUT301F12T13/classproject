@@ -170,24 +170,4 @@ public class Task extends BackedObject implements Parcelable{
 	public String toString() {
 		return "Task(ID:"+getId()+")";
 	}
-
-	//Parcelable implementation
-	public int describeContents() {
-		return 0;
-	}
-
-	public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(getId());
-    }
-
-    public static final Parcelable.Creator<Task> CREATOR
-            = new Parcelable.Creator<Task>() {
-        public Task createFromParcel(Parcel in) {
-            return TaskMan.getInstance().getRepository().getTask(in.readInt());
-        }
-
-        public Task[] newArray(int size) {
-            return new Task[size];
-        }
-    };
 }

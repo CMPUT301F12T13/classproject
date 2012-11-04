@@ -395,7 +395,6 @@ public class LocalRepository {
 	 * @param taskId the ID
 	 * @return the Task
 	 */
-	
 	Task getTask(int taskId) {
 		
 		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
@@ -415,6 +414,64 @@ public class LocalRepository {
 					);
 			cursor.close();
 			return t;
+		} else {
+			cursor.close();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the Requirement corresponding to the given Requirement Id
+	 * @param requirementId the ID
+	 * @return the Requirement
+	 */
+	Requirement getRequirement(int requirementId) {
+		
+		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
+				RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + requirementId, null,
+				null, null, null);
+		
+		if (cursor.moveToFirst()) {
+			Requirement r = new Requirement(
+					cursor.getInt(0),//ID
+					new Date(cursor.getLong(5)),//Date Created
+					new Date(cursor.getLong(6)),//Date Last Modified
+					new User(cursor.getString(4)),//Creator
+					cursor.getString(3),//Description,
+					Requirement.contentType.values()[cursor.getInt(2)],
+					new ArrayList<Fulfillment>(),//Current requirements
+					vr
+					);
+			cursor.close();
+			return r;
+		} else {
+			cursor.close();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the Fulfillment corresponding to the given Fulfillment Id
+	 * @param fulfillmentId the ID
+	 * @return the Fulfillment
+	 */
+	Fulfillment getFulfillment(int fulfillmentId) {
+		
+		Cursor cursor = db.query(RepoHelper.TASKS_TBL,
+				RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = " + fulfillmentId, null,
+				null, null, null);
+		
+		if (cursor.moveToFirst()) {
+			Fulfillment f = new Fulfillment(
+					cursor.getInt(0),//ID
+					new Date(cursor.getLong(4)),//Date Created
+					new Date(cursor.getLong(5)),//Date Last Modified
+					Requirement.contentType.values()[cursor.getInt(6)],
+					new User(cursor.getString(3)),//Creator
+					vr
+					);
+			cursor.close();
+			return f;
 		} else {
 			cursor.close();
 			return null;

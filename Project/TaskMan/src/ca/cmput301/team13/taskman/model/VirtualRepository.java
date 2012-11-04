@@ -154,6 +154,24 @@ public class VirtualRepository {
 	}
 	
 	/**
+	 * Get the Requirement corresponding to the given Requirement Id
+	 * @param requirementId the ID
+	 * @return the Requirement
+	 */
+	public Requirement getRequirement(int requirementId) {
+		return local.getRequirement(requirementId);
+	}
+	
+	/**
+	 * Get the Fulfillment corresponding to the given Fulfillment Id
+	 * @param fulfillmentId the ID
+	 * @return the Fulfillment
+	 */
+	public Fulfillment getFulfillment(int fulfillmentId) {
+		return local.getFulfillment(fulfillmentId);
+	}
+	
+	/**
 	 * Remove a Specified Task from the backing store. All references to the Task object should be discarded
 	 * @param t The Task
 	 */
