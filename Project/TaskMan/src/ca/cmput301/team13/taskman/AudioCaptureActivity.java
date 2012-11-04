@@ -56,12 +56,12 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     
     @Override
     public void onPause() {
-    	super.onPause();
-    	if(recorder != null){
-    		recorder.release();
-    		recorder = null;
-    		((Button)findViewById(R.id.record_button)).setText("Start Recording");
-    	}
+        super.onPause();
+        if(recorder != null){
+            recorder.release();
+            recorder = null;
+            ((Button)findViewById(R.id.record_button)).setText("Start Recording");
+        }
     }
     
     @Override
@@ -71,25 +71,25 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     
-	public void onClick(View source) {
-		if(source.equals(findViewById(R.id.record_button))) {
-			if(recording == false){
-				recording = true;
-				startRecording();
-				((Button)findViewById(R.id.record_button)).setText("Stop Recording");
-			} else {
-				recording = false;
-				recorder.stop();
-				((TextView) findViewById(R.id.audio_view)).setText("Recording stopped.");
-				((Button)findViewById(R.id.record_button)).setText("Record Again");
-			}
-		}
-		else if(source.equals(findViewById(R.id.collection_button))) {
-			//TODO: implement collection selection
-		}
-	}
-	
-	private void startRecording() {
+    public void onClick(View source) {
+        if(source.equals(findViewById(R.id.record_button))) {
+            if(recording == false){
+                recording = true;
+                startRecording();
+                ((Button)findViewById(R.id.record_button)).setText("Stop Recording");
+                } else {
+                    recording = false;
+                    recorder.stop();
+                    ((TextView) findViewById(R.id.audio_view)).setText("Recording stopped.");
+                    ((Button)findViewById(R.id.record_button)).setText("Record Again");
+                }
+        }
+        else if(source.equals(findViewById(R.id.collection_button))) {
+            //TODO: implement collection selection
+        }
+    }
+    
+    private void startRecording() {
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);

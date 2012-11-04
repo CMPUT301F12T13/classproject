@@ -20,6 +20,8 @@
 package ca.cmput301.team13.taskman;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -44,6 +46,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     
     Uri imageFileUri;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 200;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,8 +80,14 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
             takeAPhoto();
         }
         else if (source.equals(findViewById(R.id.gallery_button))){
-            
+            selectAPhoto();
         }
+    }
+    
+    public void selectAPhoto(){
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, GALLERY_IMAGE_ACTIVITY_REQUEST_CODE);
     }
     
     public void takeAPhoto() {
@@ -99,11 +108,12 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ImageView preview = (ImageView)findViewById(R.id.image_view);
+        
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            ImageView preview = (ImageView)findViewById(R.id.image_view);
             if (resultCode == RESULT_OK) {
                 Drawable img = Drawable.createFromPath(imageFileUri.getPath());
-                preview.setImageDrawable(img);
+                //preview.setImageDrawable(img);
                 
                 // Convert the image to a bitmap
                 // TODO: check if img is always a BitmapDrawable
@@ -114,7 +124,9 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 Canvas c = new Canvas(b);
                 img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
                 img.draw(c);
-
+                
+                preview.setImageBitmap(b);
+                
                 fulfillment.setImage(b);
                 successful = true;
             } else if (resultCode == RESULT_CANCELED) {
@@ -124,6 +136,31 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
             } else {
                 Toast.makeText(ImageCaptureActivity.this,
                         "Some sort of error" + resultCode, Toast.LENGTH_SHORT)
+                        .show();
+            }
+        } else if (requestCode == GALLERY_IMAGE_ACTIVITY_REQUEST_CODE){
+            if (resultCode == RESULT_OK) {
+                imageFileUri = data.getData();
+        
+                InputStream imageStream = null;
+                try {
+                    imageStream = getContentResolver().openInputStream(imageFileUri);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                Bitmap bm = BitmapFactory.decodeStream(imageStream);
+                preview.setImageBitmap(bm);
+                
+                fulfillment.setImage(bm);
+                successful = true;
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(ImageCaptureActivity.this,
+                        "Photo Selection Cancelled", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                Toast.makeText(ImageCaptureActivity.this,
+                        "Error choosing Photo" + resultCode, Toast.LENGTH_SHORT)
                         .show();
             }
         }
