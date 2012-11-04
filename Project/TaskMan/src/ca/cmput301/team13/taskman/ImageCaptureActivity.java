@@ -167,20 +167,19 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 Notifications.showToast(getApplicationContext(), "Photo Taken");
                 photoTaken = true;
                 
-                Drawable img = Drawable.createFromPath(imageFileUri.getPath());
-                // Convert the image to a bitmap
-                // TODO: check if img is always a BitmapDrawable
-                Bitmap b = Bitmap.createBitmap(
-                        img.getIntrinsicWidth(),
-                        img.getIntrinsicHeight(),
-                        Config.ARGB_8888);
-                Canvas c = new Canvas(b);
-                img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
-                img.draw(c);
+                InputStream imageStream = null;
+                try {
+                    imageStream = getContentResolver().openInputStream(imageFileUri);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                //convert the image to a bitmap
+                Bitmap bm = BitmapFactory.decodeStream(imageStream);
 
                 //set the preview to show the image
-                preview.setImageBitmap(b);
-                setSelectedImage(b);
+                preview.setImageBitmap(bm);
+                setSelectedImage(bm);
             } else if (resultCode == RESULT_CANCELED) {
                 //Photo Taking was Cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Cancelled");
