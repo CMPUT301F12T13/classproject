@@ -24,12 +24,24 @@ import ca.cmput301.team13.taskman.model.Requirement;
 import android.app.Activity;
 import android.os.Bundle;
 
+/**
+ * FulfillmentActivity is the base class for activities that
+ * allow the user to make a fulfillment for a requirement.
+ * This base class handles receiving of the parcelled requirement
+ * used to launch the activity, the creation of the fulfillment
+ * object, and removal of the fulfillment if the activity is
+ * cancelled.
+ */
 public abstract class FulfillmentActivity extends Activity {
 
     protected Requirement requirement;
     protected Fulfillment fulfillment;
     protected boolean successful;
 
+    /**
+     * Receives the parcelled requirement object
+     * and adds a fulfillment to the requirement.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +54,10 @@ public abstract class FulfillmentActivity extends Activity {
                 requirement);
     }
 
+    /**
+     * Removes the fulfillment from the requirement if
+     * this.successful is false.
+     */
     @Override
     public void onStop() {
         super.onStop();
