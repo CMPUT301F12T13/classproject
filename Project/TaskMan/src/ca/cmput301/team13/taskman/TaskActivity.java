@@ -121,6 +121,15 @@ public class TaskActivity extends Activity implements OnClickListener {
             //This means that pressing Save should switch the mode to "edit", before leaving the Activity
         }
     }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	if(getMode().equals("view")) {
+    		task = TaskMan.getInstance().getRepository().getTaskUpdate(task);
+    		setViewingFields();
+    	}
+    }
 
     /**
      * Saves the current Task
@@ -138,13 +147,6 @@ public class TaskActivity extends Activity implements OnClickListener {
         }
         setMode("edit");
         super.finish();
-    }
-
-    private void saveRequirementList() {
-        int numRequirements = adapter.getCount();
-        for(int i=0; i<numRequirements; i++) {
-            //			adapter.getItem(i)
-        }
     }
 
     /**

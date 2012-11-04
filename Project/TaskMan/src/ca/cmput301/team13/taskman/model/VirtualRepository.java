@@ -152,6 +152,15 @@ public class VirtualRepository {
     public Task getTask(int taskId) {
         return local.getTask(taskId);
     }
+    
+    /**
+     * Get updated data for the requested Task
+     * @param t		The task to get updated data for
+     * @return		The updated Task
+     */
+    public Task getTaskUpdate(Task t) {
+    	return local.getTaskUpdate(t);
+    }
 
     /**
      * Get the Requirement corresponding to the given Requirement Id

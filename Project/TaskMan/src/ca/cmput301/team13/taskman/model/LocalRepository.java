@@ -419,6 +419,15 @@ public class LocalRepository {
             return null;
         }
     }
+    
+    /**
+     * Get updated data for the requested Task
+     * @param t		The task to get updated data for
+     * @return		The updated Task
+     */
+    Task getTaskUpdate(Task t) {
+    	return getTask(t.getId());
+    }
 
     /**
      * Get the Requirement corresponding to the given Requirement Id
