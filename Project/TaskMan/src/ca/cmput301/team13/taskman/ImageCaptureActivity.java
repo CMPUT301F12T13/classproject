@@ -39,7 +39,8 @@ import utils.Notifications;
 
 /**
  * ImageCaptureActivity is the activity that allows the user
- * to record a sound sample to fulfill an image requirement.
+ * take a photo or select one from the devices' library to 
+ * fulfill an image requirement.
  * This activity should be launched with an intent created
  * by FulfillmentActivityFactory.
  */
@@ -222,7 +223,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Return the bitmap to be saved
+     * Returns the bitmap to be saved
      * @return the bitmap to be saved
      */
     public Bitmap getSelectedImage() {
@@ -230,7 +231,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Set the bitmap to be saved
+     * Sets the bitmap to be saved
      * @param selectedImage the chosen bitmap image
      */
     public void setSelectedImage(Bitmap selectedImage) {

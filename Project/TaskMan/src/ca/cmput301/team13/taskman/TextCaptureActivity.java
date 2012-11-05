@@ -7,6 +7,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * TextCaptureActivity is the activity that allows the user
+ * to submit the text to fulfill a textual requirement.
+ * This activity should be launched with an intent created
+ * by FulfillmentActivityFactory.
+ */
 public class TextCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     @Override
@@ -42,8 +48,9 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
      * Send the entered text to our parent and exit the Activity
      */
     public void save() {
+        //get the text
         String text = ((EditText) findViewById(R.id.text_fulfillment)).getText().toString();
-       
+        //return the text
         fulfillment.setText(text);
         successful = true;
         finish();
