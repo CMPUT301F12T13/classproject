@@ -51,11 +51,17 @@ public class TaskMan extends Application {
         return instance;
     }
 
+    /**
+     * Handles configuration changed event.
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * Initializes the app.
+     */
     @Override
     public void onCreate() {
     	String androidString;
@@ -77,20 +83,34 @@ public class TaskMan extends Application {
         Log.w("TaskMan","User set as: "+user);
     }
 
+    /**
+     * Handles low memory event.
+     */
     @Override
     public void onLowMemory() {
         super.onLowMemory();
     }
 
+    /**
+     * Handles termination event.
+     */
     @Override
     public void onTerminate() {
         super.onTerminate();
     }
 
+    /**
+     * Returns the application instance of {@link VirtualRepository}.
+     * @return the application instance of VirtualRepository
+     */
     public VirtualRepository getRepository() {
         return repository;
     }
 
+    /**
+     * Returns the {@link User} that is running the app.
+     * @return the User that is running the app
+     */
     public User getUser() {
     	if(user == null) {
     		user = new User(Identifiers.randomString(15));

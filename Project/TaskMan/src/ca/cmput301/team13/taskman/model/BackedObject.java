@@ -129,7 +129,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Returns a BackedObject conforming with the type of BackedObject that was parceled.
+     * Returns a BackedObject conforming with the type of BackedObject that was parcelled.
      * 		- Possible types: Task, Requirement, Fulfillment
      */
     public static final Parcelable.Creator<BackedObject> CREATOR

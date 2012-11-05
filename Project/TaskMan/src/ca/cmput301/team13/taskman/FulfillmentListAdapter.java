@@ -55,8 +55,8 @@ public class FulfillmentListAdapter implements ListAdapter {
     };
 
     /**
-     * Construct a TaskListAdapter
-     * @param vr The virtual repository instance
+     * Construct a FulfillmentListAdapter.
+     * @param vr the VirtualRepository instance
      */
     public FulfillmentListAdapter(Task task, Context context) {
         this.task = task;
@@ -69,7 +69,7 @@ public class FulfillmentListAdapter implements ListAdapter {
     }
 
     /**
-     * Refresh task list from the local repo.
+     * Refresh task list from the local repository.
      */
     public void update() {
     	task = TaskMan.getInstance().getRepository().getTaskUpdate(task);
@@ -88,10 +88,20 @@ public class FulfillmentListAdapter implements ListAdapter {
         notifyObservers();
     }
 
+    /**
+     * Returns the view type of an item at a given index.
+     * @param viewIndex index of the item whose view type to return
+     */
     public int getItemViewType(int viewIndex) {
         return ((Fulfillment)getItem(viewIndex)).getContentType().ordinal();
     }
 
+    /**
+     * Returns the {@link View} for an item in the list.
+     * @param viewIndex the index of the item
+     * @param convertView the old view
+     * @param parent the parent view 
+     */
     public View getView(int viewIndex, View convertView, ViewGroup parent) {
         View newView;
         if(convertView != null) {
@@ -135,17 +145,24 @@ public class FulfillmentListAdapter implements ListAdapter {
         return newView;
     }
 
+    /**
+     * Returns the number of view types.
+     */
     public int getViewTypeCount() {
         return viewType.values().length;
     }
 
+    /**
+     * Indicates stable ids.
+     */
     public boolean hasStableIds() {
         //Our ids are dependant on array index, which changes on sort.
         return false;
     }
 
     /**
-     * Implementation is not Thread-safe.
+     * Registers a data set observer.
+     * Warning: implementation is not Thread-safe.
      */
     public void registerDataSetObserver(DataSetObserver dso) {
         // TODO: This is used to tell the UI that a reload would be a good idea
@@ -153,33 +170,60 @@ public class FulfillmentListAdapter implements ListAdapter {
     }
 
     /**
-     * Implementation is not Thread-safe
+     * Unregisters a data set observer.
+     * Warning: implementation is not Thread-safe.
      */
     public void unregisterDataSetObserver(DataSetObserver dso) {
         // TODO: This is used to tell the UI that a reload would be a good idea
         observers.remove(dso);
     }
 
+    /**
+     * Causes items to be sorted by creation date.
+     */
     private void sortByCreatedDate() {
         //This as its own method may be unnecessary. THoughts?
         Collections.sort(fulfillments, new BackedObjectCreatedComparator());
     }
 
+    /**
+     * Notify registered observers of changes.
+     */
     private void notifyObservers() {
         for(DataSetObserver dso : observers) {
             dso.onChanged();
         }
     }
 
+    /**
+     * Returns the number of items in the list.
+     */
     public int getCount()        { return fulfillments.size(); }
+    /**
+     * Returns the item at a given index.
+     * @param i index of the item to retrieve
+     */
     public Object getItem(int i) { return fulfillments.get(i); }
+    /**
+     * Returns the id of an item at a given index.
+     * @param i the index of the item whose index to return
+     */
     public long getItemId(int i) { return i; }
+    /**
+     * Indicates whether or not the list is empty.
+     */
     public boolean isEmpty()     { return fulfillments.isEmpty(); }
 
+    /**
+     * Indicates all items enabled.
+     */
     public boolean areAllItemsEnabled() {
         return false;
     }
 
+    /**
+     * Indicates whether enabled.
+     */
     public boolean isEnabled(int index) {
         return true;
     }

@@ -48,6 +48,9 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
 
     private Uri imageFileUri;
     private Bitmap selectedImage;
+    /**
+     * Indicates whether or not a photo was taken.
+     */
     public boolean photoTaken = false;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 200;
