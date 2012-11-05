@@ -28,7 +28,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import utils.Notifications;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,7 +54,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     private MediaRecorder recorder;
     private boolean recording;
     private String fileName;
-    private boolean audioSelected = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         //make sure the recorder is null and booleans are false
         recorder = null;
         recording = false;
-        audioSelected = false;
         ((TextView) findViewById(R.id.audio_view)).setText("Choose audio from your collection or record one now.");
     }
 
@@ -111,7 +111,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             } else {
                 recording = false;
                 recorder.stop();
-                audioSelected = true;
                 recorder.release();
                 
                 ((TextView) findViewById(R.id.audio_view)).setText("Recording stopped.");
@@ -134,11 +133,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      */
     public void save() {
     	short[] audioShorts;
-        //test audio has been selected.
-//        if (audioSelected) {
             //Get audio from collection
             if(audioFileUri != null) {
-            	audioShorts = getAudioShort(audioFileUri.getPath());
+            	audioShorts = getAudioShort(resolveAudioPath(getBaseContext(), audioFileUri));
             //Get audio from the recorder
             } else if(fileName != null) {
             	audioShorts = getAudioShort(fileName);
@@ -146,17 +143,15 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             	audioShorts = null;
             }
             
-            //Return to the Task Viewer
+            //Return to the Task Viewer if audio was selected
             if(audioShorts != null) {
             	successful = true;
             	fulfillment.setAudio(audioShorts);
+            	finish();
             } else {
             	successful = false;
+            	Notifications.showToast(getApplicationContext(), "No Audio selected");
             }
-            finish();
-//        } else {
-//            Notifications.showToast(getApplicationContext(), "No Audio selected");
-//        }
     }
     
     /**
@@ -190,6 +185,34 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         	ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(audioShorts);
         }
         return audioShorts;
+    }
+    
+    /**
+     * Resolves a Uri to an absolute file path
+     * 		- Paul Burke's getPath method from: http://stackoverflow.com/a/7857102/95764
+     * @param context		The Activity's Context
+     * @param uri			The Uri to resolve
+     * @return				The resolved Uri
+     */
+    private String resolveAudioPath(Context context, Uri uri) {
+    	if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = { "_data" };
+            Cursor cursor = null;
+
+            try {
+                cursor = context.getContentResolver().query(uri, projection, null, null, null);
+                int column_index = cursor
+                .getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) { }
+        }
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
     }
     
     /**
@@ -253,7 +276,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         if (requestCode == COLLECTION_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Notifications.showToast(getApplicationContext(), "Audio Selection Successful");
-                audioSelected = true;
                 
                 audioFileUri = data.getData();
                 InputStream audioStream = null;
