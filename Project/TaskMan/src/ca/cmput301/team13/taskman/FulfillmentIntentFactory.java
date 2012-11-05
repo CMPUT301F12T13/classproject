@@ -1,6 +1,12 @@
 /*
  * This file is part of TaskMan
- *
+ * 
+ * This file contains a factory for intents for fulfillment activities.
+ * Note that the factory pattern has been employed in a slightly unusual
+ * way: instead of directly producing instances of classes that extend
+ * FulfillmentActivities, the factory creates intents to launch these
+ * activities.
+ * 
  * Copyright (C) 2012 Jed Barlow, Mark Galloway, Taylor Lloyd, Braeden Petruk
  *
  * TaskMan is free software: you can redistribute it and/or modify

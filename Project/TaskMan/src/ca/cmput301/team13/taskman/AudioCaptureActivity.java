@@ -39,6 +39,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * AudioCaptureActivity is the activity that allows the user
+ * to record a sound sample to fulfill an audio requirement.
+ * This activity should be launched with an intent created
+ * by FulfillmentActivityFactory.
+ */
 public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri audioFileUri;

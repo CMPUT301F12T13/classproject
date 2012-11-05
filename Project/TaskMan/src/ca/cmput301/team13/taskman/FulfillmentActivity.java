@@ -1,5 +1,10 @@
 /*
  * This file is part of TaskMan
+ * 
+ * This file contains the fulfillment activity base class.  The class
+ * handles the tasks that are common to all activities that allow users
+ * to make fulfillments.  The implementation is designed to interact 
+ * with the intent as constructed by the FulfillmentIntentFactory factory.
  *
  * Copyright (C) 2012 Jed Barlow, Mark Galloway, Taylor Lloyd, Braeden Petruk
  *
@@ -55,8 +60,8 @@ public abstract class FulfillmentActivity extends Activity {
     }
 
     /**
-     * Removes the fulfillment from the requirement if
-     * this.successful is false.
+     * Removes the fulfillment from the requirement if the
+     * <code> successful </code> member variable is false.
      */
     @Override
     public void onStop() {
@@ -64,16 +69,5 @@ public abstract class FulfillmentActivity extends Activity {
         if (!successful) {
             requirement.removeFulfillment(fulfillment);
         }
-    }
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        
     }
 }
