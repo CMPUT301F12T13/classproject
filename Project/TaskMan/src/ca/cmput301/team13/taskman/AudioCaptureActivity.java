@@ -25,7 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
+import java.nio.ByteOrder;
 
 import utils.Notifications;
 import android.content.Intent;
@@ -127,15 +127,17 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected audio to our parent and exit the Activity
      */
     public void save() {
-    	short[] audioShorts = null;
+    	short[] audioShorts;
         //test audio has been selected.
-        if (audioSelected) {
+//        if (audioSelected) {
             //Get audio from collection
             if(audioFileUri != null) {
             	audioShorts = getAudioShort(audioFileUri.getPath());
             //Get audio from the recorder
             } else if(fileName != null) {
             	audioShorts = getAudioShort(fileName);
+            } else {
+            	audioShorts = null;
             }
             
             //Return to the Task Viewer
@@ -146,9 +148,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             	successful = false;
             }
             finish();
-        } else {
-            Notifications.showToast(getApplicationContext(), "No Audio selected");
-        }
+//        } else {
+//            Notifications.showToast(getApplicationContext(), "No Audio selected");
+//        }
     }
     
     /**
@@ -177,10 +179,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
         //Do the conversion
         if(audioBytes != null) {
-        	ByteBuffer audioByteBuffer = ByteBuffer.wrap(audioBytes);
-        	audioByteBuffer.rewind();
-        	ShortBuffer audioShortBuffer = ((ByteBuffer)audioByteBuffer.rewind()).asShortBuffer();
-        	audioShorts = audioShortBuffer.array();
+        	audioShorts = new short[audioBytes.length/2];
+        	// to turn bytes to shorts as either big endian or little endian. 
+        	ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(audioShorts);
         }
         return audioShorts;
     }
@@ -190,7 +191,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      */
     public void cancel() {
         successful = false;
-        finish();
+        super.finish();
     }
     
     /**

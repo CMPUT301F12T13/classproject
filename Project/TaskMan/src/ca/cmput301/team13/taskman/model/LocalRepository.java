@@ -21,11 +21,9 @@ package ca.cmput301.team13.taskman.model;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Date;
-
-import ca.cmput301.team13.taskman.TaskMan;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -35,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class LocalRepository {
     //Database connection
@@ -56,7 +55,7 @@ public class LocalRepository {
     public void openTestConnection() {
         db = SQLiteDatabase.create(null);
     }
-
+    
     void close() {
         helper.close();
     }
@@ -295,11 +294,9 @@ public class LocalRepository {
         case audio:
             //Directly convert the short[] to byte[]
             short[] audio = f.getAudio();
-            ByteBuffer audioBytes = ByteBuffer.allocate(audio.length);
-            for(int i=0; i<audio.length; i++) {
-                audioBytes.putShort(audio[i]);
-            }
-            values.put(RepoHelper.CONTENT_COL, audioBytes.array());
+            byte[] audioBytes = new byte[audio.length * 2];
+            ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(audio);
+            values.put(RepoHelper.CONTENT_COL, audioBytes);
             break;
         case image:
             //Compress and store the image

@@ -87,7 +87,6 @@ public class VirtualRepository {
             creator = t.getCreator();
         }
         Requirement r = local.createRequirement(creator, t, content);
-        t.addRequirement(r);
         return r;
     }
 
