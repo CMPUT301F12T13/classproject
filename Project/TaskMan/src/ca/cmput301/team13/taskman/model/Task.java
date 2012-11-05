@@ -153,7 +153,7 @@ public class Task extends BackedObject implements Parcelable{
      */
     public int getRequirementCount() {
         if(!reqsLoaded)
-            return reqCount;
+            loadRequirements();
         return requirements.size();
     }
 
