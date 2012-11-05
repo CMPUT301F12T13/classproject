@@ -653,11 +653,11 @@ class RepoHelper  extends SQLiteOpenHelper{
 
     @Override
     public void onOpen(SQLiteDatabase db) {
-        //For now, we probably don't want persistence, as things may be changing.
-        Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
+        //Enabled Object Persistence
+        /*Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
         db.execSQL("DROP TABLE IF EXISTS " + TASKS_TBL);
         db.execSQL("DROP TABLE IF EXISTS " + REQS_TBL);
         db.execSQL("DROP TABLE IF EXISTS " + FULS_TBL);
-        onCreate(db);
+        onCreate(db);*/
     }
 }
