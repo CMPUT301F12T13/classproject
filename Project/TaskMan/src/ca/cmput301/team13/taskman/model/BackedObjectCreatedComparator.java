@@ -21,10 +21,16 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.Comparator;
 
-public class TaskCreatedComparator implements Comparator<Task> {
+/**
+ * Compares the creation dates of {@link BackedObject} objects.
+ */
+public class BackedObjectCreatedComparator implements Comparator<BackedObject> {
 
-    public int compare(Task t1, Task t2) {
-        return t1.getCreatedDate().compareTo(t2.getCreatedDate());
+	/**
+	 * Compares the creation dates of two {@link BackedObject} instances.
+	 */
+    public int compare(BackedObject bo1, BackedObject bo2) {
+        return bo1.getCreatedDate().compareTo(bo2.getCreatedDate());
     }
 
 }

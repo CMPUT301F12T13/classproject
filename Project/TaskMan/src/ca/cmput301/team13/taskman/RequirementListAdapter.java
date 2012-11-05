@@ -42,7 +42,8 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
 
 /**
- * Provides a list of requirements from the virtual repo to list views
+ * Provides a list of requirements from the {@link VirtualRepository}
+ * to list views.
  */
 public class RequirementListAdapter implements ListAdapter {
 
@@ -51,6 +52,7 @@ public class RequirementListAdapter implements ListAdapter {
     private LayoutInflater inflater;
     private String mode;
     private Activity activity;
+    FulfillmentIntentFactory fIntentFactory;
 
     //View types
     enum viewType {
@@ -59,7 +61,7 @@ public class RequirementListAdapter implements ListAdapter {
     };
 
     /**
-     * Construct a RequirementListAdapter
+     * Construct a RequirementListAdapter.
      * @param task The task for which to list Requirements
      * @param mode The mode ("edit"/"view")
      * @param context The context for which to inflate layouts
@@ -71,18 +73,32 @@ public class RequirementListAdapter implements ListAdapter {
         observers = new ArrayList<DataSetObserver>();
         inflater = LayoutInflater.from(activity.getBaseContext());
         //Get our initial data
+        fIntentFactory = new FulfillmentIntentFactory(activity);
         update();
     }
 
+    /**
+     * Notifies observers.
+     */
     public void update() {
         notifyObservers();
     }
 
+    /**
+     * Returns the view type of an item at a given index.
+     * @param viewIndex index of the item whose view type to return
+     */
     public int getItemViewType(int viewIndex) {
         return 0;
     }
 
     
+    /**
+     * Returns the {@link View} for an item in the list.
+     * @param viewIndex the index of the item
+     * @param convertView the old view
+     * @param parent the parent view 
+     */
     public View getView(int viewIndex, View convertView, ViewGroup parent) {
         if(mode.equals("edit")) {
             return getEditView(viewIndex, convertView, parent);
@@ -93,6 +109,14 @@ public class RequirementListAdapter implements ListAdapter {
         return null;
     }
     
+    /**
+     * Returns the static (for viewing only) {@link View} of
+     * a requirement.
+     * @param viewIndex the index of the requirement
+     * @param convertView the old view
+     * @param parent the parent view
+     * @return the static View
+     */
     public View getStaticView(int viewIndex, View convertView, ViewGroup parent) {
         View newView;
         if(convertView != null) {
@@ -133,12 +157,22 @@ public class RequirementListAdapter implements ListAdapter {
         return newView;
     }
     
+    /**
+     * Launches a fulfillment activity.
+     * @param r the requirement to launch a fulfillment activity for
+     */
     private void openFulfillmentActivity(Requirement r) {
-    	FulfillmentIntentFactory fIntentFactory = new FulfillmentIntentFactory(activity);
-		Intent i = fIntentFactory.createIntent(r);
+        Intent i = fIntentFactory.createIntent(r);
 		activity.startActivity(i);
     }
     
+    /**
+     * Returns an editable {@link View} of a requirement.
+     * @param viewIndex the index of the requirement
+     * @param convertView the old view
+     * @param parent the parent view
+     * @return the static View
+     */
     public View getEditView(int viewIndex, View convertView, ViewGroup parent) {
         View newView;
         if(convertView != null) {
@@ -186,17 +220,24 @@ public class RequirementListAdapter implements ListAdapter {
         return newView;
     }
 
+    /**
+     * Returns the number of view types.
+     */
     public int getViewTypeCount() {
         return 1;
     }
 
+    /**
+     * Indicates stable ids.
+     */
     public boolean hasStableIds() {
         //Our ids are dependant on array index, which changes on sort.
         return false;
     }
 
     /**
-     * Implementation is not Thread-safe.
+     * Registers a data set observer.
+     * Warning: implementation is not Thread-safe.
      */
     public void registerDataSetObserver(DataSetObserver dso) {
         // TODO: This is used to tell the UI that a reload would be a good idea
@@ -204,32 +245,59 @@ public class RequirementListAdapter implements ListAdapter {
     }
 
     /**
-     * Implementation is not Thread-safe
+     * Unregisters a data set observer.
+     * Warning: implementation is not Thread-safe.
      */
     public void unregisterDataSetObserver(DataSetObserver dso) {
         // TODO: This is used to tell the UI that a reload would be a good idea
         observers.remove(dso);
     }
 
+    /**
+     * Notify registered observers of changes.
+     */
     private void notifyObservers() {
         for(DataSetObserver dso : observers) {
             dso.onChanged();
         }
     }
 
+    /**
+     * Returns the number of items in the list.
+     */
     public int getCount()        { return task.getRequirementCount(); }
+    /**
+     * Returns the item at a given index.
+     * @param i index of the item to retrieve
+     */
     public Object getItem(int i) { return task.getRequirement(i); }
+    /**
+     * Returns the id of an item at a given index.
+     * @param i the index of the item whose index to return
+     */
     public long getItemId(int i) { return i; }
+    /**
+     * Indicates whether or not the list is empty.
+     */
     public boolean isEmpty()     { return task.getRequirementCount() == 0; }
 
+    /**
+     * Indicates all items enabled.
+     */
     public boolean areAllItemsEnabled() {
         return false;
     }
 
+    /**
+     * Indicates whether enabled.
+     */
     public boolean isEnabled(int index) {
         return true;
     }
 
+    /**
+     * Enable/disable delaying of saves.
+     */
     public void delaySaves(boolean delay) {
         for(int i=0;i<getCount();i++) {
             ((Requirement)getItem(i)).delaySaves(delay);
@@ -265,7 +333,6 @@ class RequirementTextWatcher implements TextWatcher {
     }
     
     public void afterTextChanged(Editable editable) {
-        String t = editable.toString();
         ((Requirement)rla.getItem(position)).setDescription(editable.toString());
     }
 

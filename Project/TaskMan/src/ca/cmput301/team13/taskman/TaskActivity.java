@@ -36,12 +36,20 @@ import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
 
+/**
+ * This activity has two modes, one for viewing tasks, and one for
+ * editing.
+ */
 public class TaskActivity extends Activity implements OnClickListener {
 
     private Task task;
     private String mode;
-    private RequirementListAdapter adapter;
+    private RequirementListAdapter reqAdapter;
+    private FulfillmentListAdapter fulAdapter;
 
+    /**
+     * Handles initialization of the activity.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +73,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         //        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
     }
 
+    /**
+     * Sets the listeners, adapters, and text fields for the Task Editing View
+     */
     private void setEditingFields() {
         //Disconnect our Task from the Repository
         task.delaySaves(true);
@@ -81,12 +92,15 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ImageButton)findViewById(R.id.req_addImg_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addAud_btn)).setOnClickListener(this);
         //TODO: Set the requirements
-        adapter = new RequirementListAdapter(task, "edit", this);
+        reqAdapter = new RequirementListAdapter(task, "edit", this);
         //Disconnect our Requirements from the repository
-        adapter.delaySaves(true);
-        ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
+        reqAdapter.delaySaves(true);
+        ((ListView)findViewById(R.id.requirement_list)).setAdapter(reqAdapter);
     }
 
+    /**
+     * Sets the listeners, adapters, and text fields for the Task View
+     */
     private void setViewingFields() {
         //Show title and description
         ((TextView)findViewById(R.id.task_name_text)).setText(task.getTitle());
@@ -98,10 +112,15 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((Button)findViewById(R.id.task_edit_btn)).setOnClickListener(this);
         
         //Setup the Requirements List
-        adapter = new RequirementListAdapter(task, mode, this);
-        ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
+        reqAdapter = new RequirementListAdapter(task, mode, this);
+        ((ListView)findViewById(R.id.requirement_list)).setAdapter(reqAdapter);
+        fulAdapter = new FulfillmentListAdapter(task, this);
+        ((ListView)findViewById(R.id.fulfillment_list)).setAdapter(fulAdapter);
     }
 
+    /**
+     * Constructs menu options.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_task, menu);
@@ -116,6 +135,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         this.mode = mode;
     }
 
+    /**
+     * Handles pause event.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -126,6 +148,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         }
     }
     
+    /**
+     * Handles resume event.
+     */
     @Override
     public void onResume() {
     	super.onResume();
@@ -148,7 +173,7 @@ public class TaskActivity extends Activity implements OnClickListener {
             task.setDescription(taskDescription);
             //Push all changes to the repository
             task.delaySaves(false);
-            adapter.delaySaves(false);
+            reqAdapter.delaySaves(false);
             //Make sure we don't delete the Task after all this
             setMode("edit");
         }
@@ -162,6 +187,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         super.finish();
     }
 
+    /**
+     * Handles click events.
+     */
     public void onClick(View source) {
         if(source.equals(findViewById(R.id.save_button))) {
             saveTask();
@@ -169,13 +197,13 @@ public class TaskActivity extends Activity implements OnClickListener {
             cancelTask();
         } else if  (source.getId() == R.id.req_addTxt_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text);
-            adapter.update();
+            reqAdapter.update();
         } else if  (source.getId() == R.id.req_addImg_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.image);
-            adapter.update();
+            reqAdapter.update();
         } else if  (source.getId() == R.id.req_addAud_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio);
-            adapter.update();
+            reqAdapter.update();
         } else if  (source.getId() == R.id.task_edit_btn) {
             Bundle b = new Bundle();
             b.putParcelable("task", task);

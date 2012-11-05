@@ -19,14 +19,18 @@
 
 package ca.cmput301.team13.taskman;
 
-import ca.cmput301.team13.taskman.model.User;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
-
+import utils.Identifiers;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.provider.Settings.Secure;
 import android.util.Log;
+import ca.cmput301.team13.taskman.model.User;
+import ca.cmput301.team13.taskman.model.VirtualRepository;
 
+/**
+ * Singleton that provides application-wide access to the
+ * {@link VirtualRepository} and {@link User} instances.
+ */
 public class TaskMan extends Application {
 
     private VirtualRepository repository;
@@ -36,40 +40,81 @@ public class TaskMan extends Application {
     public TaskMan() {
     }
 
+    /**
+     * Singleton global instance access method.
+     * @return Singleton instance
+     */
     public static TaskMan getInstance() {
+    	if(instance == null) {
+    		instance = new TaskMan();
+    	}
         return instance;
     }
 
+    /**
+     * Handles configuration changed event.
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * Initializes the app.
+     */
     @Override
     public void onCreate() {
+    	String androidString;
         super.onCreate();
         instance = this;
         //instantiate a global context for the repository
         repository = new VirtualRepository(this.getApplicationContext());
-        user = new User(Secure.getString(this.getContentResolver(), Secure.ANDROID_ID));
+        if(Secure.ANDROID_ID == null) {
+        	androidString = Identifiers.randomString(15);
+        } else {
+	        androidString = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+	        //If an ANROID_ID is not available, generate a pseudo-random string instead (most likely
+	        //we're running a Test Case if this problem is encountered)
+	        if(androidString == null) {
+	        	androidString = Identifiers.randomString(15);
+	        }
+        }
+        user = new User(androidString);
         Log.w("TaskMan","User set as: "+user);
     }
 
+    /**
+     * Handles low memory event.
+     */
     @Override
     public void onLowMemory() {
         super.onLowMemory();
     }
 
+    /**
+     * Handles termination event.
+     */
     @Override
     public void onTerminate() {
         super.onTerminate();
     }
 
+    /**
+     * Returns the application instance of {@link VirtualRepository}.
+     * @return the application instance of VirtualRepository
+     */
     public VirtualRepository getRepository() {
         return repository;
     }
 
+    /**
+     * Returns the {@link User} that is running the app.
+     * @return the User that is running the app
+     */
     public User getUser() {
+    	if(user == null) {
+    		user = new User(Identifiers.randomString(15));
+    	}
         return user;
     }
 }

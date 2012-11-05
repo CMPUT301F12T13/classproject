@@ -1,5 +1,10 @@
 /*
  * This file is part of TaskMan
+ * 
+ * This file contains the fulfillment activity base class.  The class
+ * handles the tasks that are common to all activities that allow users
+ * to make fulfillments.  The implementation is designed to interact 
+ * with the intent as constructed by the FulfillmentIntentFactory factory.
  *
  * Copyright (C) 2012 Jed Barlow, Mark Galloway, Taylor Lloyd, Braeden Petruk
  *
@@ -24,37 +29,55 @@ import ca.cmput301.team13.taskman.model.Requirement;
 import android.app.Activity;
 import android.os.Bundle;
 
+/**
+ * FulfillmentActivity is the base class for activities that
+ * allow the user to make a fulfillment for a requirement.
+ * This base class handles receiving of the parcelled
+ * {@link Requirement} used to launch the activity, the creation
+ * of the {@link Fulfillment} object, and removal of the fulfillment
+ * if the activity is cancelled.
+ */
 public abstract class FulfillmentActivity extends Activity {
 
+	/**
+	 * The parcelled {@link Requirement}.
+	 */
     protected Requirement requirement;
+    /**
+     * The newly created {@link Fulfillment} for the requirement.
+     */
     protected Fulfillment fulfillment;
+    /**
+     * Determines whether or not to keep the fulfillment.  If false,
+     * then the fulfillment is removed when the activity is stopped.
+     */
     protected boolean successful;
 
+    /**
+     * Receives the parcelled requirement object
+     * and adds a fulfillment to the requirement.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.successful = false;
-        this.requirement = this.getIntent().getParcelableExtra("requirement");
-        TaskMan.getInstance().getRepository().addFulfillmentToRequirement(TaskMan.getInstance().getUser(), requirement);
+        this.requirement = (Requirement) this.getIntent().getParcelableExtra("requirement");
+
+        fulfillment = TaskMan.getInstance().getRepository().addFulfillmentToRequirement(
+                TaskMan.getInstance().getUser(),
+                requirement);
     }
 
+    /**
+     * Removes the fulfillment from the requirement if the
+     * {@link successful} member variable is false.
+     */
     @Override
     public void onStop() {
         super.onStop();
         if (!successful) {
             requirement.removeFulfillment(fulfillment);
         }
-    }
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        
     }
 }

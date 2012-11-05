@@ -28,27 +28,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
+import ca.cmput301.team13.taskman.model.Fulfillment;
+import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.TaskFilter;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
 
 /**
  * Provides a list of tasks from the {@link VirtualRepository}
  * to list views.
  */
-public class TaskListAdapter implements ListAdapter {
+public class FulfillmentListAdapter implements ListAdapter {
 
-    private VirtualRepository repo;
-    private ArrayList<Task> tasks;
+    private Task task;
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
-
-    // Task Filters
-    private TaskFilter taskFilter;
+    private ArrayList<Fulfillment> fulfillments;
 
     //View types
     enum viewType {
@@ -57,24 +55,35 @@ public class TaskListAdapter implements ListAdapter {
     };
 
     /**
-     * Construct a TaskListAdapter.
-     * @param vr The virtual repository instance
+     * Construct a FulfillmentListAdapter.
+     * @param vr the VirtualRepository instance
      */
-    public TaskListAdapter(VirtualRepository vr, Context context) {
-        repo = vr;
-        taskFilter = new TaskFilter();
+    public FulfillmentListAdapter(Task task, Context context) {
+        this.task = task;
         observers = new ArrayList<DataSetObserver>();
         inflater = LayoutInflater.from(context);
+        fulfillments = new ArrayList<Fulfillment>();
 
         //Get our initial data
         update();
     }
 
     /**
-     * Refresh task list from the {@link LocalRepository}.
+     * Refresh task list from the local repository.
      */
     public void update() {
-        tasks = repo.getTasksForFilter(taskFilter);
+    	task = TaskMan.getInstance().getRepository().getTaskUpdate(task);
+    	
+    	//Clear the list
+        fulfillments.clear();
+        //Repopulate the list
+        for(int i=0;i<task.getRequirementCount()-1;i++) {
+        	Requirement r = task.getRequirement(i);
+        	for(int j=0;j<r.getFullfillmentCount();j++) {
+        		fulfillments.add(r.getFulfillment(j));
+        	}
+        }
+        //Sort the list
         sortByCreatedDate();
         notifyObservers();
     }
@@ -84,8 +93,7 @@ public class TaskListAdapter implements ListAdapter {
      * @param viewIndex index of the item whose view type to return
      */
     public int getItemViewType(int viewIndex) {
-        //TODO: Differentiate headers from Tasks
-        return viewType.Task.ordinal();
+        return ((Fulfillment)getItem(viewIndex)).getContentType().ordinal();
     }
 
     /**
@@ -101,27 +109,39 @@ public class TaskListAdapter implements ListAdapter {
             newView = convertView;
         } else {
             //Instantiate a new view
-            newView = inflater.inflate(R.layout.task_row, null);
+            if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
+            	newView = inflater.inflate(R.layout.ful_text_elem, null);
+            	
+            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
+            	newView = inflater.inflate(R.layout.ful_img_elem, null);
+            	
+            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
+            	newView = inflater.inflate(R.layout.ful_aud_elem, null);
+            	
+            } else {
+            	Log.w("FulfillmentListAdapter", "Unknown content type");
+            	newView = inflater.inflate(R.layout.ful_text_elem, null);
+            }
         }
-        Task task = (Task)getItem(viewIndex);
-        //Figure out what we support
-        boolean text = false;
-        boolean image = false;
-        boolean audio = false;
-        Log.w("TaskListAdapter", task + " has " + task.getRequirementCount() + " Requirements");
-        for(int i=0;i<task.getRequirementCount();i++) {
-            contentType ct = task.getRequirement(i).getContentType();
-            Log.w("TaskListAdapter", "Requirement content type: " + ct.toString());
-            if(ct == contentType.text) text = true;
-            else if(ct == contentType.image) image = true;
-            else audio = true;
+        
+        //Setup the attributes of the view
+        //TODO: DateFormatter
+        ((TextView)newView.findViewById(R.id.fulTime)).setText("On ----:");
+        
+        if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
+        	((TextView)newView.findViewById(R.id.ful_text)).setText(
+        			((Fulfillment)getItem(viewIndex)).getText());
+        	
+        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
+        	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(
+        			((Fulfillment)getItem(viewIndex)).getImage());
+        	
+        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
+        	//Ignore Audio for now
+        	//((MediaController)newView.findViewById(R.id.ful_audio)).set
+        	
         }
-
-        //Set all the pertinent values
-        ((TextView)newView.findViewById(R.id.title_lbl)).setText(task.getTitle());
-        newView.findViewById(R.id.txtImg).setVisibility((text ? View.VISIBLE : View.INVISIBLE));
-        newView.findViewById(R.id.imgImg).setVisibility((image ? View.VISIBLE : View.INVISIBLE));
-        newView.findViewById(R.id.audImg).setVisibility((audio ? View.VISIBLE : View.INVISIBLE));
+        
         return newView;
     }
 
@@ -163,7 +183,7 @@ public class TaskListAdapter implements ListAdapter {
      */
     private void sortByCreatedDate() {
         //This as its own method may be unnecessary. THoughts?
-        Collections.sort(tasks, new BackedObjectCreatedComparator());
+        Collections.sort(fulfillments, new BackedObjectCreatedComparator());
     }
 
     /**
@@ -178,12 +198,12 @@ public class TaskListAdapter implements ListAdapter {
     /**
      * Returns the number of items in the list.
      */
-    public int getCount()        { return tasks.size(); }
+    public int getCount()        { return fulfillments.size(); }
     /**
      * Returns the item at a given index.
      * @param i index of the item to retrieve
      */
-    public Object getItem(int i) { return tasks.get(i); }
+    public Object getItem(int i) { return fulfillments.get(i); }
     /**
      * Returns the id of an item at a given index.
      * @param i the index of the item whose index to return
@@ -192,7 +212,7 @@ public class TaskListAdapter implements ListAdapter {
     /**
      * Indicates whether or not the list is empty.
      */
-    public boolean isEmpty()     { return tasks.isEmpty(); }
+    public boolean isEmpty()     { return fulfillments.isEmpty(); }
 
     /**
      * Indicates all items enabled.
@@ -205,7 +225,6 @@ public class TaskListAdapter implements ListAdapter {
      * Indicates whether enabled.
      */
     public boolean isEnabled(int index) {
-        // TODO mark headers unlabelled
         return true;
     }
 }

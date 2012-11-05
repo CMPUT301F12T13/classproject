@@ -25,6 +25,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import ca.cmput301.team13.taskman.TaskMan;
 
+/**
+ * Base class for objects that reside in the database.
+ */
 abstract class BackedObject implements Parcelable {
 
 
@@ -34,7 +37,15 @@ abstract class BackedObject implements Parcelable {
     private User creator;
     VirtualRepository repo;
     boolean delaySave = false;
-
+    
+    /**
+     * Creates a BackedObject.
+     * @param id			The ID for insertion into the database
+     * @param created		The date the item was created
+     * @param lastModified	The last modification date 
+     * @param creator		The User who created this Object
+     * @param repo			The VirtualRepository this Object is wrapped under
+     */
     BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
         this.id = id;
         this.repo = repo;
@@ -44,7 +55,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Save any changes that have occurred to this object
+     * Save any changes that have occurred to this object.
      * @return Whether or not the save was successful
      */
     boolean saveChanges() {
@@ -70,7 +81,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Access the ID of this object
+     * Access the ID of this object.
      * @return the id
      */
     int getId() {
@@ -78,7 +89,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Access the date/time when this object was first created
+     * Access the date/time when this object was first created.
      * @return the date
      */
     public Date getCreatedDate() {
@@ -86,7 +97,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Access the date/time when this object was last modified
+     * Access the date/time when this object was last modified.
      * @return the date
      */
     public Date getLastModifiedDate() {
@@ -94,25 +105,31 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * 
+     * Returns the {@link User} who created the object.
      * @return the User that created this Object
      */
     public User getCreator() {
         return creator;
     }
 
+    /**
+     * Describes the contents of the object (for parcelling).
+     */
     //Parcelable Implementation
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Writes the object to a {@link android.os.Parcel}.
+     */
     public void writeToParcel(Parcel out, int flags) {
         BackedObjectParcel parcel = new BackedObjectParcel(getId(), getClass().getName());
         out.writeSerializable(parcel);
     }
 
     /**
-     * Returns a BackedObject conforming with the type of BackedObject that was parceled
+     * Returns a BackedObject conforming with the type of BackedObject that was parcelled.
      * 		- Possible types: Task, Requirement, Fulfillment
      */
     public static final Parcelable.Creator<BackedObject> CREATOR

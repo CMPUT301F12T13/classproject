@@ -22,10 +22,15 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Holds the information associated with a requirement for a {@link Task};
+ * aggregated by {@link Task}.
+ */
 public class Requirement extends BackedObject{
 
-    private static final long serialVersionUID = 1792613431433747003L;
-
+	/**
+	 * An enum of desired contentType for requirements.
+	 */
     //Content Mask Stuff
     public static enum contentType {
         text,
@@ -43,7 +48,7 @@ public class Requirement extends BackedObject{
     private boolean loaded = false;
 
     /**
-     * Construct a Requirement with backing in the persistent store
+     * Construct a Requirement with backing in the persistent store.
      * @param id - the id of the requirement
      * @param description - the description of the requirement
      * @param fulfillments - the list of fulfillments of the requirement
@@ -58,7 +63,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * Construct a Requirement with backing in the persistent store
+     * Construct a Requirement with backing in the persistent store.
      * @param id - the id of the requirement
      * @param description - the description of the requirement
      * @param fulfillments - the list of fulfillments of the requirement
@@ -73,7 +78,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * 
+     * Returns the description of the Requirement.
      * @return the description of the Requirement
      */
     public String getDescription() {
@@ -81,7 +86,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * Changes the description, and saves the changes
+     * Changes the description, and saves the changes.
      * @param description the new description of the requirement
      * @return success of save
      */
@@ -91,7 +96,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * Adds a fulfillment, and saves the changes
+     * Adds a fulfillment, and saves the changes.
      * @param ful the fulfillment to add to the requirement
      * @return success of save
      */
@@ -104,7 +109,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * Removes a fulfillment, and saves the changes
+     * Removes a fulfillment, and saves the changes.
      * @param ful the fulfillment to remove from the requirement
      * @return success of both the remove, and the save
      */
@@ -122,7 +127,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * 
+     * Returns the number of fulfillments associated with this requirement.
      * @return the number of fulfillments associated with this requirement
      */
     public int getFullfillmentCount() {
@@ -133,7 +138,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * 
+     * Retrieves a {@link Fulfillment} from an index.
      * @param index the index of the desired Fulfillment
      * @return the associated Fulfillment
      */
@@ -145,7 +150,7 @@ public class Requirement extends BackedObject{
     }
 
     /**
-     * 
+     * Returns the content type expected by the Requirement.
      * @return the Content Type expected by this Requirement
      */
     public contentType getContentType() {
@@ -160,6 +165,10 @@ public class Requirement extends BackedObject{
         }
     }
 
+    /**
+     * Returns a string representation of the Requirement.
+     * @return a string representation of the Requirement
+     */
     @Override
     public String toString() {
         return "Req(ID:"+getId()+")";

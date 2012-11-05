@@ -1,6 +1,12 @@
 /*
  * This file is part of TaskMan
- *
+ * 
+ * This file contains a factory for intents for fulfillment activities.
+ * Note that the factory pattern has been employed in a slightly unusual
+ * way: instead of directly producing instances of classes that extend
+ * FulfillmentActivities, the factory creates intents to launch these
+ * activities.
+ * 
  * Copyright (C) 2012 Jed Barlow, Mark Galloway, Taylor Lloyd, Braeden Petruk
  *
  * TaskMan is free software: you can redistribute it and/or modify
@@ -23,13 +29,18 @@ import android.app.Activity;
 import android.content.Intent;
 import ca.cmput301.team13.taskman.model.Requirement;
 
+/**
+ * FulfillmentIntentFactory creates intents for launching fulfillment
+ * activities (subclasses of FulfillmentActivity).
+ */
 public class FulfillmentIntentFactory {
 
     private Activity source;
 
     /**
      * Creates an instance of FulfillmentIntentFactory.
-     * @param src The intent that owns the factory
+     * @param src The intent that owns the factory; is
+     * used to create the intents.
      */
     FulfillmentIntentFactory(Activity src) {
         source = src;
@@ -51,7 +62,7 @@ public class FulfillmentIntentFactory {
             i = new Intent(source, AudioCaptureActivity.class);
         }
         else if(req.getContentType() == Requirement.contentType.text) {
-            // TODO: don't have this activity yet.
+            i = new Intent(source, TextCaptureActivity.class);
         }
 
         i.putExtra("requirement", req);

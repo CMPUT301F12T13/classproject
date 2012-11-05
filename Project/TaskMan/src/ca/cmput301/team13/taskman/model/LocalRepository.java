@@ -21,10 +21,10 @@ package ca.cmput301.team13.taskman.model;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Date;
 
-import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 import android.content.ContentValues;
@@ -35,7 +35,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
+import ca.cmput301.team13.taskman.TaskMan;
 
+/**
+ * Manages a <a href="http://sqlite.org/">SQLite<a> database stored
+ * locally on the phone memory.
+ */
 public class LocalRepository {
     //Database connection
     private SQLiteDatabase db = null;
@@ -44,6 +49,11 @@ public class LocalRepository {
     //Virtual Repository link
     private VirtualRepository vr;
 
+    /**
+     * Creates a new LocalRepository instance.
+     * @param context the Context of the Android application
+     * @param vr the virtual repository
+     */
     public LocalRepository(Context context, VirtualRepository vr) {
         helper = new RepoHelper(context);
         this.vr = vr;
@@ -53,10 +63,13 @@ public class LocalRepository {
         db = helper.getWritableDatabase();
     }
 
+    /**
+     * Opens a test connection.
+     */
     public void openTestConnection() {
         db = SQLiteDatabase.create(null);
     }
-
+    
     void close() {
         helper.close();
     }
@@ -228,11 +241,18 @@ public class LocalRepository {
         		removeRequirement(r);
         	}
         }
+        
+        //Only update a Task created by the current User
+        String creator = t.getCreator().toString();
+        String current = TaskMan.getInstance().getUser().toString();
+        if(t.getCreator().equals(TaskMan.getInstance().getUser())) {
+        	int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
+        	if(updateCount != 1)
+        		throw new RuntimeException("Database update failed!");
+        } else {
+        	throw new RuntimeException("Attempted to update a Task from a foreign User.");
+        }
 
-        int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
-
-        if(updateCount != 1)
-            throw new RuntimeException("Database update failed!");
     }
 
     /**
@@ -286,7 +306,7 @@ public class LocalRepository {
         values.put(RepoHelper.LASTMODIFIED_COL, f.getLastModifiedDate().getTime());
         values.put(RepoHelper.ID_COL, f.getId());
 
-        //TODO: Logic to convert typed Fulfillment content into a blob
+        //Logic to convert typed Fulfillment content into a blob
         switch(f.getContentType()) {
         case text:
             //Store a byte array for the text
@@ -295,11 +315,9 @@ public class LocalRepository {
         case audio:
             //Directly convert the short[] to byte[]
             short[] audio = f.getAudio();
-            ByteBuffer audioBytes = ByteBuffer.allocate(audio.length);
-            for(int i=0; i<audio.length; i++) {
-                audioBytes.putShort(audio[i]);
-            }
-            values.put(RepoHelper.CONTENT_COL, audioBytes.array());
+            byte[] audioBytes = new byte[audio.length * 2];
+            ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(audio);
+            values.put(RepoHelper.CONTENT_COL, audioBytes);
             break;
         case image:
             //Compress and store the image
@@ -467,6 +485,7 @@ public class LocalRepository {
      * @return		The updated Task
      */
     Task getTaskUpdate(Task t) {
+    	loadRequirementsForTask(t);
     	return getTask(t.getId());
     }
 
@@ -500,6 +519,11 @@ public class LocalRepository {
         }
     }
 
+    /**
+     * Get the number of Fulfillments for the specified Requirement
+     * @param requirementId		The ID of the requirement
+     * @return					The number of Fulfillments contained by the specified Requirement
+     */
     private int getFulfillmentCount(int requirementId) {
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
                 new String[] {"COUNT(*)"}, RepoHelper.REQ_COL + " = " + requirementId, null,
@@ -562,7 +586,7 @@ public class LocalRepository {
     void removeRequirement(Requirement r) {
         int numFulfillments = r.getFullfillmentCount();
         for(int i=0; i<numFulfillments; i++) {
-            removeFulfillment(r.getFulfillment(i));
+    		removeFulfillment(r.getFulfillment(i));
         }
         db.delete(RepoHelper.REQS_TBL, RepoHelper.ID_COL + " = " + r.getId(), null);
     }
@@ -653,11 +677,11 @@ class RepoHelper  extends SQLiteOpenHelper{
 
     @Override
     public void onOpen(SQLiteDatabase db) {
-        //For now, we probably don't want persistence, as things may be changing.
-        Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
+        //Enabled Object Persistence
+        /*Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
         db.execSQL("DROP TABLE IF EXISTS " + TASKS_TBL);
         db.execSQL("DROP TABLE IF EXISTS " + REQS_TBL);
         db.execSQL("DROP TABLE IF EXISTS " + FULS_TBL);
-        onCreate(db);
+        onCreate(db);*/
     }
 }

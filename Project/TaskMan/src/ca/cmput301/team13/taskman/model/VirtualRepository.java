@@ -27,16 +27,26 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * A facade combining {@link LocalRepository} and a remote
+ * database into one interface.
+ */
 public class VirtualRepository {
     private LocalRepository local;
 
+    /**
+     * Instantiates a new {@link VirtualRepository} object.
+     * @param context the context of the Android application
+     */
     public VirtualRepository(Context context) {
-        local = new LocalRepository(context, this);
-        local.open();
+    	if(local == null) {
+    		local = new LocalRepository(context, this);
+        	local.open();
+    	}
     }
 
     /**
-     * Creates a new Task, with no title, description, or requirements
+     * Creates a new Task, with no title, description, or requirements.
      * @param creator The User that has created the Task
      * @return the Task, with no non-housekeeping values yet set
      */
@@ -45,7 +55,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Creates a new Requirement, with no description or fulfillments
+     * Creates a new Requirement, with no description or fulfillments.
      * @param creator The User that has created the Requirement
      * @param task The Task to add the Requirement to
      * @param contentType The desired content type of the requirement
@@ -56,7 +66,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Creates a new Fulfillment, with no content yet set
+     * Creates a new Fulfillment, with no content yet set.
      * @param creator The User that has created the Fulfillment
      * @param req The Requirement to add the FUlfillment to
      * @return the Fulfillment, with no content yet attached
@@ -66,8 +76,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Obtains a list of Tasks for display
-     * 
+     * Obtains a list of Tasks for display.
      * @param tf The TaskFilter with which to obtain Tasks
      * @return an ArrayList of compatible Tasks
      */
@@ -76,7 +85,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Creates a Requirement and links it to a Task
+     * Creates a Requirement and links it to a Task.
      * @param creator The User creating the requirement (null to use Task's creator)
      * @param t The Task to add the Requirement to
      * @param content The content type specified by the Requirement
@@ -87,12 +96,11 @@ public class VirtualRepository {
             creator = t.getCreator();
         }
         Requirement r = local.createRequirement(creator, t, content);
-        t.addRequirement(r);
         return r;
     }
 
     /**
-     * Creates a Fulfillment and links it to a Requirement
+     * Creates a Fulfillment and links it to a Requirement.
      * @param creator The User creating the fulfillment (null to use Requirement's creator)
      * @param r The Requirement to add the Fulfillment to
      * @return
@@ -102,13 +110,12 @@ public class VirtualRepository {
             creator = r.getCreator();
         }
         Fulfillment f = local.createFulfillment(creator, r);
-        r.addFulfillment(f);
         return f;
     }
 
 
     /**
-     * Saves any changes to the notifying object to the permanent store
+     * Saves any changes to the notifying object to the permanent store.
      * @param backedObject - the object with changes
      */
     boolean saveUpdate(BackedObject backedObject) {
@@ -128,7 +135,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Get the list of Requirements for a given Task
+     * Get the list of Requirements for a given Task.
      * @param t The task for which to return Requirements
      * @return
      */
@@ -137,7 +144,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Get the list of Fulfillments for a given Requirement
+     * Get the list of Fulfillments for a given Requirement.
      * @param r The requirement for which to return Fulfillments
      * @return
      */
@@ -146,7 +153,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Get the Task corresponding to the given Task Id
+     * Get the Task corresponding to the given Task Id.
      * @param taskId the ID
      * @return the Task
      */
@@ -155,7 +162,7 @@ public class VirtualRepository {
     }
     
     /**
-     * Get updated data for the requested Task
+     * Get updated data for the requested Task.
      * @param t		The task to get updated data for
      * @return		The updated Task
      */
@@ -164,7 +171,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Get the Requirement corresponding to the given Requirement Id
+     * Get the Requirement corresponding to the given Requirement Id.
      * @param requirementId the ID
      * @return the Requirement
      */
@@ -173,7 +180,7 @@ public class VirtualRepository {
     }
 
     /**
-     * Get the Fulfillment corresponding to the given Fulfillment Id
+     * Get the Fulfillment corresponding to the given Fulfillment Id.
      * @param fulfillmentId the ID
      * @return the Fulfillment
      */
@@ -182,7 +189,8 @@ public class VirtualRepository {
     }
 
     /**
-     * Remove a Specified Task from the backing store. All references to the Task object should be discarded
+     * Remove a specified Task from the backing store. All
+     * references to the Task object should be discarded.
      * @param t The Task
      */
     public void removeTask(Task t) {
@@ -193,7 +201,9 @@ public class VirtualRepository {
     }
 
     /**
-     * Remove a Specified Requirement from the backing store. All references to the Requirement object should be discarded
+     * Remove a specified Requirement from the backing
+     * store. All references to the Requirement object
+     * should be discarded.
      * @param r The Requirement
      */
     public void removeRequirement(Requirement r) {
@@ -204,13 +214,22 @@ public class VirtualRepository {
     }
 
     /**
-     * Remove a Specified Fulfillment from the backing store. All references to the Fulfillment object should be discarded
+     * Remove a Specified Fulfillment from the backing store.
+     * All references to the Fulfillment object should be discarded.
      * @param f The Fulfillment
      */
     public void removeFulfillment(Fulfillment f) {
     	//Only the creator can delete the Fulfillment
     	if(f.getCreator().equals(TaskMan.getInstance().getUser())) {
     		local.removeFulfillment(f);
+    	}
+    }
+    
+    public boolean taskExists(Task t) {
+    	if(getTask(t.getId()) == null) {
+    		return false;
+    	} else {
+    		return true;
     	}
     }
 

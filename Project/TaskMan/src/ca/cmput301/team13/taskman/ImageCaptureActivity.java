@@ -25,10 +25,7 @@ import java.io.InputStream;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,14 +37,27 @@ import android.widget.Button;
 import android.widget.ImageView;
 import utils.Notifications;
 
+/**
+ * ImageCaptureActivity is the activity that allows the user
+ * take a photo or select one from the device's library to 
+ * fulfill an image requirement.
+ * This activity should be launched with an intent created
+ * by {@link FulfillmentIntentFactory}.
+ */
 public class ImageCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
-    Uri imageFileUri;
+    private Uri imageFileUri;
     private Bitmap selectedImage;
+    /**
+     * Indicates whether or not a photo was taken.
+     */
     public boolean photoTaken = false;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 200;
 
+    /**
+     * Handles initialization of the activity.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,16 +70,25 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
         ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
     }
     
+    /**
+     * Handles resume event.
+     */
     @Override
     public void onResume() {
         super.onResume();
     }
 
+    /**
+     * Handles pause event.
+     */
     @Override
     public void onPause() {
         super.onPause();
     }
     
+    /**
+     * Constructs menu options.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.image_fulfillment, menu);
@@ -77,7 +96,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Delegates action based on which listener has been clicked
+     * Delegates action based on which listener has been clicked.
      * @param source 
      */
     public void onClick(View source) {
@@ -96,7 +115,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Send the taken/selected photo to our parent and exit the Activity
+     * Send the taken/selected photo to our parent and exit the Activity.
      */
     public void save() {
         //test if a photo has been selected.
@@ -110,7 +129,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     /**
-     * Cancel the Activity
+     * Cancel the Activity.
      */
     public void cancel() {
         successful = false;
@@ -119,7 +138,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     
     /**
      * Takes the user to the gallery where a previously taken photo can
-     * be selected for use
+     * be selected for use.
      */
     public void selectAPhoto(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -128,8 +147,8 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Sets up the filepath for a new photo and launches the built-in camera application to 
-     * get a photo.
+     * Sets up the filepath for a new photo and launches the
+     * built-in camera application to get a photo.
      */
     public void takeAPhoto() {
         //set a file path for the new photo
@@ -167,20 +186,19 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 Notifications.showToast(getApplicationContext(), "Photo Taken");
                 photoTaken = true;
                 
-                Drawable img = Drawable.createFromPath(imageFileUri.getPath());
-                // Convert the image to a bitmap
-                // TODO: check if img is always a BitmapDrawable
-                Bitmap b = Bitmap.createBitmap(
-                        img.getIntrinsicWidth(),
-                        img.getIntrinsicHeight(),
-                        Config.ARGB_8888);
-                Canvas c = new Canvas(b);
-                img.setBounds(0, 0, img.getIntrinsicWidth(), img.getIntrinsicHeight());
-                img.draw(c);
+                InputStream imageStream = null;
+                try {
+                    imageStream = getContentResolver().openInputStream(imageFileUri);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                //convert the image to a bitmap
+                Bitmap bm = BitmapFactory.decodeStream(imageStream);
 
                 //set the preview to show the image
-                preview.setImageBitmap(b);
-                setSelectedImage(b);
+                preview.setImageBitmap(bm);
+                setSelectedImage(bm);
             } else if (resultCode == RESULT_CANCELED) {
                 //Photo Taking was Cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Cancelled");
@@ -210,15 +228,17 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 preview.setImageBitmap(bm);
                 setSelectedImage(bm);
             } else if (resultCode == RESULT_CANCELED) {
+                //Photo selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Selection Cancelled");
             } else {
+                //Photo selection had an error
                 Notifications.showToast(getApplicationContext(), "Error choosing Photo" + resultCode);
             }
         }
     }
 
     /**
-     * Return the bitmap to be saved
+     * Returns the bitmap to be saved.
      * @return the bitmap to be saved
      */
     public Bitmap getSelectedImage() {
@@ -226,7 +246,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Set the bitmap to be saved
+     * Sets the bitmap to be saved.
      * @param selectedImage the chosen bitmap image
      */
     public void setSelectedImage(Bitmap selectedImage) {

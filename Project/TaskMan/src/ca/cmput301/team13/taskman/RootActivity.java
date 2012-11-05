@@ -34,10 +34,17 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+/**
+ * The main activity for the app, provides a list of tasks and allows
+ * users to navigate to task creation, viewing, and editing activities.
+ */
 public class RootActivity extends Activity implements OnClickListener, OnItemClickListener {
     ListView taskList;
     TaskListAdapter taskAdapter;
 
+    /**
+     * Handles initialization of the activity.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,23 +63,35 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         ((ImageButton)findViewById(R.id.txtfilter_btn)).setOnClickListener(this);
     }
 
+    /**
+     * Handles pause event.
+     */
     @Override
     public void onPause() {
         super.onPause();
     }
 
+    /**
+     * Handles resume event.
+     */
     @Override
     public void onResume() {
         super.onResume();
         taskAdapter.update();
     }
 
+    /**
+     * Constructs menu options.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_root, menu);
         return true;
     }
 
+    /**
+     * Handles click events.
+     */
     public void onClick(View source) {
         if(source.equals(findViewById(R.id.addTask_btn))) {
             Bundle b = new Bundle();
@@ -92,6 +111,9 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         }
     }
 
+    /**
+     * Handles click events of list items.
+     */
     public void onItemClick(AdapterView<?> list, View source, int position,
             long id) {
         Log.w("RootActivity", "Element "+position+" clicked.");

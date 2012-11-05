@@ -25,6 +25,10 @@ import java.util.Date;
 import android.os.Parcelable;
 import android.util.Log;
 
+/**
+ * Holds the information associated with a task;
+ * aggregates {@link Requirement}.
+ */
 public class Task extends BackedObject implements Parcelable{
 
 
@@ -36,7 +40,7 @@ public class Task extends BackedObject implements Parcelable{
     int reqCount = 0;
 
     /**
-     * Construct a Task with backing in a persistent store
+     * Construct a Task with backing in a persistent store.
      * @param id - the ID of the Task
      * @param title - the title of the task
      * @param description - the description of the task
@@ -52,7 +56,8 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * Construct a Task with backing in a persistent store, without preloaded requirements
+     * Construct a Task with backing in a persistent store,
+     * without preloaded requirements.
      * @param id - the ID of the Task
      * @param title - the title of the task
      * @param description - the description of the task
@@ -76,15 +81,15 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * 
-     * @return the title of the Task
+     * Returns the title of the task.
+     * @return the title of the task
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * Changes the title, and saves the changes
+     * Changes the title, and saves the changes.
      * @param title the new title of the task
      * @return success of save
      */
@@ -94,15 +99,15 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * 
-     * @return the description of the Task
+     * Returns the description of the task.
+     * @return the description of the task
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Changes the description, and saves the changes
+     * Changes the description, and saves the changes.
      * @param description the new description of the task
      * @return success of save
      */
@@ -112,8 +117,8 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * Adds a requirement, and saves the changes
-     * @param req the requirement to add to the Task
+     * Adds a requirement, and saves the changes.
+     * @param req the requirement to add to the task
      * @return success of save
      */
     public boolean addRequirement(Requirement req) {
@@ -126,7 +131,7 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * Removes a requirement, and saves the changes
+     * Removes a requirement, and saves the changes.
      * @param req the requirement to remove from the task
      * @return success of both the remove, and the save
      */
@@ -143,8 +148,8 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * 
-     * @return the number of requirements associated with this Task
+     * Returns the number of requirements associated with this task.
+     * @return the number of requirements associated with this task
      */
     public int getRequirementCount() {
         if(!reqsLoaded)
@@ -153,7 +158,7 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * 
+     * Retrieves a requirement from an index.
      * @param index the index of the desired Requirement
      * @return the associated Requirement
      */
@@ -164,6 +169,10 @@ public class Task extends BackedObject implements Parcelable{
         return requirements.get(index);
     }
 
+    /**
+     * Returns a string representation of the task.
+     * @return a string representation of the task
+     */
     @Override
     public String toString() {
         return "Task(ID:"+getId()+")";

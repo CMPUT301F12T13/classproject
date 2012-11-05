@@ -25,6 +25,10 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
+/**
+ * Represents a fulfillment to a task requirement;
+ * aggregated by {@link Requirement}.
+ */
 public class Fulfillment extends BackedObject {
 
     private contentType content;
@@ -91,6 +95,10 @@ public class Fulfillment extends BackedObject {
         this.audioBuffer = buffer;
     }
 
+    /**
+     * Returns the image content associated with this fulfillment.
+     * @return the {@link android.graphics.Bitmap} content associated with the fulfillment.
+     */
     public Bitmap getImage() {
         if(content != contentType.image) {
             Log.w("Fulfillment(ID:"+getId()+")", "getImage() called on non-image Fulfillment");
@@ -99,6 +107,10 @@ public class Fulfillment extends BackedObject {
         return image;
     }
 
+    /**
+     * Return the text content associated with this fulfillment.
+     * @return the string content associated with the fulfillment.
+     */
     public String getText() {
         if(content != contentType.text) {
             Log.w("Fulfillment(ID:"+getId()+")", "getText() called on non-text Fulfillment");
@@ -107,6 +119,10 @@ public class Fulfillment extends BackedObject {
         return text;
     }
 
+    /**
+     * Returns the audio data associated with the fulfillment.
+     * @return the audio data associated with the fulfillment
+     */
     public short[] getAudio() {
         if(content != contentType.audio) {
             Log.w("Fulfillment(ID:"+getId()+")", "getAudio() called on non-audio Fulfillment");
@@ -115,6 +131,10 @@ public class Fulfillment extends BackedObject {
         return audioBuffer;
     }
 
+    /**
+     * Sets the image content associated with the fulfillment.
+     * @param image the {@link android.graphics.Bitmap} to associate with the fulfillment
+     */
     public void setImage(Bitmap image) {
         if(content != contentType.image) {
             Log.w("Fulfillment(ID:"+getId()+")", "setImage() called on non-image Fulfillment");
@@ -124,6 +144,10 @@ public class Fulfillment extends BackedObject {
         saveChanges();
     }
 
+    /**
+     * Sets the text content associated with the fulfillment.
+     * @param text the string of text content to associate with the fulfillment
+     */
     public void setText(String text) {
         if(content != contentType.text) {
             Log.w("Fulfillment(ID:"+getId()+")", "setText() called on non-text Fulfillment");
@@ -133,18 +157,31 @@ public class Fulfillment extends BackedObject {
         saveChanges();
     }
 
+    /**
+     * Sets the audio data associated with the fulfillment.
+     * @param buffer the audio data to associate with the fulfillment
+     */
     public void setAudio(short[] buffer) {
         if(content != contentType.audio) {
             Log.w("Fulfillment(ID:"+getId()+")", "setAudio() called on non-audio Fulfillment");
             return;
         }
+        this.audioBuffer = buffer;
         saveChanges();
     }
 
+    /**
+     * Returns the content type of the fulfillment.
+     * @return the content type of the fulfillment
+     */
     public contentType getContentType() {
         return content;
     }
 
+    /**
+     * Returns a string representation of the fulfillment.
+     * @return a string representation of the fulfillment
+     */
     @Override
     public String toString() {
         return "Fulfillment(ID:"+getId()+")";

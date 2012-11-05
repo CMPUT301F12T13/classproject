@@ -22,13 +22,18 @@ package ca.cmput301.team13.taskman.model;
 import java.io.Serializable;
 
 /**
- * Allows clear expression of the ID and type of a BackedObject Parcel
+ * Allows clear expression of the ID and type of a {@link BackedObject} Parcel.
  */
 class BackedObjectParcel implements Serializable {
     private static final long serialVersionUID = -6951704268396268805L;
     public int id;
     public String backedObjectType;
-
+    
+    /**
+     * Creates a BackedObject Parcel for sending it between Activities
+     * @param id					The ID of the BackedObject (for acquisition from the Repository)
+     * @param backedObjectType		The qualified class name of the object (usually get this from class.getName())
+     */
     public BackedObjectParcel(int id, String backedObjectType) {
         this.id = id;
         this.backedObjectType = backedObjectType;
