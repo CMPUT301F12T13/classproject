@@ -37,6 +37,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import utils.Notifications;
 
+/**
+ * ImageCaptureActivity is the activity that allows the user
+ * to record a sound sample to fulfill an image requirement.
+ * This activity should be launched with an intent created
+ * by FulfillmentActivityFactory.
+ */
 public class ImageCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri imageFileUri;
