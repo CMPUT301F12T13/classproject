@@ -506,6 +506,11 @@ public class LocalRepository {
         }
     }
 
+    /**
+     * Get the number of Fulfillments for the specified Requirement
+     * @param requirementId		The ID of the requirement
+     * @return					The number of Fulfillments contained by the specified Requirement
+     */
     private int getFulfillmentCount(int requirementId) {
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
                 new String[] {"COUNT(*)"}, RepoHelper.REQ_COL + " = " + requirementId, null,
