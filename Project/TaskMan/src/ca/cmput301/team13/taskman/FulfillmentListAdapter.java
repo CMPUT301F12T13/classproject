@@ -19,6 +19,8 @@
 
 package ca.cmput301.team13.taskman;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -77,7 +79,7 @@ public class FulfillmentListAdapter implements ListAdapter {
     	//Clear the list
         fulfillments.clear();
         //Repopulate the list
-        for(int i=0;i<task.getRequirementCount()-1;i++) {
+        for(int i=0;i<task.getRequirementCount();i++) {
         	Requirement r = task.getRequirement(i);
         	for(int j=0;j<r.getFullfillmentCount();j++) {
         		fulfillments.add(r.getFulfillment(j));
@@ -127,7 +129,8 @@ public class FulfillmentListAdapter implements ListAdapter {
         
         //Setup the attributes of the view
         //TODO: DateFormatter
-        ((TextView)newView.findViewById(R.id.fulTime)).setText("On ----:");
+        DateFormat df = new SimpleDateFormat("'On' MMM dd, yyyy 'at' h:mm");
+        ((TextView)newView.findViewById(R.id.fulTime)).setText(df.format(((Fulfillment)getItem(viewIndex)).getCreatedDate()));
         
         if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
         	((TextView)newView.findViewById(R.id.ful_text)).setText(

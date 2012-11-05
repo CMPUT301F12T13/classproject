@@ -431,7 +431,9 @@ public class LocalRepository {
                 RepoHelper.FULS_COLS, RepoHelper.REQ_COL + " = " + reqId, null,
                 null, null, null);
 
-        //If we have requirements, load them
+        //TODO: Content should be loaded on instantiation, not afterwards.
+        // (Afterwards triggers a write-back)
+        
         if(cursor.moveToFirst()) {
             do {
                 Fulfillment f = new Fulfillment(
