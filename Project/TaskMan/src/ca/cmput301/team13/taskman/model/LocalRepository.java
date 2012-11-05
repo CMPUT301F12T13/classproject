@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
+import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class LocalRepository {
@@ -227,11 +228,18 @@ public class LocalRepository {
         		removeRequirement(r);
         	}
         }
+        
+        //Only update a Task created by the current User
+        String creator = t.getCreator().toString();
+        String current = TaskMan.getInstance().getUser().toString();
+        if(t.getCreator().equals(TaskMan.getInstance().getUser())) {
+        	int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
+        	if(updateCount != 1)
+        		throw new RuntimeException("Database update failed!");
+        } else {
+        	throw new RuntimeException("Attempted to update a Task from a foreign User.");
+        }
 
-        int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
-
-        if(updateCount != 1)
-            throw new RuntimeException("Database update failed!");
     }
 
     /**
@@ -285,7 +293,7 @@ public class LocalRepository {
         values.put(RepoHelper.LASTMODIFIED_COL, f.getLastModifiedDate().getTime());
         values.put(RepoHelper.ID_COL, f.getId());
 
-        //TODO: Logic to convert typed Fulfillment content into a blob
+        //Logic to convert typed Fulfillment content into a blob
         switch(f.getContentType()) {
         case text:
             //Store a byte array for the text
