@@ -51,6 +51,7 @@ public class RequirementListAdapter implements ListAdapter {
     private LayoutInflater inflater;
     private String mode;
     private Activity activity;
+    FulfillmentIntentFactory fIntentFactory;
 
     //View types
     enum viewType {
@@ -71,6 +72,7 @@ public class RequirementListAdapter implements ListAdapter {
         observers = new ArrayList<DataSetObserver>();
         inflater = LayoutInflater.from(activity.getBaseContext());
         //Get our initial data
+        fIntentFactory = new FulfillmentIntentFactory(activity);
         update();
     }
 
@@ -134,8 +136,7 @@ public class RequirementListAdapter implements ListAdapter {
     }
     
     private void openFulfillmentActivity(Requirement r) {
-    	FulfillmentIntentFactory fIntentFactory = new FulfillmentIntentFactory(activity);
-		Intent i = fIntentFactory.createIntent(r);
+        Intent i = fIntentFactory.createIntent(r);
 		activity.startActivity(i);
     }
     
