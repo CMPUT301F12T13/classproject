@@ -34,6 +34,9 @@ import android.widget.EditText;
  */
 public class TextCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
+    /**
+     * Handles initialization of the activity.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,9 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
         ((Button)findViewById(R.id.text_cancel_button)).setOnClickListener(this); 
     }
 
+    /**
+     * Constructs menu options.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.text_fulfillment, menu);

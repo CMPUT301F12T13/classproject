@@ -39,8 +39,18 @@ import android.os.Bundle;
  */
 public abstract class FulfillmentActivity extends Activity {
 
+	/**
+	 * The parcelled {@link Requirement}.
+	 */
     protected Requirement requirement;
+    /**
+     * The newly created {@link Fulfillment} for the requirement.
+     */
     protected Fulfillment fulfillment;
+    /**
+     * Determines whether or not to keep the fulfillment.  If false,
+     * then the fulfillment is removed when the activity is stopped.
+     */
     protected boolean successful;
 
     /**

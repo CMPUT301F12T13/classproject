@@ -55,6 +55,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     private boolean recording;
     private String fileName;
 
+    /**
+     * Handles initialization of the activity.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);        
     }
 
+    /**
+     * Handles resume event.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -76,6 +82,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         ((TextView) findViewById(R.id.audio_view)).setText("Choose audio from your collection or record one now.");
     }
 
+    /**
+     * Handles pause event.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -87,11 +96,17 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
     }
     
+    /**
+     * Handles stop event.
+     */
     @Override
     public void onStop() {
         super.onStop();
     }
 
+    /**
+     * Constructs menu options.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.audio_fulfillment, menu);
@@ -99,7 +114,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Delegates action based on which listener has been clicked
+     * Delegates action based on which listener has been clicked.
      * @param source 
      */
     public void onClick(View source) {
@@ -129,7 +144,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     /**
-     * Send the taken/selected audio to our parent and exit the Activity
+     * Send the taken/selected audio to our parent and exit the Activity.
      */
     public void save() {
     	short[] audioShorts;
@@ -155,7 +170,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     /**
-     * Creates a short array from audio data stored at the given file path
+     * Creates a short array from audio data stored at the given file path.
      * @param path		The path to the audio file
      * @return			The short[] representing the audio data
      */
@@ -188,7 +203,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     /**
-     * Resolves a Uri to an absolute file path
+     * Resolves a Uri to an absolute file path.
      * 		- Paul Burke's getPath method from: http://stackoverflow.com/a/7857102/95764
      * @param context		The Activity's Context
      * @param uri			The Uri to resolve
@@ -216,7 +231,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     /**
-     * Cancel the Activity
+     * Cancel the Activity.
      */
     public void cancel() {
         successful = false;
@@ -224,8 +239,8 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
     
     /**
-     * Takes the user to the built-in audio selector where an existing audio file can
-     * be selected for use
+     * Takes the user to the built-in audio selector where an
+     * existing audio file can be selected for use.
      */
     private void audioFromCollection() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -234,7 +249,8 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     }
 
     /**
-     * Sets the file path for the new audio file, initialises and starts the MediaRecorder
+     * Sets the file path for the new audio file,
+     * initializes and starts the MediaRecorder.
      * @see android.media.MediaRecorder
      */
     private void startRecording() {
