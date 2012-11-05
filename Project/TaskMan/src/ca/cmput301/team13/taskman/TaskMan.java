@@ -27,6 +27,10 @@ import android.util.Log;
 import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
 
+/**
+ * Singleton that provides application-wide access to the
+ * {@link VirtualRepository} and {@link User} instances.
+ */
 public class TaskMan extends Application {
 
     private VirtualRepository repository;
@@ -36,6 +40,10 @@ public class TaskMan extends Application {
     public TaskMan() {
     }
 
+    /**
+     * Singleton global instance access method.
+     * @return Singleton instance
+     */
     public static TaskMan getInstance() {
     	if(instance == null) {
     		instance = new TaskMan();

@@ -22,7 +22,7 @@ package ca.cmput301.team13.taskman.model;
 import java.io.Serializable;
 
 /**
- * Allows clear expression of the ID and type of a BackedObject Parcel
+ * Allows clear expression of the ID and type of a {@link BackedObject} Parcel.
  */
 class BackedObjectParcel implements Serializable {
     private static final long serialVersionUID = -6951704268396268805L;

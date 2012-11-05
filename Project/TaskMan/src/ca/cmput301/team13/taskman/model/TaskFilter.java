@@ -22,6 +22,10 @@ package ca.cmput301.team13.taskman.model;
 import java.util.HashSet;
 import java.util.Iterator;
 
+/**
+ * Filters tasks based on a set of {@link Requirement.contentType}.
+ * enum values.
+ */
 public class TaskFilter {
 
     HashSet<Requirement.contentType> activeFilters;

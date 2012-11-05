@@ -31,7 +31,7 @@ import ca.cmput301.team13.taskman.model.Requirement;
 
 /**
  * FulfillmentIntentFactory creates intents for launching fulfillment
- * activities (activities that extend FulfillmentActivity).
+ * activities (subclasses of FulfillmentActivity).
  */
 public class FulfillmentIntentFactory {
 

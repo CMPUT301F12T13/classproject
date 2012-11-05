@@ -21,6 +21,9 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.Comparator;
 
+/**
+ * Compares the creation dates of {@link BackedObject} objects.
+ */
 public class BackedObjectCreatedComparator implements Comparator<BackedObject> {
 
     public int compare(BackedObject bo1, BackedObject bo2) {

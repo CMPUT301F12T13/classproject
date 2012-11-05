@@ -36,6 +36,10 @@ import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
 
+/**
+ * This activity has two modes, one for viewing tasks, and one for
+ * editing.
+ */
 public class TaskActivity extends Activity implements OnClickListener {
 
     private Task task;
@@ -43,6 +47,9 @@ public class TaskActivity extends Activity implements OnClickListener {
     private RequirementListAdapter reqAdapter;
     private FulfillmentListAdapter fulAdapter;
 
+    /**
+     * Handles initialization of the activity.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +118,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ListView)findViewById(R.id.fulfillment_list)).setAdapter(fulAdapter);
     }
 
+    /**
+     * Constructs menu options.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_task, menu);
@@ -125,6 +135,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         this.mode = mode;
     }
 
+    /**
+     * Handles pause event.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -135,6 +148,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         }
     }
     
+    /**
+     * Handles resume event.
+     */
     @Override
     public void onResume() {
     	super.onResume();
@@ -171,6 +187,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         super.finish();
     }
 
+    /**
+     * Handles click events.
+     */
     public void onClick(View source) {
         if(source.equals(findViewById(R.id.save_button))) {
             saveTask();

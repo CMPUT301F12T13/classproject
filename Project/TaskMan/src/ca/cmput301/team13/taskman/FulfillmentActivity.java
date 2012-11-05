@@ -32,10 +32,10 @@ import android.os.Bundle;
 /**
  * FulfillmentActivity is the base class for activities that
  * allow the user to make a fulfillment for a requirement.
- * This base class handles receiving of the parcelled requirement
- * used to launch the activity, the creation of the fulfillment
- * object, and removal of the fulfillment if the activity is
- * cancelled.
+ * This base class handles receiving of the parcelled
+ * {@link Requirement} used to launch the activity, the creation
+ * of the {@link Fulfillment} object, and removal of the fulfillment
+ * if the activity is cancelled.
  */
 public abstract class FulfillmentActivity extends Activity {
 
@@ -61,7 +61,7 @@ public abstract class FulfillmentActivity extends Activity {
 
     /**
      * Removes the fulfillment from the requirement if the
-     * <code> successful </code> member variable is false.
+     * {@link successful} member variable is false.
      */
     @Override
     public void onStop() {

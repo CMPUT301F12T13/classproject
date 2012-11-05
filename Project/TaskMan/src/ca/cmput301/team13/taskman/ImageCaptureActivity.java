@@ -39,10 +39,10 @@ import utils.Notifications;
 
 /**
  * ImageCaptureActivity is the activity that allows the user
- * take a photo or select one from the devices' library to 
+ * take a photo or select one from the device's library to 
  * fulfill an image requirement.
  * This activity should be launched with an intent created
- * by FulfillmentActivityFactory.
+ * by {@link FulfillmentIntentFactory}.
  */
 public class ImageCaptureActivity extends FulfillmentActivity implements OnClickListener {
 

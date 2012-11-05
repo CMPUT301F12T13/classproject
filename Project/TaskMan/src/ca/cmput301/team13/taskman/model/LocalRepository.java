@@ -36,6 +36,10 @@ import android.util.Log;
 import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
+/**
+ * Manages a <a href="http://sqlite.org/">SQLite<a> database stored
+ * locally on the phone memory.
+ */
 public class LocalRepository {
     //Database connection
     private SQLiteDatabase db = null;

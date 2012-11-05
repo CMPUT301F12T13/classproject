@@ -41,7 +41,8 @@ import ca.cmput301.team13.taskman.model.TaskFilter;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
 
 /**
- * Provides a list of tasks from the virtual repo to list views
+ * Provides a list of tasks from the {@link VirtualRepository}
+ * to list views.
  */
 public class FulfillmentListAdapter implements ListAdapter {
 

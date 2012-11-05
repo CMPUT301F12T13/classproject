@@ -25,6 +25,10 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
+/**
+ * Represents a fulfillment to a task requirement;
+ * aggregated by {@link Requirement}.
+ */
 public class Fulfillment extends BackedObject {
 
     private contentType content;

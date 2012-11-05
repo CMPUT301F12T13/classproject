@@ -42,7 +42,8 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
 
 /**
- * Provides a list of requirements from the virtual repo to list views
+ * Provides a list of requirements from the {@link VirtualRepository}
+ * to list views.
  */
 public class RequirementListAdapter implements ListAdapter {
 

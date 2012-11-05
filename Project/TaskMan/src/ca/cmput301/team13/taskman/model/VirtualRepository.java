@@ -27,6 +27,10 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * A facade combining {@link LocalRepository} and a remote
+ * database into one interface.
+ */
 public class VirtualRepository {
     private LocalRepository local;
 

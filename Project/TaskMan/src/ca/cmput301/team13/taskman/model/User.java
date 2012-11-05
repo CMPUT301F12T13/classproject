@@ -19,6 +19,9 @@
 
 package ca.cmput301.team13.taskman.model;
 
+/**
+ * Holds the identity of a user.
+ */
 public class User {
     private String identifier;
     public User(String identifier) {

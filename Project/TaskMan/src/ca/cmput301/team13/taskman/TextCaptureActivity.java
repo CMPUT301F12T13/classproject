@@ -30,7 +30,7 @@ import android.widget.EditText;
  * TextCaptureActivity is the activity that allows the user
  * to submit the text to fulfill a textual requirement.
  * This activity should be launched with an intent created
- * by FulfillmentActivityFactory.
+ * by {@link FulfillmentIntentFactory}.
  */
 public class TextCaptureActivity extends FulfillmentActivity implements OnClickListener {
 

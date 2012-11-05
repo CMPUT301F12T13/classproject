@@ -22,6 +22,10 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Holds the information associated with a requirement for a task;
+ * aggregated by {@link Task}.
+ */
 public class Requirement extends BackedObject{
 
     private static final long serialVersionUID = 1792613431433747003L;

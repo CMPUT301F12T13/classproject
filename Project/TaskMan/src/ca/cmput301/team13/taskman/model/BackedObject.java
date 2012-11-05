@@ -25,6 +25,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import ca.cmput301.team13.taskman.TaskMan;
 
+/**
+ * Base class for objects that reside in the database.
+ * Subclasses include {@link Requirement}
+ */
 abstract class BackedObject implements Parcelable {
 
 
