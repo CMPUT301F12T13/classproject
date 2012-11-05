@@ -30,15 +30,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.MediaController;
 import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
 import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.TaskFilter;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
 
 /**
  * Provides a list of tasks from the virtual repo to list views

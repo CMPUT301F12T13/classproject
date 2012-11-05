@@ -24,8 +24,6 @@ import java.util.Date;
 
 public class Requirement extends BackedObject{
 
-    private static final long serialVersionUID = 1792613431433747003L;
-
     //Content Mask Stuff
     public static enum contentType {
         text,
