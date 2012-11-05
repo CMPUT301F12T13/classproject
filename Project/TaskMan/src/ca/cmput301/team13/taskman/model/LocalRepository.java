@@ -22,6 +22,7 @@ package ca.cmput301.team13.taskman.model;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,6 +35,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import ca.cmput301.team13.taskman.TaskMan;
 
@@ -440,7 +442,29 @@ public class LocalRepository {
                         new User(cursor.getString(4)),//Creator
                         vr
                         );
-                //TODO: Attach actual data onto fulfillment, instead of just saying what it should be.
+                if(!cursor.isNull(2)) {
+                    switch(f.getContentType()) {
+                    case text:
+                        //COnvert the Byte Array to a String
+                        f.setText(new String(cursor.getBlob(2)));
+                        break;
+                    case audio:
+                        //Directly convert the byte[] to short[]
+                        byte[] audioBytes = cursor.getBlob(2);
+                        ByteBuffer bb = ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN);
+                        short[] audio = new short[audioBytes.length/2];
+                        for(int i=0;i<audio.length;i++)
+                            audio[i]=bb.getShort();
+                        f.setAudio(audio);
+                        break;
+                    case image:
+                        //Convert the byte array to a Bitmap
+                        byte[] imgBytes = cursor.getBlob(2);
+                        f.setImage(BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length));
+                        break;
+                    }
+                }
+                
                 fulfillments.add(f);
             } while (cursor.moveToNext());
         }

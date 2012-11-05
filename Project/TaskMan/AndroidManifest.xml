@@ -46,7 +46,7 @@
         </activity>
         <activity
             android:name=".TextCaptureActivity"
-            android:label="@string/title_activity_text_capture" >
+            android:label="@string/title_activity_text_capture" > 
             <intent-filter>
             </intent-filter>
         </activity>
