@@ -66,6 +66,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         //        ((LinearLayout)findViewById(R.id.basic_info_entry_panel)).setVisibility(View.GONE);
     }
 
+    /**
+     * Sets the listeners, adapters, and text fields for the Task Editing View
+     */
     private void setEditingFields() {
         //Disconnect our Task from the Repository
         task.delaySaves(true);
@@ -88,6 +91,9 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ListView)findViewById(R.id.requirement_list)).setAdapter(reqAdapter);
     }
 
+    /**
+     * Sets the listeners, adapters, and text fields for the Task View
+     */
     private void setViewingFields() {
         //Show title and description
         ((TextView)findViewById(R.id.task_name_text)).setText(task.getTitle());
