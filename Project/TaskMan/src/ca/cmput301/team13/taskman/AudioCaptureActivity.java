@@ -115,6 +115,12 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         else if(source.equals(findViewById(R.id.collection_button))) {
             audioFromCollection();
         }
+        else if (source.equals(findViewById(R.id.save_button))) {
+            save();
+        }
+        else if (source.equals(findViewById(R.id.cancel_button))) {
+            cancel();
+        }
     }
     
     /**
