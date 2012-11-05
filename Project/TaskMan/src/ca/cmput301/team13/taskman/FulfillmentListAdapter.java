@@ -83,6 +83,7 @@ public class FulfillmentListAdapter implements ListAdapter {
         		fulfillments.add(r.getFulfillment(j));
         	}
         }
+        Log.w("FulfillmentListAdapter", "Found "+fulfillments.size()+" Fulfillments.");
         //Sort the list
         sortByCreatedDate();
         notifyObservers();
