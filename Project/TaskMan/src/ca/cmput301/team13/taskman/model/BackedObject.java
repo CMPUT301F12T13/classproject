@@ -34,7 +34,15 @@ abstract class BackedObject implements Parcelable {
     private User creator;
     VirtualRepository repo;
     boolean delaySave = false;
-
+    
+    /**
+     * Creates a BackedObject
+     * @param id			The ID for insertion into the database
+     * @param created		The date the item was created
+     * @param lastModified	The last modification date 
+     * @param creator		The User who created this Object
+     * @param repo			The VirtualRepository this Object is wrapped under
+     */
     BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
         this.id = id;
         this.repo = repo;

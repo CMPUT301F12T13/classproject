@@ -138,6 +138,7 @@ public class Fulfillment extends BackedObject {
             Log.w("Fulfillment(ID:"+getId()+")", "setAudio() called on non-audio Fulfillment");
             return;
         }
+        this.audioBuffer = buffer;
         saveChanges();
     }
 

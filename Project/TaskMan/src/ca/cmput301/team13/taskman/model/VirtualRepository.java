@@ -31,8 +31,10 @@ public class VirtualRepository {
     private LocalRepository local;
 
     public VirtualRepository(Context context) {
-        local = new LocalRepository(context, this);
-        local.open();
+    	if(local == null) {
+    		local = new LocalRepository(context, this);
+        	local.open();
+    	}
     }
 
     /**
@@ -87,7 +89,6 @@ public class VirtualRepository {
             creator = t.getCreator();
         }
         Requirement r = local.createRequirement(creator, t, content);
-        t.addRequirement(r);
         return r;
     }
 
@@ -102,7 +103,6 @@ public class VirtualRepository {
             creator = r.getCreator();
         }
         Fulfillment f = local.createFulfillment(creator, r);
-        r.addFulfillment(f);
         return f;
     }
 

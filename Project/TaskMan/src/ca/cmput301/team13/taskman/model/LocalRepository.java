@@ -21,6 +21,7 @@ package ca.cmput301.team13.taskman.model;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,6 +35,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
+import ca.cmput301.team13.taskman.TaskMan;
 
 public class LocalRepository {
     //Database connection
@@ -55,7 +57,7 @@ public class LocalRepository {
     public void openTestConnection() {
         db = SQLiteDatabase.create(null);
     }
-
+    
     void close() {
         helper.close();
     }
@@ -227,11 +229,18 @@ public class LocalRepository {
         		removeRequirement(r);
         	}
         }
+        
+        //Only update a Task created by the current User
+        String creator = t.getCreator().toString();
+        String current = TaskMan.getInstance().getUser().toString();
+        if(t.getCreator().equals(TaskMan.getInstance().getUser())) {
+        	int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
+        	if(updateCount != 1)
+        		throw new RuntimeException("Database update failed!");
+        } else {
+        	throw new RuntimeException("Attempted to update a Task from a foreign User.");
+        }
 
-        int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
-
-        if(updateCount != 1)
-            throw new RuntimeException("Database update failed!");
     }
 
     /**
@@ -285,7 +294,7 @@ public class LocalRepository {
         values.put(RepoHelper.LASTMODIFIED_COL, f.getLastModifiedDate().getTime());
         values.put(RepoHelper.ID_COL, f.getId());
 
-        //TODO: Logic to convert typed Fulfillment content into a blob
+        //Logic to convert typed Fulfillment content into a blob
         switch(f.getContentType()) {
         case text:
             //Store a byte array for the text
@@ -294,11 +303,9 @@ public class LocalRepository {
         case audio:
             //Directly convert the short[] to byte[]
             short[] audio = f.getAudio();
-            ByteBuffer audioBytes = ByteBuffer.allocate(audio.length);
-            for(int i=0; i<audio.length; i++) {
-                audioBytes.putShort(audio[i]);
-            }
-            values.put(RepoHelper.CONTENT_COL, audioBytes.array());
+            byte[] audioBytes = new byte[audio.length * 2];
+            ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(audio);
+            values.put(RepoHelper.CONTENT_COL, audioBytes);
             break;
         case image:
             //Compress and store the image
@@ -466,6 +473,7 @@ public class LocalRepository {
      * @return		The updated Task
      */
     Task getTaskUpdate(Task t) {
+    	loadRequirementsForTask(t);
     	return getTask(t.getId());
     }
 
@@ -499,6 +507,11 @@ public class LocalRepository {
         }
     }
 
+    /**
+     * Get the number of Fulfillments for the specified Requirement
+     * @param requirementId		The ID of the requirement
+     * @return					The number of Fulfillments contained by the specified Requirement
+     */
     private int getFulfillmentCount(int requirementId) {
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
                 new String[] {"COUNT(*)"}, RepoHelper.REQ_COL + " = " + requirementId, null,

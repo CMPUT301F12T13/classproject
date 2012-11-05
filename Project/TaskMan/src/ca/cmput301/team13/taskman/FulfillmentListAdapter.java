@@ -71,10 +71,12 @@ public class FulfillmentListAdapter implements ListAdapter {
      * Refresh task list from the local repo.
      */
     public void update() {
+    	task = TaskMan.getInstance().getRepository().getTaskUpdate(task);
+    	
     	//Clear the list
         fulfillments.clear();
         //Repopulate the list
-        for(int i=0;i<task.getRequirementCount();i++) {
+        for(int i=0;i<task.getRequirementCount()-1;i++) {
         	Requirement r = task.getRequirement(i);
         	for(int j=0;j<r.getFullfillmentCount();j++) {
         		fulfillments.add(r.getFulfillment(j));
