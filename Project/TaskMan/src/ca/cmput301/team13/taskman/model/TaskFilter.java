@@ -31,7 +31,7 @@ public class TaskFilter {
     HashSet<Requirement.contentType> activeFilters;
 
     /**
-     * Initializes a new, empty TaskFilter
+     * Initializes a new, empty TaskFilter.
      * 		(the default filter will not allow any tasks to be displayed)
      */
     public TaskFilter() {
@@ -39,7 +39,7 @@ public class TaskFilter {
     }
 
     /**
-     * Initializes a new TaskFilter, given a set of active filters
+     * Initializes a new TaskFilter, given a set of active filters.
      * @param activeFilters
      */
     public TaskFilter(HashSet<Requirement.contentType> activeFilters) {
@@ -47,7 +47,7 @@ public class TaskFilter {
     }
 
     /**
-     * Activates the specified filter
+     * Activates the specified filter.
      * @param requirementType		Requirement.contentType		The filter to activate
      */
     public void activateFilter(Requirement.contentType requirementType) {
@@ -55,7 +55,8 @@ public class TaskFilter {
     }
 
     /**
-     * Activates all possible filter types (according to Requirement.contentType
+     * Activates all possible filter types (according
+     * to {@link Requirement.contentType}).
      */
     public void activateAll() {
         for (Requirement.contentType requirementType : Requirement.contentType.values()) {
@@ -64,7 +65,7 @@ public class TaskFilter {
     }
 
     /**
-     * Deactivates the specified filter
+     * Deactivates the specified filter.
      * @param requirementType		Requirement.contentType		The filter to deactivate
      */
     public void deactivateFilter(Requirement.contentType requirementType) {
@@ -72,7 +73,8 @@ public class TaskFilter {
     }
 
     /**
-     * Checks the task against the filter and determines whether it should be displayed
+     * Checks the task against the filter and determines
+     * whether it should be displayed.
      * @param	task	Task		The task to evaluate
      * @return			boolean		Whether the task should be displayed under the filter
      */
@@ -87,9 +89,9 @@ public class TaskFilter {
     }
 
     /**
-     * Creates a SQL "WHERE" representation of this filter
-     * 		ex. "text OR image"
-     * @return	String		The SQL string
+     * Creates a SQL <code>"WHERE"</code> representation of this filter.
+     * 		Example:<code> "text" </code> OR <code>"image"</code>.
+     * @return String The SQL string
      */
     @Override
     public String toString() {

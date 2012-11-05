@@ -208,7 +208,8 @@ public class VirtualRepository {
     }
 
     /**
-     * Remove a Specified Fulfillment from the backing store. All references to the Fulfillment object should be discarded
+     * Remove a Specified Fulfillment from the backing store.
+     * All references to the Fulfillment object should be discarded.
      * @param f The Fulfillment
      */
     public void removeFulfillment(Fulfillment f) {

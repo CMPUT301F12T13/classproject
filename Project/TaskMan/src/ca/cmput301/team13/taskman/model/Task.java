@@ -90,7 +90,7 @@ public class Task extends BackedObject implements Parcelable{
 
     /**
      * Changes the title, and saves the changes.
-     * @param title the new title of the Task
+     * @param title the new title of the task
      * @return success of save
      */
     public boolean setTitle(String title) {
@@ -99,8 +99,8 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * Returns the description of the Task.
-     * @return the description of the Task
+     * Returns the description of the task.
+     * @return the description of the task
      */
     public String getDescription() {
         return description;
@@ -118,7 +118,7 @@ public class Task extends BackedObject implements Parcelable{
 
     /**
      * Adds a requirement, and saves the changes.
-     * @param req the requirement to add to the Task
+     * @param req the requirement to add to the task
      * @return success of save
      */
     public boolean addRequirement(Requirement req) {
@@ -148,8 +148,8 @@ public class Task extends BackedObject implements Parcelable{
     }
 
     /**
-     * Returns the number of requirements associated with this Task.
-     * @return the number of requirements associated with this Task
+     * Returns the number of requirements associated with this task.
+     * @return the number of requirements associated with this task
      */
     public int getRequirementCount() {
         if(!reqsLoaded)

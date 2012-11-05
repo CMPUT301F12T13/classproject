@@ -106,18 +106,24 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * 
+     * Returns the {@link User} who created the object.
      * @return the User that created this Object
      */
     public User getCreator() {
         return creator;
     }
 
+    /**
+     * Describes the contents of the object (for parcelling).
+     */
     //Parcelable Implementation
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Writes the object to a {@link android.os.Parcel}.
+     */
     public void writeToParcel(Parcel out, int flags) {
         BackedObjectParcel parcel = new BackedObjectParcel(getId(), getClass().getName());
         out.writeSerializable(parcel);
