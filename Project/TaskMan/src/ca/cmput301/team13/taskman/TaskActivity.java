@@ -40,7 +40,8 @@ public class TaskActivity extends Activity implements OnClickListener {
 
     private Task task;
     private String mode;
-    private RequirementListAdapter adapter;
+    private RequirementListAdapter reqAdapter;
+    private FulfillmentListAdapter fulAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,10 +82,10 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ImageButton)findViewById(R.id.req_addImg_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addAud_btn)).setOnClickListener(this);
         //TODO: Set the requirements
-        adapter = new RequirementListAdapter(task, "edit", this);
+        reqAdapter = new RequirementListAdapter(task, "edit", this);
         //Disconnect our Requirements from the repository
-        adapter.delaySaves(true);
-        ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
+        reqAdapter.delaySaves(true);
+        ((ListView)findViewById(R.id.requirement_list)).setAdapter(reqAdapter);
     }
 
     private void setViewingFields() {
@@ -98,8 +99,10 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((Button)findViewById(R.id.task_edit_btn)).setOnClickListener(this);
         
         //Setup the Requirements List
-        adapter = new RequirementListAdapter(task, mode, this);
-        ((ListView)findViewById(R.id.requirement_list)).setAdapter(adapter);
+        reqAdapter = new RequirementListAdapter(task, mode, this);
+        ((ListView)findViewById(R.id.requirement_list)).setAdapter(reqAdapter);
+        fulAdapter = new FulfillmentListAdapter(task, this);
+        ((ListView)findViewById(R.id.fulfillment_list)).setAdapter(fulAdapter);
     }
 
     @Override
@@ -148,7 +151,7 @@ public class TaskActivity extends Activity implements OnClickListener {
             task.setDescription(taskDescription);
             //Push all changes to the repository
             task.delaySaves(false);
-            adapter.delaySaves(false);
+            reqAdapter.delaySaves(false);
             //Make sure we don't delete the Task after all this
             setMode("edit");
         }
@@ -169,13 +172,13 @@ public class TaskActivity extends Activity implements OnClickListener {
             cancelTask();
         } else if  (source.getId() == R.id.req_addTxt_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text);
-            adapter.update();
+            reqAdapter.update();
         } else if  (source.getId() == R.id.req_addImg_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.image);
-            adapter.update();
+            reqAdapter.update();
         } else if  (source.getId() == R.id.req_addAud_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio);
-            adapter.update();
+            reqAdapter.update();
         } else if  (source.getId() == R.id.task_edit_btn) {
             Bundle b = new Bundle();
             b.putParcelable("task", task);

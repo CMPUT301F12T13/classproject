@@ -9,6 +9,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="TaskMan"
@@ -29,27 +30,24 @@
             android:label="@string/title_activity_task"
             android:windowSoftInputMode="adjustPan" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AudioCaptureActivity"
             android:label="@string/title_activity_audio_capture" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ImageCaptureActivity"
             android:label="@string/title_activity_camera_capture" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TextCaptureActivity"
+            android:label="@string/title_activity_text_capture" >
+            <intent-filter>
             </intent-filter>
         </activity>
     </application>

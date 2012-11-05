@@ -62,7 +62,7 @@ public class FulfillmentIntentFactory {
             i = new Intent(source, AudioCaptureActivity.class);
         }
         else if(req.getContentType() == Requirement.contentType.text) {
-            // TODO: don't have this activity yet.
+            i = new Intent(source, TextCaptureActivity.class);
         }
 
         i.putExtra("requirement", req);

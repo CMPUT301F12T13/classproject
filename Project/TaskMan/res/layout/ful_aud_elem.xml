@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/reqDescriptionText"
+        android:id="@+id/fulTime"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -15,7 +15,7 @@
     </TextView>
 
     <MediaController
-        android:id="@+id/mediaController1"
+        android:id="@+id/ful_audio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

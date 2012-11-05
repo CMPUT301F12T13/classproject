@@ -19,13 +19,13 @@
 
 package ca.cmput301.team13.taskman;
 
-import ca.cmput301.team13.taskman.model.User;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
-
+import utils.Identifiers;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.provider.Settings.Secure;
 import android.util.Log;
+import ca.cmput301.team13.taskman.model.User;
+import ca.cmput301.team13.taskman.model.VirtualRepository;
 
 public class TaskMan extends Application {
 
@@ -37,6 +37,9 @@ public class TaskMan extends Application {
     }
 
     public static TaskMan getInstance() {
+    	if(instance == null) {
+    		instance = new TaskMan();
+    	}
         return instance;
     }
 
@@ -47,11 +50,22 @@ public class TaskMan extends Application {
 
     @Override
     public void onCreate() {
+    	String androidString;
         super.onCreate();
         instance = this;
         //instantiate a global context for the repository
         repository = new VirtualRepository(this.getApplicationContext());
-        user = new User(Secure.getString(this.getContentResolver(), Secure.ANDROID_ID));
+        if(Secure.ANDROID_ID == null) {
+        	androidString = Identifiers.randomString(15);
+        } else {
+	        androidString = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+	        //If an ANROID_ID is not available, generate a pseudo-random string instead (most likely
+	        //we're running a Test Case if this problem is encountered)
+	        if(androidString == null) {
+	        	androidString = Identifiers.randomString(15);
+	        }
+        }
+        user = new User(androidString);
         Log.w("TaskMan","User set as: "+user);
     }
 
@@ -70,6 +84,9 @@ public class TaskMan extends Application {
     }
 
     public User getUser() {
+    	if(user == null) {
+    		user = new User(Identifiers.randomString(15));
+    	}
         return user;
     }
 }

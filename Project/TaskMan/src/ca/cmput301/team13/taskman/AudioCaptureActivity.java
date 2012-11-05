@@ -20,10 +20,14 @@
 package ca.cmput301.team13.taskman;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
+import utils.Notifications;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -34,7 +38,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import utils.Notifications;
 
 /**
  * AudioCaptureActivity is the activity that allows the user
@@ -118,25 +121,74 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         else if(source.equals(findViewById(R.id.collection_button))) {
             audioFromCollection();
         }
+        else if (source.equals(findViewById(R.id.save_button))) {
+            save();
+        }
+        else if (source.equals(findViewById(R.id.cancel_button))) {
+            cancel();
+        }
     }
     
     /**
      * Send the taken/selected audio to our parent and exit the Activity
      */
     public void save() {
+    	short[] audioShorts = null;
         //test audio has been selected.
         if (audioSelected) {
-            Notifications.showToast(getApplicationContext(), Notifications.NOT_IMPLEMENTED);
-            //TODO: need to convert what we have to short[];
-            // we have String fileName as a handle to it if it was recorded.
-            // we have Uri audioFileUri as a handle if it was selected from library.
+            //Get audio from collection
+            if(audioFileUri != null) {
+            	audioShorts = getAudioShort(audioFileUri.getPath());
+            //Get audio from the recorder
+            } else if(fileName != null) {
+            	audioShorts = getAudioShort(fileName);
+            }
             
-            
-            //successful = true;
+            //Return to the Task Viewer
+            if(audioShorts != null) {
+            	successful = true;
+            	fulfillment.setAudio(audioShorts);
+            } else {
+            	successful = false;
+            }
             finish();
         } else {
             Notifications.showToast(getApplicationContext(), "No Audio selected");
         }
+    }
+    
+    /**
+     * Creates a short array from audio data stored at the given file path
+     * @param path		The path to the audio file
+     * @return			The short[] representing the audio data
+     */
+    public short[] getAudioShort(String path) {
+    	File audioFile;
+    	FileInputStream audioStream = null;
+    	byte[] audioBytes = null;
+    	short[] audioShorts = null;
+    	audioFile = new File(path);
+    	//If audio of some kind was generated, attempt to convert it and pass it back to the Task Viewer
+        if(audioFile != null) {
+			try {
+				audioStream = new FileInputStream(audioFile);
+				audioBytes = new byte[(int)audioFile.length()];
+				audioStream.read(audioBytes);
+				audioStream.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+        //Do the conversion
+        if(audioBytes != null) {
+        	ByteBuffer audioByteBuffer = ByteBuffer.wrap(audioBytes);
+        	audioByteBuffer.rewind();
+        	ShortBuffer audioShortBuffer = ((ByteBuffer)audioByteBuffer.rewind()).asShortBuffer();
+        	audioShorts = audioShortBuffer.array();
+        }
+        return audioShorts;
     }
     
     /**
