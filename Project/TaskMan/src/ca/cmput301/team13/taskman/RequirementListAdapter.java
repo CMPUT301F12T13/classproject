@@ -267,7 +267,6 @@ class RequirementTextWatcher implements TextWatcher {
     }
     
     public void afterTextChanged(Editable editable) {
-        String t = editable.toString();
         ((Requirement)rla.getItem(position)).setDescription(editable.toString());
     }
 

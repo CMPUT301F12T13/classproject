@@ -25,6 +25,8 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,7 +36,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 import ca.cmput301.team13.taskman.TaskMan;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 /**
  * Manages a <a href="http://sqlite.org/">SQLite<a> database stored
@@ -668,11 +669,11 @@ class RepoHelper  extends SQLiteOpenHelper{
 
     @Override
     public void onOpen(SQLiteDatabase db) {
-        //For now, we probably don't want persistence, as things may be changing.
-        Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
+        //Enabled Object Persistence
+        /*Log.w("SQLite Helper", "Wiping local SQLite DB, preventing persistence");
         db.execSQL("DROP TABLE IF EXISTS " + TASKS_TBL);
         db.execSQL("DROP TABLE IF EXISTS " + REQS_TBL);
         db.execSQL("DROP TABLE IF EXISTS " + FULS_TBL);
-        onCreate(db);
+        onCreate(db);*/
     }
 }
