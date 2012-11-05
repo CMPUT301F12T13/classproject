@@ -79,7 +79,7 @@ public class FulfillmentListAdapter implements ListAdapter {
         //Repopulate the list
         for(int i=0;i<task.getRequirementCount();i++) {
         	Requirement r = task.getRequirement(i);
-        	for(int j=0;i<r.getFullfillmentCount();j++) {
+        	for(int j=0;j<r.getFullfillmentCount();j++) {
         		fulfillments.add(r.getFulfillment(j));
         	}
         }
