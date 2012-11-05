@@ -34,6 +34,10 @@ import android.util.Log;
 public class VirtualRepository {
     private LocalRepository local;
 
+    /**
+     * Instantiates a new {@link VirtualRepository} object.
+     * @param context the context of the Android application
+     */
     public VirtualRepository(Context context) {
     	if(local == null) {
     		local = new LocalRepository(context, this);

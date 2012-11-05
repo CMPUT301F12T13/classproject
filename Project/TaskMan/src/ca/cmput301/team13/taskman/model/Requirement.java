@@ -28,6 +28,9 @@ import java.util.Date;
  */
 public class Requirement extends BackedObject{
 
+	/**
+	 * An enum of desired contentType for requirements.
+	 */
     //Content Mask Stuff
     public static enum contentType {
         text,

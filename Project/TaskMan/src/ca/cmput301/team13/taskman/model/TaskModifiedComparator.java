@@ -26,6 +26,9 @@ import java.util.Comparator;
  */
 public class TaskModifiedComparator implements Comparator<Task> {
 
+	/**
+	 * Compares the modified dates of two {@link Task} instances.
+	 */
     public int compare(Task t1, Task t2) {
         return t1.getLastModifiedDate().compareTo(t2.getLastModifiedDate());
     }

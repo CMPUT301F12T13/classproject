@@ -49,6 +49,11 @@ public class LocalRepository {
     //Virtual Repository link
     private VirtualRepository vr;
 
+    /**
+     * Creates a new LocalRepository instance.
+     * @param context the Context of the Android application
+     * @param vr the virtual repository
+     */
     public LocalRepository(Context context, VirtualRepository vr) {
         helper = new RepoHelper(context);
         this.vr = vr;
@@ -58,6 +63,9 @@ public class LocalRepository {
         db = helper.getWritableDatabase();
     }
 
+    /**
+     * Opens a test connection.
+     */
     public void openTestConnection() {
         db = SQLiteDatabase.create(null);
     }

@@ -27,7 +27,6 @@ import ca.cmput301.team13.taskman.TaskMan;
 
 /**
  * Base class for objects that reside in the database.
- * Subclasses include {@link Requirement}
  */
 abstract class BackedObject implements Parcelable {
 
@@ -40,7 +39,7 @@ abstract class BackedObject implements Parcelable {
     boolean delaySave = false;
     
     /**
-     * Creates a BackedObject
+     * Creates a BackedObject.
      * @param id			The ID for insertion into the database
      * @param created		The date the item was created
      * @param lastModified	The last modification date 
@@ -56,7 +55,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Save any changes that have occurred to this object
+     * Save any changes that have occurred to this object.
      * @return Whether or not the save was successful
      */
     boolean saveChanges() {
@@ -82,7 +81,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Access the ID of this object
+     * Access the ID of this object.
      * @return the id
      */
     int getId() {
@@ -90,7 +89,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Access the date/time when this object was first created
+     * Access the date/time when this object was first created.
      * @return the date
      */
     public Date getCreatedDate() {
@@ -98,7 +97,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Access the date/time when this object was last modified
+     * Access the date/time when this object was last modified.
      * @return the date
      */
     public Date getLastModifiedDate() {
@@ -130,7 +129,7 @@ abstract class BackedObject implements Parcelable {
     }
 
     /**
-     * Returns a BackedObject conforming with the type of BackedObject that was parceled
+     * Returns a BackedObject conforming with the type of BackedObject that was parceled.
      * 		- Possible types: Task, Requirement, Fulfillment
      */
     public static final Parcelable.Creator<BackedObject> CREATOR

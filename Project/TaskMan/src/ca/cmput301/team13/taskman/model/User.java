@@ -24,12 +24,23 @@ package ca.cmput301.team13.taskman.model;
  */
 public class User {
     private String identifier;
+    /**
+     * Creates a new instance.
+     * @param identifier the string to identify the user
+     */
     public User(String identifier) {
         this.identifier = identifier;
     }
+    /**
+     * Returns the identifier string for the user.
+     * @return the identifier string for the user
+     */
     public String getIdentifier() {
         return identifier;
     }
+    /**
+     * Compares user identities.
+     */
     @Override
     public boolean equals(Object o) {
         if(o == null) return false;
@@ -40,6 +51,10 @@ public class User {
         }
         return false;
     }
+    /**
+     * Returns the user identity as a string.
+     * @return the string representation of the user identity
+     */
     @Override
     public String toString() {
         return identifier;
