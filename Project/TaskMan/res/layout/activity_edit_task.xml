@@ -98,30 +98,48 @@
         android:background="@color/bgMinorColor" >
 
         <ImageButton
+            android:id="@+id/req_addAud_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@+id/req_addTxt_btn"
+            android:src="@drawable/audicon"
+            android:contentDescription="Audio Fulfillment" 
+            />        
+        
+        <ImageButton
             android:id="@+id/req_addTxt_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/txticon" 
-            android:contentDescription="Text Filter" />
+            android:src="@drawable/txticon"
+            android:layout_toLeftOf="@+id/divider" 
+            android:contentDescription="Text Fulfillment" />
+
+        <RelativeLayout
+            android:id="@id/divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" >
+    
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/req_addImg_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/req_addTxt_btn"
+            android:layout_toRightOf="@+id/divider"
             android:src="@drawable/imgicon" 
-            android:contentDescription="Image Filter" 
+            android:contentDescription="Image Fulfillment" 
             />
 
         <ImageButton
-            android:id="@+id/req_addAud_btn"
+            android:id="@+id/req_addVid_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toRightOf="@+id/req_addTxt_btn"
-            android:src="@drawable/audicon"
-            android:contentDescription="Audio Filter" 
+            android:layout_toRightOf="@+id/req_addImg_btn"
+            android:src="@drawable/vidicon" 
+            android:contentDescription="Video Fulfillment" 
             />
+
     </RelativeLayout>
     
     <ListView

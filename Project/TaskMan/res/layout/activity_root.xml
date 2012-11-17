@@ -35,29 +35,45 @@
         android:background="@color/bgMinorColor" >
 
         <ImageButton
+            android:id="@+id/audfilter_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@+id/txtfilter_btn"
+            android:src="@drawable/audicon"
+            android:contentDescription="Audio Filter" 
+            />
+        
+        <ImageButton
             android:id="@+id/txtfilter_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
+            android:layout_toLeftOf="@+id/divider"
             android:src="@drawable/txticon" 
             android:contentDescription="Text Filter" />
+        
+        <RelativeLayout
+            android:id="@id/divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" >
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/imgfilter_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/txtfilter_btn"
+            android:layout_toRightOf="@+id/divider"
             android:src="@drawable/imgicon" 
             android:contentDescription="Image Filter" 
             />
-
+        
         <ImageButton
-            android:id="@+id/audfilter_btn"
+            android:id="@+id/vidfilter_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toRightOf="@+id/txtfilter_btn"
-            android:src="@drawable/audicon"
-            android:contentDescription="Audio Filter" 
+            android:layout_toRightOf="@+id/imgfilter_btn"
+            android:src="@drawable/vidicon" 
+            android:contentDescription="Video Filter" 
             />
         
         <Button
