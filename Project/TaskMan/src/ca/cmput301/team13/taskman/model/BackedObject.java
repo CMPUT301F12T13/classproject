@@ -35,7 +35,7 @@ abstract class BackedObject implements Parcelable {
     private Date created;
     private Date lastModified;
     private User creator;
-    VirtualRepository repo;
+    transient VirtualRepository repo;
     boolean delaySave = false;
     
     /**
