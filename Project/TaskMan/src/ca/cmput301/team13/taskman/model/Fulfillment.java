@@ -35,6 +35,7 @@ public class Fulfillment extends BackedObject {
     private Bitmap image;
     private String text;
     private short[] audioBuffer;
+    private short[] videoBuffer;
 
     /**
      * Constructor to initialize with no actual data
@@ -94,7 +95,9 @@ public class Fulfillment extends BackedObject {
         this.content = contentType.audio;
         this.audioBuffer = buffer;
     }
-
+    
+    //TODO: constructor for video
+    
     /**
      * Returns the image content associated with this fulfillment.
      * @return the {@link android.graphics.Bitmap} content associated with the fulfillment.
@@ -132,6 +135,18 @@ public class Fulfillment extends BackedObject {
     }
 
     /**
+     * Returns the video data associated with the fulfillment.
+     * @return the video data associated with the fulfillment
+     */
+    public short[] getVideo() {
+        if(content != contentType.video) {
+            Log.w("Fulfillment(ID:"+getId()+")", "getVideo() called on non-video Fulfillment");
+            return null;
+        }
+        return videoBuffer;
+    }
+    
+    /**
      * Sets the image content associated with the fulfillment.
      * @param image the {@link android.graphics.Bitmap} to associate with the fulfillment
      */
@@ -167,6 +182,19 @@ public class Fulfillment extends BackedObject {
             return;
         }
         this.audioBuffer = buffer;
+        saveChanges();
+    }
+    
+    /**
+     * Sets the video data associated with the fulfillment.
+     * @param buffer the video data to associate with the fulfillment
+     */
+    public void setVideo(short[] buffer) {
+        if(content != contentType.video) {
+            Log.w("Fulfillment(ID:"+getId()+")", "setVideo() called on non-video Fulfillment");
+            return;
+        }
+        this.videoBuffer = buffer;
         saveChanges();
     }
 

@@ -2,13 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
+
     <ImageView
         android:id="@+id/audImg"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/txtImg"
         android:src="@drawable/audicon" />
 
     
@@ -17,7 +18,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/audImg"
+        android:layout_toLeftOf="@+id/imgImg"
         android:src="@drawable/txticon" />
 
     <ImageView
@@ -25,8 +26,17 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/txtImg"
+        android:layout_toLeftOf="@+id/vidImg"
         android:src="@drawable/imgicon" />
+    
+    <ImageView
+        android:id="@+id/vidImg"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/vidicon" />
+    
 
     <TextView
         android:id="@+id/title_lbl"

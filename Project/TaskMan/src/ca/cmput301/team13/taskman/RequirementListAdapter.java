@@ -140,6 +140,9 @@ public class RequirementListAdapter implements ListAdapter {
         else if (req.getContentType() == contentType.audio)  {
             resource = R.drawable.audicon;
         }
+        else if (req.getContentType() == contentType.video)  {
+            resource = R.drawable.vidicon;
+        }
         else {
             Log.w("RequirementListAdapter", "Unknown Content Type: "+req.getContentType());
             resource = R.drawable.txticon;
@@ -199,6 +202,9 @@ public class RequirementListAdapter implements ListAdapter {
         }
         else if (req.getContentType() == contentType.audio)  {
             resource = R.drawable.audicon;
+        }
+        else if (req.getContentType() == contentType.video)  {
+            resource = R.drawable.vidicon;
         }
         else {
             Log.w("RequirementListAdapter", "Unknown Content Type: "+req.getContentType());

@@ -122,6 +122,9 @@ public class FulfillmentListAdapter implements ListAdapter {
             } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
             	newView = inflater.inflate(R.layout.ful_aud_elem, null);
             	
+            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.video)) {
+                newView = inflater.inflate(R.layout.ful_vid_elem, null);
+                
             } else {
             	Log.w("FulfillmentListAdapter", "Unknown content type");
             	newView = inflater.inflate(R.layout.ful_text_elem, null);
@@ -145,6 +148,8 @@ public class FulfillmentListAdapter implements ListAdapter {
         	//Ignore Audio for now
         	//((MediaController)newView.findViewById(R.id.ful_audio)).set
         	
+        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.video)) {
+            //Ignore video for now
         }
         
         return newView;

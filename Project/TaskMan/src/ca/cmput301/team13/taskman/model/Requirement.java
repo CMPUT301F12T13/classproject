@@ -35,7 +35,8 @@ public class Requirement extends BackedObject{
     public static enum contentType {
         text,
         image,
-        audio
+        audio,
+        video
     };
 
     //private state variables

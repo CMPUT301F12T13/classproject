@@ -91,6 +91,7 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ImageButton)findViewById(R.id.req_addTxt_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addImg_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addAud_btn)).setOnClickListener(this);
+        ((ImageButton)findViewById(R.id.req_addVid_btn)).setOnClickListener(this);
         //TODO: Set the requirements
         reqAdapter = new RequirementListAdapter(task, "edit", this);
         //Disconnect our Requirements from the repository
@@ -203,6 +204,9 @@ public class TaskActivity extends Activity implements OnClickListener {
             reqAdapter.update();
         } else if  (source.getId() == R.id.req_addAud_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio);
+            reqAdapter.update();
+        } else if  (source.getId() == R.id.req_addVid_btn) {
+            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.video);
             reqAdapter.update();
         } else if  (source.getId() == R.id.task_edit_btn) {
             Bundle b = new Bundle();

@@ -64,6 +64,9 @@ public class FulfillmentIntentFactory {
         else if(req.getContentType() == Requirement.contentType.text) {
             i = new Intent(source, TextCaptureActivity.class);
         }
+        else if(req.getContentType() == Requirement.contentType.video) {
+            i = new Intent(source, VideoCaptureActivity.class);
+        }
 
         i.putExtra("requirement", req);
         return i;

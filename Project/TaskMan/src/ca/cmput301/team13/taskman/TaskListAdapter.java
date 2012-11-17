@@ -108,13 +108,15 @@ public class TaskListAdapter implements ListAdapter {
         boolean text = false;
         boolean image = false;
         boolean audio = false;
+        boolean video = false;
         Log.w("TaskListAdapter", task + " has " + task.getRequirementCount() + " Requirements");
         for(int i=0;i<task.getRequirementCount();i++) {
             contentType ct = task.getRequirement(i).getContentType();
             Log.w("TaskListAdapter", "Requirement content type: " + ct.toString());
             if(ct == contentType.text) text = true;
             else if(ct == contentType.image) image = true;
-            else audio = true;
+            else if(ct == contentType.audio) audio = true;
+            else if(ct == contentType.video) video = true;
         }
 
         //Set all the pertinent values
@@ -122,6 +124,8 @@ public class TaskListAdapter implements ListAdapter {
         newView.findViewById(R.id.txtImg).setVisibility((text ? View.VISIBLE : View.INVISIBLE));
         newView.findViewById(R.id.imgImg).setVisibility((image ? View.VISIBLE : View.INVISIBLE));
         newView.findViewById(R.id.audImg).setVisibility((audio ? View.VISIBLE : View.INVISIBLE));
+        newView.findViewById(R.id.vidImg).setVisibility((video ? View.VISIBLE : View.INVISIBLE));
+
         return newView;
     }
 
