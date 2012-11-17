@@ -259,7 +259,8 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
                 videoFileUri = data.getData();
                 
                 //create a thumbnail
-                Bitmap bm = ThumbnailUtils.createVideoThumbnail(videoFileUri.getPath(), MediaStore.Video.Thumbnails.MICRO_KIND);
+                Bitmap bm = ThumbnailUtils.createVideoThumbnail(resolveVideoPath(getBaseContext(), videoFileUri), 
+                        MediaStore.Video.Thumbnails.MICRO_KIND);
 
                 //set the preview to show the image
                 preview.setImageBitmap(bm);
