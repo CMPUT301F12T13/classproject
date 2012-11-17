@@ -52,7 +52,7 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.text_fulfillment, menu);
+        getMenuInflater().inflate(R.menu.activity_text_capture, menu);
         return true;
     }
 

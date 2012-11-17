@@ -109,7 +109,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.audio_fulfillment, menu);
+        getMenuInflater().inflate(R.menu.activity_audio_capture, menu);
         return true;
     }
 

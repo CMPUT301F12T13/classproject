@@ -91,7 +91,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.image_fulfillment, menu);
+        getMenuInflater().inflate(R.menu.activity_image_capture, menu);
         return true;
     }
 
