@@ -61,7 +61,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.audio_fulfillment);
+        setContentView(R.layout.activity_audio_capture);
         
         //setup our listeners
         ((Button)findViewById(R.id.record_button)).setOnClickListener(this);
@@ -294,6 +294,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
                 Notifications.showToast(getApplicationContext(), "Audio Selection Successful");
                 
                 audioFileUri = data.getData();
+                @SuppressWarnings("unused")
                 InputStream audioStream = null;
                 try {
                     audioStream = getContentResolver().openInputStream(audioFileUri);

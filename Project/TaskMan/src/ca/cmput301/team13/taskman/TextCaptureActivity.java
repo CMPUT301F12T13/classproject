@@ -40,7 +40,7 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.text_fulfillment);
+        setContentView(R.layout.activity_text_capture);
         
         //setup our listeners
         ((Button)findViewById(R.id.text_save_button)).setOnClickListener(this);
