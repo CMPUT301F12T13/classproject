@@ -53,6 +53,8 @@ abstract class BackedObject implements Parcelable {
         this.created = created;
         this.lastModified = lastModified;
     }
+    
+    public BackedObject() { }
 
     /**
      * Save any changes that have occurred to this object.

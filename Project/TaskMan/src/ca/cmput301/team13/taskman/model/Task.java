@@ -23,6 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ca.cmput301.team13.taskman.TaskMan;
 
 import android.os.Parcelable;
@@ -79,8 +82,23 @@ public class Task extends BackedObject implements Parcelable, Serializable {
      * Required to make Tasks serializable. The created Task object will not be used as an independent object; it will instead be used to store intermediate data
      * until a proper object can be created in, or fetched from, the LocalRepository
      */
-    public Task() {
-    	this(-1, null, null, null, null, null, -1, null);
+    public Task() { }
+    
+    public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();
+    	try {
+			json.put("id", getId());
+			json.put("title", getTitle());
+			json.put("description", getDescription());
+			json.put("created", getCreatedDate().getTime());
+			json.put("lastModified", getLastModifiedDate().getTime());
+			json.put("creator", getCreator().toString());
+			json.put("reqCount", getRequirementCount());
+			return json;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return null;
     }
 
     private void loadRequirements() {

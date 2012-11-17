@@ -2,9 +2,12 @@ package ca.cmput301.team13.taskman.model;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ca.cmput301.team13.taskman.TaskMan;
 
 import utils.ObjectWriter;
 
@@ -69,29 +72,22 @@ public class CrowdSourcerObject {
 	 */
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
-		String serializedData = "";
+		JSONObject serializedData = new JSONObject();
 		int id = -1;
 		long lastModifiedDate = -1;
 		switch(type) {
 			case TASK:
-				if(task != null)
-					try {
-						serializedData = ObjectWriter.objectToString(task);
-						id = task.getId();
-						lastModifiedDate = task.getLastModifiedDate().getTime();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} 
+				if(task != null) {
+					serializedData = task.toJSON();
+					id = task.getId();
+					lastModifiedDate = task.getLastModifiedDate().getTime();
+				}
 			break;
 			case FULFILLMENT:
 				if(fulfillment != null)
-					try {
-						serializedData = ObjectWriter.objectToString(fulfillment);
-						id = fulfillment.getId();
-						lastModifiedDate = fulfillment.getLastModifiedDate().getTime();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} 
+					serializedData = new JSONObject();
+					id = fulfillment.getId();
+					lastModifiedDate = fulfillment.getLastModifiedDate().getTime();
 				break;
 		}
 		try {
@@ -114,7 +110,6 @@ public class CrowdSourcerObject {
 	 * @param jsonString	The JSON representation
 	 */
 	public void fromJSON(JSONObject json) {
-		String jsonString = json.toString();
 		try {
 			JSONObject content = json.getJSONObject("content");
 			try {
@@ -123,8 +118,18 @@ public class CrowdSourcerObject {
 				//Populate type-specific fields
 				switch(type) {
 					case TASK:
-						Object o = ObjectWriter.stringToObject(content.getString("data"));
-						setContent((Task) ObjectWriter.stringToObject(content.getString("data")));
+						JSONObject taskData = content.getJSONObject("data");
+						Task t = new Task(
+							taskData.getInt("id"), 
+							new Date(), 
+							new Date(), 
+							new User(taskData.getString("creator")), 
+							taskData.getString("title"), 
+							taskData.getString("description"), 
+							taskData.getInt("reqCount"), 
+							TaskMan.getInstance().getRepository()
+						);
+						setContent(t);
 					break;
 					case FULFILLMENT:
 						setContent((Fulfillment) ObjectWriter.stringToObject(content.getString("data")));

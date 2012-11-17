@@ -26,7 +26,7 @@ import java.util.Date;
  * Holds the information associated with a requirement for a {@link Task};
  * aggregated by {@link Task}.
  */
-public class Requirement extends BackedObject{
+public class Requirement extends BackedObject {
 
 	/**
 	 * An enum of desired contentType for requirements.
