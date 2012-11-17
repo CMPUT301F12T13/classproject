@@ -300,10 +300,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
                     audioStream = getContentResolver().openInputStream(audioFileUri);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                }
-
-                //TODO: need to figure out what to do with audio file here
-                
+                }                
             } else if (resultCode == RESULT_CANCELED) {
                 //Audio selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Audio Selection Cancelled");

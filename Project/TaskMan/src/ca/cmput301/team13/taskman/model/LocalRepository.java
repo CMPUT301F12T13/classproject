@@ -321,6 +321,13 @@ public class LocalRepository {
             ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(audio);
             values.put(RepoHelper.CONTENT_COL, audioBytes);
             break;
+        case video:
+            //Directly convert the short[] to byte[]
+            short[] video = f.getVideo();
+            byte[] videoBytes = new byte[video.length * 2];
+            ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(video);
+            values.put(RepoHelper.CONTENT_COL, videoBytes);
+            break;
         case image:
             //Compress and store the image
             ByteArrayOutputStream imageWriter = new ByteArrayOutputStream();
@@ -458,6 +465,15 @@ public class LocalRepository {
                         for(int i=0;i<audio.length;i++)
                             audio[i]=bb.getShort();
                         f.setAudio(audio);
+                        break;
+                    case video:
+                        //Directly convert the byte[] to short[]
+                        byte[] videoBytes = cursor.getBlob(2);
+                        ByteBuffer vbb = ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN);
+                        short[] video = new short[videoBytes.length/2];
+                        for(int i=0;i<video.length;i++)
+                            video[i]=vbb.getShort();
+                        f.setVideo(video);
                         break;
                     case image:
                         //Convert the byte array to a Bitmap

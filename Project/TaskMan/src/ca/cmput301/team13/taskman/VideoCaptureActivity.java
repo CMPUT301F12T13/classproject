@@ -20,6 +20,11 @@
 package ca.cmput301.team13.taskman;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import utils.Notifications;
 import android.media.ThumbnailUtils;
@@ -27,7 +32,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.view.Menu;
 import android.view.View;
@@ -45,7 +52,6 @@ import android.widget.ImageView;
 public class VideoCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri videoFileUri;
-    boolean videoTaken = false;
     private static final int VIDEO_CAPTURE_ACTIVITY_REQUEST_CODE = 400;
     private static final int VIDEO_GALLERY_ACTIVITY_REQUEST_CODE = 500;
 
@@ -95,21 +101,89 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected video to our parent and exit the Activity.
      */
     public void save() {
-        //test if a video has been selected.
-        //if (videoTaken) {
-            //fulfillment.setVideo(selectedImage);
-            //successful = true;
-            //finish();
-       // } else {
-            Notifications.showToast(getApplicationContext(), "Video savinng not Implemented yet");
-       // }
+        short[] videoShorts;
+        if (videoFileUri != null) {
+            videoShorts = getVideoShort(resolveVideoPath(getBaseContext(), videoFileUri));
+        } else {
+            videoShorts = null;
+        }
+        
+        //Return to the Task Viewer if video was selected
+        if(videoShorts != null) {
+            successful = true;
+            fulfillment.setVideo(videoShorts);
+            finish();
+        } else {
+            Notifications.showToast(getApplicationContext(), "No Video Selected");
+        }
+    }
+    
+    /**
+     * Creates a short array from audio data stored at the given file path.
+     * @param path      The path to the audio file
+     * @return          The short[] representing the audio data
+     */
+    public short[] getVideoShort(String path) {
+        File videoFile;
+        FileInputStream videoStream = null;
+        byte[] videoBytes = null;
+        short[] videoShorts = null;
+        videoFile = new File(path);
+        //If video of some kind was generated, attempt to convert it and pass it back to the Task Viewer
+        if(videoFile != null) {
+            try {
+                videoStream = new FileInputStream(videoFile);
+                videoBytes = new byte[(int)videoFile.length()];
+                videoStream.read(videoBytes);
+                videoStream.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //Do the conversion
+        if(videoBytes != null) {
+            videoShorts = new short[videoBytes.length/2];
+            // to turn bytes to shorts as either big endian or little endian. 
+            ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(videoShorts);
+        }
+        return videoShorts;
+    }
+    
+    /**
+     * Resolves a Uri to an absolute file path.
+     *      - Paul Burke's getPath method from: http://stackoverflow.com/a/7857102/95764
+     * @param context       The Activity's Context
+     * @param uri           The Uri to resolve
+     * @return              The resolved Uri
+     */
+    private String resolveVideoPath(Context context, Uri uri) {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = { "_data" };
+            Cursor cursor = null;
+
+            try {
+                cursor = context.getContentResolver().query(uri, projection, null, null, null);
+                int column_index = cursor
+                .getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) { }
+        }
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
     }
     
     /**
      * Cancel the Activity.
      */
     public void cancel() {
-        //successful = false;
+        successful = false;
         finish();
     }
     
@@ -140,9 +214,9 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
      * be selected for use.
      */
     public void selectVideo(){
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("video/*");
-        startActivityForResult(intent, VIDEO_GALLERY_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(intent,"Select Video "), VIDEO_GALLERY_ACTIVITY_REQUEST_CODE);
     }
     
     /**
@@ -162,7 +236,6 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
             if (resultCode == RESULT_OK) {
                 //Video Taking was a success
                 Notifications.showToast(getApplicationContext(), "Video Taken");
-                videoTaken = true;
                 
                 //create a thumbnail
                 Bitmap bm = ThumbnailUtils.createVideoThumbnail(videoFileUri.getPath(), MediaStore.Video.Thumbnails.MICRO_KIND);
@@ -181,7 +254,6 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
             if (resultCode == RESULT_OK) {
                 //Video was successfully chosen from Gallery
                 Notifications.showToast(getApplicationContext(), "Video Selected");
-                videoTaken = true;
                 
                 //get the returned image from the Intent
                 videoFileUri = data.getData();
