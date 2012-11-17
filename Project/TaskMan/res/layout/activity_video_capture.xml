@@ -12,13 +12,13 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/image_title"
+            android:id="@+id/video_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
-            android:text="Image Fulfillment"
+            android:text="Video Fulfillment"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
 
@@ -44,13 +44,13 @@
             
     </LinearLayout>
     
-        <TextView android:id="@+id/image_fulfillment"
+        <TextView android:id="@+id/audio_fulfillment"
             android:layout_width="fill_parent"
             android:layout_height="30dp"
             android:layout_marginLeft="5dp"
             android:gravity="bottom"
             android:textColor="#00CCFF"   
-            android:text="Acquire Image" />
+            android:text="Acquire Video" />
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/gallery_button"
             android:layout_alignParentLeft="true"
-            android:text="Take Photo"
+            android:text="Take Video"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
         </RelativeLayout>
