@@ -73,7 +73,7 @@ public class Requirement extends BackedObject {
      * @param fulfillments - the list of fulfillments of the requirement
      * @param repo - the repository backing this object
      */
-    Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
+    public Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.description = description;
         this.fulfillmentCount = fulfillmentCount;
@@ -83,12 +83,14 @@ public class Requirement extends BackedObject {
     
     public JSONObject toJSON() {
     	JSONObject json = new JSONObject();
-    	JSONArray fulfillments = new JSONArray(); //Only stores the IDs
-    	for(int i=0; i<this.fulfillments.size(); i++) {
+    	JSONArray fulfillmentArray = new JSONArray(); //Only stores the IDs
+    	//Ensure the Fulfillments are loaded before trying to get their IDs
+    	if(!loaded) loadFulfillments(); 
+    	//Get Fulfillment IDs of this Requiremenr
+    	for(int i=0; i<fulfillments.size(); i++) {
     		try {
-				fulfillments.put(i, this.fulfillments.get(i).getId());
+				fulfillmentArray.put(i, fulfillments.get(i).getId());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}
@@ -100,8 +102,8 @@ public class Requirement extends BackedObject {
 			json.put("created", getCreatedDate().getTime());
 			json.put("lastModified", getLastModifiedDate().getTime());
 			json.put("creator", getCreator().toString());
+			json.put("fulfillments", fulfillmentArray);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	return json;
