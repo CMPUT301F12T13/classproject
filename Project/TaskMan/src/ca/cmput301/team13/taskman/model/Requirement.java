@@ -22,6 +22,10 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Holds the information associated with a requirement for a {@link Task};
  * aggregated by {@link Task}.
@@ -75,6 +79,32 @@ public class Requirement extends BackedObject {
         this.fulfillmentCount = fulfillmentCount;
         this.desiredContent = desiredContent;
         this.loaded = false;
+    }
+    
+    public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();
+    	JSONArray fulfillments = new JSONArray(); //Only stores the IDs
+    	for(int i=0; i<this.fulfillments.size(); i++) {
+    		try {
+				fulfillments.put(i, this.fulfillments.get(i).getId());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	try {
+    		json.put("id", getId());
+    		json.put("description", getDescription());
+			json.put("fulfillmentCount", getFullfillmentCount());
+			json.put("contentType", this.desiredContent.ordinal());
+			json.put("created", getCreatedDate().getTime());
+			json.put("lastModified", getLastModifiedDate().getTime());
+			json.put("creator", getCreator().toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return json;
     }
 
     /**

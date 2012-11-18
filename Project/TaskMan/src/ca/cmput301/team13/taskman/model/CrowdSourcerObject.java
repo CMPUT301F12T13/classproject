@@ -1,15 +1,14 @@
 package ca.cmput301.team13.taskman.model;
 
-import java.io.IOException;
-import java.io.StreamCorruptedException;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import ca.cmput301.team13.taskman.TaskMan;
-
-import utils.ObjectWriter;
 
 public class CrowdSourcerObject {
 	
@@ -125,8 +124,8 @@ public class CrowdSourcerObject {
 					case TASK:
 						Task t = new Task(
 							data.getInt("id"), 
-							new Date(), //TODO: insert correct dates
-							new Date(), 
+							new Date(data.getLong("created")),
+							new Date(data.getLong("lastModified")), 
 							new User(data.getString("creator")), 
 							data.getString("title"), 
 							data.getString("description"), 
@@ -136,18 +135,60 @@ public class CrowdSourcerObject {
 						setContent(t);
 					break;
 					case FULFILLMENT:
-						JSONObject fulfillmentData = data.getJSONObject("data");
-						Requirement.contentType contentType = Requirement.contentType.values()[fulfillmentData.getInt("contentType")];
-						int id = fulfillmentData.getInt("id");
-						int created = fulfillmentData.getInt("created");
-						int lastModified = fulfillmentData.getInt("lastModified");
-						String text = fulfillmentData.getString("data");
+						Requirement.contentType contentType = Requirement.contentType.values()[data.getInt("contentType")];
+						int id = data.getInt("id");
+						Date created = new Date(data.getLong("created"));
+						Date lastModified = new Date(data.getLong("lastModified"));
+						User user = TaskMan.getInstance().getUser();
+						VirtualRepository vr = TaskMan.getInstance().getRepository();
+						Fulfillment f = null;
+						//Get the Fulfillment data
 						switch(contentType) {
 							case text:
-								
+								f = new Fulfillment(
+									id, 
+									created, 
+									lastModified, 
+									data.getString("data"), 
+									user,
+									vr
+								);
 							break;
+							case audio:
+								JSONArray audioByteArray = data.getJSONArray("data");
+								short[] audioBytes = new short[audioByteArray.length()];
+								//Re-generate the short[] from its JSONArray representation
+								for(int i=0; i<audioByteArray.length(); i++) {
+									audioBytes[i] = (short)audioByteArray.getInt(i);
+								}
+								f = new Fulfillment(
+									id,
+									created,
+									lastModified,
+									audioBytes,
+									user,
+									vr
+								);
+							break;
+							case image:
+								JSONArray imageByteArray = data.getJSONArray("data");
+								byte[] imageBytes = new byte[imageByteArray.length()];
+								//Re-generate the short[] from its JSONArray representation
+								for(int i=0; i<imageByteArray.length(); i++) {
+									imageBytes[i] = (byte)imageByteArray.getInt(i);
+								}
+								Bitmap image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+								f = new Fulfillment(
+									id,
+									created,
+									lastModified,
+									image,
+									user,
+									vr
+								);
 						}
-//						Fulfillment f = new Fulfillment();
+						//Actually set this object's fulfillment
+						setContent(f);
 					break;
 				}
 			} catch (JSONException e) {
@@ -156,7 +197,6 @@ public class CrowdSourcerObject {
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
-		
 	}
 	
 	public entityType getType() {
