@@ -15,7 +15,8 @@ public class CrowdSourcerObject {
 	
 	public static enum entityType {
 		TASK,
-		FULFILLMENT
+		FULFILLMENT,
+		REQUIREMENT
 	}
 	
 	//The ID of the entity
@@ -75,23 +76,26 @@ public class CrowdSourcerObject {
 		JSONObject serializedData = new JSONObject();
 		int id = -1;
 		long lastModifiedDate = -1;
+		int typeOrdinal = -1;
 		switch(type) {
 			case TASK:
 				if(task != null) {
 					serializedData = task.toJSON();
 					id = task.getId();
 					lastModifiedDate = task.getLastModifiedDate().getTime();
+					typeOrdinal = entityType.TASK.ordinal();
 				}
 			break;
 			case FULFILLMENT:
 				if(fulfillment != null)
-					serializedData = new JSONObject();
+					serializedData = fulfillment.toJSON();
 					id = fulfillment.getId();
 					lastModifiedDate = fulfillment.getLastModifiedDate().getTime();
+					typeOrdinal = entityType.FULFILLMENT.ordinal();
 				break;
 		}
 		try {
-			json.put("type", entityType.TASK.ordinal());
+			json.put("type", typeOrdinal);
 			json.put("id", id);
 			json.put("lastModifiedDate", lastModifiedDate);
 			json.put("data", serializedData);
@@ -115,33 +119,38 @@ public class CrowdSourcerObject {
 			try {
 				//Get the entityType
 				type = entityType.values()[content.getInt("type")];
+				JSONObject data = content.getJSONObject("data");
 				//Populate type-specific fields
 				switch(type) {
 					case TASK:
-						JSONObject taskData = content.getJSONObject("data");
 						Task t = new Task(
-							taskData.getInt("id"), 
+							data.getInt("id"), 
+							new Date(), //TODO: insert correct dates
 							new Date(), 
-							new Date(), 
-							new User(taskData.getString("creator")), 
-							taskData.getString("title"), 
-							taskData.getString("description"), 
-							taskData.getInt("reqCount"), 
+							new User(data.getString("creator")), 
+							data.getString("title"), 
+							data.getString("description"), 
+							data.getInt("reqCount"), 
 							TaskMan.getInstance().getRepository()
 						);
 						setContent(t);
 					break;
 					case FULFILLMENT:
-						setContent((Fulfillment) ObjectWriter.stringToObject(content.getString("data")));
+						JSONObject fulfillmentData = data.getJSONObject("data");
+						Requirement.contentType contentType = Requirement.contentType.values()[fulfillmentData.getInt("contentType")];
+						int id = fulfillmentData.getInt("id");
+						int created = fulfillmentData.getInt("created");
+						int lastModified = fulfillmentData.getInt("lastModified");
+						String text = fulfillmentData.getString("data");
+						switch(contentType) {
+							case text:
+								
+							break;
+						}
+//						Fulfillment f = new Fulfillment();
 					break;
 				}
 			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (StreamCorruptedException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		} catch (JSONException e1) {
@@ -182,7 +191,7 @@ public class CrowdSourcerObject {
 		}else if(content instanceof Fulfillment) {
 			this.type = entityType.FULFILLMENT;
 			this.fulfillment = (Fulfillment)content;
-			this.id = task.getId();
+			this.id = fulfillment.getId();
 		}
 	}
 	

@@ -31,10 +31,7 @@ public class WebRepository {
     }
 	
 	public void createTask(Task task) {
-		CrowdSourcerObject co = new CrowdSourcerObject();
-		co.setType(CrowdSourcerObject.entityType.TASK);
-		co.setId(task.getId());
-		co.setContent(task);
+		CrowdSourcerObject co = new CrowdSourcerObject(task);
 		
 		//Things stored in the "content" field in CrowdSourcer
 		//TODO: Perhaps store a text version of DateModified here for synchronization purposes?
@@ -50,6 +47,21 @@ public class WebRepository {
 					new RequestArgument("summary", CrowdSourcerObject.entityType.TASK.toString()),
 					new RequestArgument("content", co.toJSON().toString())
 			}
+		);
+	}
+	
+	public void createFulfillment(Fulfillment f) {
+		CrowdSourcerObject co = new CrowdSourcerObject(f);
+		
+		postContent(
+				REPO_URL,
+				new RequestArgument[]{
+					new RequestArgument("action", "post")
+				},
+				new RequestArgument[]{
+					new RequestArgument("summary", CrowdSourcerObject.entityType.FULFILLMENT.toString()),
+					new RequestArgument("content", co.toJSON().toString())
+				}
 		);
 	}
 	

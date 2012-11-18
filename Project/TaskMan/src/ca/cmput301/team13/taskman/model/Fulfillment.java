@@ -19,9 +19,16 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import utils.ObjectWriter;
 import android.graphics.Bitmap;
 import android.util.Log;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
@@ -60,7 +67,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, Bitmap image, User creator, VirtualRepository repo) {
+    public Fulfillment(int id, Date created, Date lastModified, Bitmap image, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.image;
         this.image = image;
@@ -75,7 +82,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, String text, User creator, VirtualRepository repo) {
+    public Fulfillment(int id, Date created, Date lastModified, String text, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.text;
         this.text = text;
@@ -90,10 +97,46 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
+    public Fulfillment(int id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.audio;
         this.audioBuffer = buffer;
+    }
+    
+    public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();
+    	try {
+    		json.put("id", getId());
+    		json.put("created", getCreatedDate().getTime());
+    		json.put("lastModified", getLastModifiedDate().getTime());
+			json.put("contentType", content.ordinal());
+			//Serialize the contained data
+			switch(content) {
+				case text:
+					json.put("data", text);
+				break;
+				case audio:
+					JSONArray audioByteArray = new JSONArray();
+					for(int i=0; i<audioBuffer.length; i++) {
+						audioByteArray.put((int)audioBuffer[i]);
+					}
+					json.put("data", audioByteArray);
+				break;
+				case image:
+					ByteArrayOutputStream s = new ByteArrayOutputStream();
+					image.compress(Bitmap.CompressFormat.PNG, 100, s);
+					byte[] bitmapBytes = s.toByteArray();
+					JSONArray bitmapByteArray = new JSONArray();
+					for(int i=0; i<bitmapBytes.length; i++) {
+						bitmapByteArray.put((int)bitmapBytes[i]);
+					}
+					json.put("data", bitmapByteArray);
+				break;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return json;
     }
 
     /**
