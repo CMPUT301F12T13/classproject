@@ -64,6 +64,11 @@ public class TaskActivity extends Activity implements OnClickListener {
             setEditingFields();
             ((Button)findViewById(R.id.save_button)).setOnClickListener(this);
             ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
+            if(getMode().equals("edit")) {
+                ((Button)findViewById(R.id.delete_button)).setOnClickListener(this);
+            } else {
+                findViewById(R.id.delete_button).setVisibility((View.INVISIBLE));
+            }
         } else {
             setContentView(R.layout.activity_view_task);
             setViewingFields();
@@ -189,6 +194,17 @@ public class TaskActivity extends Activity implements OnClickListener {
     }
 
     /**
+     * Delete the task and end the activity
+     */
+    private void deleteTask() {
+        //Destroy the associated Task
+        TaskMan.getInstance().getRepository().removeTask(task);
+        Intent i = new Intent(this, RootActivity.class);
+        startActivity(i);
+        super.finish();
+    }
+    
+    /**
      * Handles click events.
      */
     public void onClick(View source) {
@@ -196,6 +212,8 @@ public class TaskActivity extends Activity implements OnClickListener {
             saveTask();
         } else if(source.equals(findViewById(R.id.cancel_button))) {
             cancelTask();
+        } else if(source.equals(findViewById(R.id.delete_button))) {
+            deleteTask();
         } else if  (source.getId() == R.id.req_addTxt_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text);
             reqAdapter.update();

@@ -16,12 +16,22 @@
 		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
 		    android:layout_gravity="center_vertical"
-		    android:layout_weight="1"
+		    android:layout_weight=".75"
 		    android:layout_marginLeft="5dp"
 		    android:text="Task"
 		    android:textAppearance="?android:attr/textAppearanceMedium"
 		    android:textColor="#FFFFFF" />
 
+		<Button
+	        android:id="@+id/delete_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_gravity="center"
+	        android:textColor="#FFFFFF"
+	        android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="Delete" />
+		
 		<Button
 	        android:id="@+id/save_button"
 	        android:layout_width="0dp"
@@ -40,7 +50,7 @@
 	        android:layout_gravity="center"
 	        android:textColor="#FFFFFF"
 	        android:textAppearance="?android:attr/textAppearanceSmall"
-	        android:text="Cancel" />    
+	        android:text="Cancel" />
 		    
     </LinearLayout>
     
