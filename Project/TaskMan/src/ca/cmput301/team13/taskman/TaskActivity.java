@@ -194,7 +194,7 @@ public class TaskActivity extends Activity implements OnClickListener {
     }
 
     /**
-     * Delete the task and end the activity
+     * Delete the task and return to the root activity
      */
     private void deleteTask() {
         //Destroy the associated Task
