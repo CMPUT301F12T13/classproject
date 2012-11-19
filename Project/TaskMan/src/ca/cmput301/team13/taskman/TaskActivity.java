@@ -200,6 +200,8 @@ public class TaskActivity extends Activity implements OnClickListener {
         //Destroy the associated Task
         TaskMan.getInstance().getRepository().removeTask(task);
         Intent i = new Intent(this, RootActivity.class);
+        //clear backlog of activities so RootActivity's back-button does not
+        //back into the view activity of a no longer existent task
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
