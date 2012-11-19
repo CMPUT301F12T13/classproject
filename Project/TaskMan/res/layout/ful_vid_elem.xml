@@ -15,13 +15,14 @@
 
     </TextView>
 
-    <MediaController
-        android:id="@+id/ful_vid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/video_play_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/reqDescriptionText"
-        android:layout_marginRight="31dp" >
-    </MediaController>
+        android:layout_alignParentTop="true"
+        android:contentDescription="Video Play Button"
+        android:background="#FFFFFF"
+        android:src="@drawable/playbtn" />
 
 </RelativeLayout>

@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/fulTime"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:text="On XX/XX/XX:"
@@ -15,13 +15,14 @@
 
     </TextView>
 
-    <MediaController
-        android:id="@+id/ful_audio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/audio_play_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/reqDescriptionText"
-        android:layout_marginRight="31dp" >
-    </MediaController>
+        android:layout_alignParentTop="true"
+        android:background="#FFFFFF"
+        android:contentDescription="Audio Play Button"
+        android:src="@drawable/playbtn" />
 
 </RelativeLayout>
