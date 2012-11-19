@@ -30,9 +30,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.ImageButton;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
 import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
@@ -145,11 +147,25 @@ public class FulfillmentListAdapter implements ListAdapter {
         			((Fulfillment)getItem(viewIndex)).getImage());
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
-        	//Ignore Audio for now
-        	//((MediaController)newView.findViewById(R.id.ful_audio)).set
+        	//ignore audio until list adapter is fixed
+            /*((ImageButton)newView.findViewById(R.id.audio_play_btn)).setOnClickListener(new OnClickListener() {
+                public void onClick(View source) {
+                    
+                    //TODO: convert byte[] to uri
+                    //TODO: launch built-in player
+                }
+            });*/
+            
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.video)) {
-            //Ignore video for now
+            //ignore video until list adapter is fixed
+            /*((ImageButton)newView.findViewById(R.id.video_play_btn)).setOnClickListener(new OnClickListener() {
+                public void onClick(View source) {
+                    
+                    //TODO: convert byte[] to Uri
+                    //TODO: launch built-in player
+                }
+            });*/
         }
         
         return newView;
