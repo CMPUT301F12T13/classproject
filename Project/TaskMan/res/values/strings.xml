@@ -16,7 +16,7 @@
     <string name="title_activity_text_capture">TextCaptureActivity</string>
     <string name="title_activity_video_capture">VideoCaptureActivity</string>
     <string name="title_activity_image_view">ImageViewActivity</string>
-    <string name="title_activity_audio_view">ImageViewActivity</string>
-    <string name="title_activity_text_view">ImageViewActivity</string>
+    <string name="title_activity_audio_view">AudioViewActivity</string>
+    <string name="title_activity_text_view">TextViewActivity</string>
 
 </resources>
