@@ -5,8 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -19,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +39,7 @@ public class WebRepository {
 	
 	private Queue<Request> requestQueue = new ConcurrentLinkedQueue<Request>();
 	public static final String REPO_URL = "http://crowdsourcer.softwareprocess.es/F12/CMPUT301F12T13/";
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd kk:mm:ss:SSS Z");
 	private VirtualRepository vr;
 	
 	public WebRepository(VirtualRepository vr) {
@@ -39,42 +47,242 @@ public class WebRepository {
     }
 	
 	/**
-	 * Create an object in the CrowdSourcer database
-	 * @param o		The BackedObject to transfer to CrowdSourcer
+	 * Invokes pushObject(BackedObject, boolean) with the second parameter as true
+	 * @see pushObject(BackedObject, boolean)
 	 */
-	public void createObject(BackedObject o) {
+	public void pushObject(BackedObject o) {
+		pushObject(o, true);
+	}
+	
+	/**
+	 * Create or update an object in the CrowdSourcer database
+	 * 		NOTE: This method runs asynchronously
+	 * @param o			The BackedObject to transfer to CrowdSourcer
+	 * @param update	Whether existing objects should be updated
+	 */
+	public void pushObject(BackedObject o, boolean update) {
+		if(o.isLocal) return; //Don't upload local objects
+		
 		CrowdSourcerObject co = new CrowdSourcerObject(o);
+		RequestArgument[] action;
+		final VirtualRepository vr = this.vr;
+		final boolean doUpdate = update;
+		
+		//If this object doesn't have a webID, then it is not in CrowdSourcer and needs to be posted
+		if(o.getWebID() == null || o.getWebID().length() == 0) {
+			action = new RequestArgument[] {
+				new RequestArgument("action", "post")
+			};
+		//Otherwise the object *is* in CrowdSourcer and needs to be updated
+		} else {
+			//If we need to update the object, update it
+			if(doUpdate) {
+				action = new RequestArgument[] {
+						new RequestArgument("action", "update"),
+						new RequestArgument("id", o.getWebID())
+				}; 
+			//Otherwise just get the data that needs to be propagated to its children
+			} else {
+				action = new RequestArgument[] {
+						new RequestArgument("action", "get"),
+						new RequestArgument("id", o.getWebID())
+				};
+			}
+		}
 		
 		//Create a new Request and add it to the queue
 		requestQueue.add(new Request(
 			REPO_URL,
+			action,
 			new RequestArgument[]{
-				new RequestArgument("action", "post")
+				new RequestArgument("content", co.toJSON().toString()),
+				new RequestArgument("summary", dateFormat.format(co.getContent(BackedObject.class).getLastModifiedDate()))
 			},
-			new RequestArgument[]{
-				new RequestArgument("summary", co.getType().toString()),
-				new RequestArgument("content", co.toJSON().toString())
+			new RequestCallback() {
+				public void run(CrowdSourcerObject co) {
+					BackedObject bo = co.getContent(BackedObject.class);
+					//Update the local object with the webID returned from CrowdSourcer
+					if(bo instanceof Task) {
+						Task t = vr.getTask(bo.getId());
+						if(t != null) {
+							t.setWebID(bo.getWebID());
+							//Once the Task has been uploaded and updated, add its Requirements
+							for(int i=0; i<t.getRequirementCount(); i++) {
+								Requirement r = t.getRequirement(i);
+								r.setParentId(t.getId());
+								r.setParentWebID(t.getWebID());
+								pushObject(r, doUpdate);
+							}
+						}
+					} else if(bo instanceof Fulfillment) {
+						Fulfillment f = vr.getFulfillment(bo.getId());
+						if(f != null)
+							f.setWebID(bo.getWebID());
+					} else if(bo instanceof Requirement) {
+						Requirement r = vr.getRequirement(bo.getId());
+						if(r != null) {
+							r.setWebID(bo.getWebID());
+							//Once the Requirement has been uploaded and updated, add its Fulfillments
+							for(int i=0; i<r.getFullfillmentCount(); i++) {
+								Fulfillment f = r.getFulfillment(i);
+								f.setParentId(r.getId());
+								f.setParentWebID(r.getWebID());
+								pushObject(f, doUpdate);
+							}
+						}
+					}
+				}
 			}
-			//TODO: add callback?
 		));
 		
 		requestHandler.run();
 	}
 	
+	//TODO: Test this method!
+	public void loadTask(String taskId) {
+		
+		requestQueue.add(new Request(
+			REPO_URL,
+			new RequestArgument[]{
+				new RequestArgument("action", "get"),
+				new RequestArgument("id", taskId)
+			},
+			new RequestCallback() {
+				public void run(CrowdSourcerObject co) {
+					System.out.println("callback running");
+					BackedObject bo = co.getContent(BackedObject.class);
+					//If a Task was returned and doesn't already exist, add it
+					if(bo != null && bo instanceof Task) {
+						//If it isn't already there, add the task into the LocalRepository
+						if(vr.getTask(bo.getId()) == null) {
+							vr.createTask((Task)bo);
+						}						
+						//TODO: Add Requirements and Fulfillments here?
+					} else if(bo != null) {
+						throw new RuntimeException("Treating " + bo.getClass().getName() + " as Task.");
+					} else {
+						throw new RuntimeException("The task could not be fetched from CrowdSourcer.");
+					}
+				}
+			}
+		));
+		
+		requestHandler.run();
+		loadRequirementsForTask(taskId);
+		
+	}
+	
+	public void pullChanges() {
+			//Objects need to be updated in the order { Task -> Requirement -> Fulfillment } to ensure that
+			//parent objects exist before their children are updated
+			final PriorityQueue<BackedObject> updatedObjects = new PriorityQueue<BackedObject>(20, BackedObject.getComparator());
+			
+			//Go through the list of all objects in CrowdSourcer and change things that are newer than local versions
+			requestQueue.add(new Request(
+				REPO_URL,
+				new RequestArgument[]{
+					new RequestArgument("action", "list"),
+				},
+				new RequestCallback() {
+					public void run(JSONArray ja) {
+						try {
+							//Traverse the returned list and pull changes as necessary
+							for(int i=0; i<ja.length(); i++) {
+								JSONObject currentObject = ja.getJSONObject(i);
+								if(currentObject.has("summary")) {
+									Date lastModifiedDate = dateFormat.parse(currentObject.getString("summary"));
+									//If the CrowdSourcer version is newer than the local version, it needs to be pulled
+									if(lastModifiedDate.after(vr.getNewestLocalModification())) {
+										//Add this object to the update queue
+										updatedObjects.add(getObject(currentObject.getString("id")).getContent(BackedObject.class));
+									}
+								}
+							}
+							
+							//Do all of the updates
+							Iterator<BackedObject> itr = updatedObjects.iterator();
+							while(itr.hasNext()) {
+								pullObject(itr.next());
+							}
+						} catch (JSONException e) {
+							throw new RuntimeException("An invalid object list was returned from pullChanges.");
+						} catch (ParseException e) {
+							throw new RuntimeException("An invalid date string was stored with the list object.");
+						}
+					}
+				}
+			));
+				
+			requestHandler.run();
+	}
+	
 	/**
-	 * Get a Task from CrowdSourcer
-	 * @param id	The ID of the Task to fetch
-	 * @return		The requested Task (null if none is found)
+	 * Pull the object into the local repository by adding it if it doesn't
+	 * exist, or updating it if it does exist
+	 * @param bo
 	 */
-	public Task getTask(String id) {
+	public void pullObject(BackedObject bo) {
+		//Update or add objects as necessary
+		if(bo instanceof Task) {
+			//Add the task if necessary
+			if(vr.getTask(bo.getId()) == null) {
+				vr.createTask((Task)bo);
+			//or update the Task if it exists
+			} else {
+				vr.getTask(bo.getId()).loadFromTask((Task)bo);
+			}
+		} else if(bo instanceof Requirement) {
+			//Add the Requirement if necessary:
+				//Get the Requirement's task with parentId
+				//Add the Requirement
+			if(vr.getRequirement(bo.getId()) == null) {
+				//TODO: Implement Requirement.loadFromRequirement(Requirement)
+			//or update the Requirement if it exists
+			} else {
+				
+			}
+		} else if(bo instanceof Fulfillment) {
+			//Add the Fulfillment if necessary:
+				//Get the Fulfillment's Requirement with parentId
+				//Add the Fulfillment
+			if(vr.getFulfillment(bo.getId()) == null) {
+				//TODO: Implement Fulfillment.loadFromFulfillment(Fulfillment)
+			//or update the Fulfillment if it exists
+			} else {
+				
+			}
+		}
+	}
+	
+	public void loadRequirementsForTask(String taskId) {
+		//Load task if it's not loaded
+		
+		//
+	}
+	
+	/**
+	 * Get a CrowdSourcerObject from CrowdSourcer
+	 * @param id				The ID of the CrowdSourcerObject to fetch
+	 * @return		The requested BackedObject (null if none is found)
+	 */
+	public CrowdSourcerObject getObject(String id) {
 		JSONObject taskJSON = getJSON(REPO_URL, new RequestArgument[]{new RequestArgument("id", id)});
 		try {
-			CrowdSourcerObject taskCS = (CrowdSourcerObject)taskJSON.get("data");
-			return taskCS.getContent(Task.class);
+			return (CrowdSourcerObject)taskJSON.get("data");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	/**
+	 * Get a BackedObject from CrowdSourcer
+	 * @param id				The ID of the BackedObject to fetch
+	 * @param objectClass		The type of BackedObject being fetched
+	 * @return		The requested BackedObject (null if none is found)
+	 */
+	public <T extends BackedObject> T getObject(String id, Class<T> objectClass) {
+		return getObject(id).getContent(objectClass);
 	}
 	
 	/**
@@ -225,32 +433,40 @@ public class WebRepository {
 
 		public void run() {
 			//If there are Requests waiting to be served, execute them
-			if(!requestQueue.isEmpty()) {
+			while(!requestQueue.isEmpty()) {
+				String result = null;
 				Request r = requestQueue.remove();
-				switch(r.type) {
-					case GET:
-						CrowdSourcerObject getResult;
+				CrowdSourcerObject co;
+				
+				if(r.callback != null) {
+					//Get the Request result
+					switch(r.type) {
+						case GET:
+							result = getContent(r.uri);
+						break;
+						case POST:
+							result = postContent(r.uri, r.postArguments);
+						break;
+					}
+					//If a result was fetched, turn it into a CrowdSourcerObject and run its Callback
+					if(result != null) {
+						System.out.println(result);
 						try {
-							getResult = new CrowdSourcerObject(getJSON(r.uri));
-						} catch(JSONException e) {
-							getResult = null;
-						}
-						if(r.callback != null && getResult != null)
-							r.callback.run(getResult);
-					break;
-					case POST:
-						String postResult = postContent(r.uri, r.postArguments);
-						if(r.callback != null && postResult != null) {
-							CrowdSourcerObject co;
-							try {
-								co = new CrowdSourcerObject(new JSONObject(postResult));
-							//If the JSON is invalid or doesn't comply with CrowdSourcerObject, just pass in null
-							} catch (JSONException e) {
-								co = null;
-							}
+							//Treat it like a CrowdSourcerObject; this will succeed if it is
+							co = new CrowdSourcerObject(new JSONObject(result));
 							r.callback.run(co);
+						} catch (JSONException e) {
+							try {
+								//Treat it like it's an object listing
+								JSONArray jsonArray = new JSONArray(result);
+								r.callback.run(jsonArray);
+							} catch (JSONException e2) {
+								//We didn't get anything valid, so invoke an "error" callback
+								r.callback.run(false);
+							}
+							co = null;
 						}
-					break;
+					}
 				}
 			}
 		}
@@ -266,8 +482,9 @@ public class WebRepository {
 	 * 					  boolean version (passes transmission success) 
 	 */
 	private class RequestCallback {
-		public void run(boolean success) {	}
-		public void run(CrowdSourcerObject co) { }
+		public void run(CrowdSourcerObject co) { } //This is invoked when a CrowdSourcerObject is returned from the API
+		public void run(JSONArray ja) { } //This is invoked when an object listing is returned from the API
+		public void run(boolean success) { } //This is invoked when a call errors
 	}
 	
 	private class Request {
@@ -276,16 +493,6 @@ public class WebRepository {
 		private String uri;
 		private RequestArgument[] postArguments;
 		private RequestCallback callback = null;
-		
-		public Request(String uri) {
-			type = requestType.GET;
-			this.uri = uri;
-		}
-		
-		public Request(String uri, RequestCallback callback) {
-			this(uri);
-			this.callback = callback;
-		}
 		
 		public Request(String uri, RequestArgument[] arguments) {
 			type = requestType.GET;

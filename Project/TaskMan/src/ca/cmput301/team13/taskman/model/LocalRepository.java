@@ -50,6 +50,8 @@ public class LocalRepository {
     private RepoHelper helper;
     //Virtual Repository link
     private VirtualRepository vr;
+    //The latest modification date
+    private Date newestModification;
 
     /**
      * Creates a new LocalRepository instance.
@@ -59,6 +61,7 @@ public class LocalRepository {
     public LocalRepository(Context context, VirtualRepository vr) {
         helper = new RepoHelper(context);
         this.vr = vr;
+        newestModification = new Date(0); //Initialize to a really old date
     }
 
     void open() throws SQLException {
@@ -119,10 +122,23 @@ public class LocalRepository {
                     new ArrayList<Requirement>(),//Current requirements
                     vr
                     );
+            updateNewestModificationDate(t);
         }
 
         cursor.close();
         return t;
+    }
+    
+    Task createTask(Task t) {
+    	Task createdTask = createTask(t.getCreator());
+    	createdTask.setTitle(t.getTitle());
+    	createdTask.setDescription(t.getDescription());
+    	createdTask.setLastModifiedDate(t.getLastModifiedDate());
+    	createdTask.reqsLoaded = false;
+    	createdTask.reqCount = 0;
+    	createdTask.isLocal = false;
+    	updateNewestModificationDate(createdTask);
+    	return createdTask;
     }
 
     /**
@@ -163,8 +179,9 @@ public class LocalRepository {
                 new ArrayList<Fulfillment>(),//Current requirements
                 vr
                 );
-
+        
         task.addRequirement(r);
+        updateNewestModificationDate(r);
 
         cursor.close();
         return r;
@@ -206,6 +223,7 @@ public class LocalRepository {
                 );
 
         req.addFulfillment(f);
+        updateNewestModificationDate(f);
 
         cursor.close();
         return f;
@@ -228,6 +246,7 @@ public class LocalRepository {
         values.put(RepoHelper.CREATOR_COL, t.getCreator().toString());
         
         existingRequirements = loadRequirements(t.getId());
+        updateNewestModificationDate(t);
         
         //TODO: Increase efficiency here using HashMaps as Requirement lists?
         for(Requirement r : existingRequirements) {
@@ -275,6 +294,7 @@ public class LocalRepository {
         values.put(RepoHelper.CREATOR_COL, r.getCreator().toString());
         
         existingFulfillments = loadFulfillments(r.getId(), r.getContentType());
+        updateNewestModificationDate(r);
         
       //TODO: Increase efficiency here using HashMaps as Requirement lists?
         for(Fulfillment f : existingFulfillments) {
@@ -330,6 +350,8 @@ public class LocalRepository {
         }
 
         values.put(RepoHelper.CREATOR_COL, f.getCreator().toString());
+        
+        updateNewestModificationDate(f);
 
         int updateCount = db.update(RepoHelper.FULS_TBL, values, RepoHelper.ID_COL + "=" + f.getId(), null);
 
@@ -361,6 +383,7 @@ public class LocalRepository {
                         vr
                         );
                 tasks.add(t);
+                updateNewestModificationDate(t);
             } while (cursor.moveToNext());
         }
 
@@ -403,6 +426,7 @@ public class LocalRepository {
                         vr
                         );
                 reqs.add(r);
+                updateNewestModificationDate(r);
             } while (cursor.moveToNext());
         }
 
@@ -468,6 +492,7 @@ public class LocalRepository {
                 }
                 
                 fulfillments.add(f);
+                updateNewestModificationDate(f);
             } while (cursor.moveToNext());
         }
 
@@ -623,6 +648,31 @@ public class LocalRepository {
      */
     void removeFulfillment(Fulfillment f) {
         db.delete(RepoHelper.FULS_TBL, RepoHelper.ID_COL + " = " + f.getId(), null);
+    }
+    
+    /**
+     * Get the newest modification that has been done in the LocalRepository
+     * @return The newest modification date
+     */
+    Date getNewestModification() {
+    	return newestModification;
+    }
+
+    /**
+     * Set the newest modification that has been done in the LocalRepository
+     * @param date	The newest modification date
+     */
+    private void setNewestModification(Date date) {
+    	newestModification = date;
+    }
+    
+    /**
+     * If the provided BackedObject has a modification date that is newer than the current newestModificationDate
+     * the value is updated
+     * @param bo	The BackedObject to compare dates against
+     */
+    private void updateNewestModificationDate(BackedObject bo) {
+    	if(bo.getLastModifiedDate().after(getNewestModification())) setNewestModification(bo.getLastModifiedDate());
     }
 
 }

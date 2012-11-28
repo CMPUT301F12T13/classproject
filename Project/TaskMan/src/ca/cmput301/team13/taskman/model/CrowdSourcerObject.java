@@ -13,9 +13,17 @@ import ca.cmput301.team13.taskman.TaskMan;
 public class CrowdSourcerObject {
 	
 	public static enum entityType {
-		TASK,
-		FULFILLMENT,
-		REQUIREMENT
+		TASK("TSK"),
+		FULFILLMENT("FUL"),
+		REQUIREMENT("REQ");
+		
+		private final String value;
+		private entityType(final String value) {
+			this.value = value;
+		}
+		public String toString() {
+			return value;
+		}
 	}
 	
 	//The ID of the entity
@@ -74,7 +82,17 @@ public class CrowdSourcerObject {
 				return (T)requirement;
 			else
 				throw new RuntimeException("Getting a Requirement from a non-requirement CrowdSourcerObject");
-		}else {
+		}else if(objectClass.equals(BackedObject.class)) {
+			switch(type) {
+				case TASK:
+					return (T)task;
+				case FULFILLMENT:
+					return (T)fulfillment;
+				case REQUIREMENT:
+					return (T)requirement;
+			}
+			return null;
+		}else { 
 			return null;
 		}
 	}
@@ -160,6 +178,7 @@ public class CrowdSourcerObject {
 					data.getInt("reqCount"), 
 					TaskMan.getInstance().getRepository()
 				);
+				t.setWebID(content.getString("id"));
 				setContent(t);
 			break;
 			case FULFILLMENT:
@@ -220,6 +239,7 @@ public class CrowdSourcerObject {
 						);
 				}
 				//Actually set this object's fulfillment
+				f.setWebID(content.getString("id"));
 				setContent(f);
 			break;
 			case REQUIREMENT:
@@ -234,6 +254,7 @@ public class CrowdSourcerObject {
 					data.getInt("fulfillmentCount"), 
 					TaskMan.getInstance().getRepository()
 				);
+				r.setWebID(content.getString("id"));
 				setContent(r);
 			break;
 		}

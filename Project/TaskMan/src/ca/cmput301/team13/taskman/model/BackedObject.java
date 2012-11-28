@@ -19,6 +19,7 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import android.os.Parcel;
@@ -32,11 +33,15 @@ abstract class BackedObject implements Parcelable {
 
 
     private int id;
-    private Date created;
+    private String webID;
+    private int parentId = -1;
+    private String parentWebID = "";
+	private Date created;
     private Date lastModified;
-    private User creator;
+	private User creator;
     transient VirtualRepository repo;
     boolean delaySave = false;
+    boolean isLocal = false;
     
     /**
      * Creates a BackedObject.
@@ -105,6 +110,10 @@ abstract class BackedObject implements Parcelable {
     public Date getLastModifiedDate() {
         return lastModified;
     }
+    
+    public void setLastModifiedDate(Date lastModified) {
+		this.lastModified = lastModified;
+	}
 
     /**
      * Returns the {@link User} who created the object.
@@ -113,7 +122,15 @@ abstract class BackedObject implements Parcelable {
     public User getCreator() {
         return creator;
     }
+    
+    public String getWebID() {
+		return webID;
+	}
 
+	public void setWebID(String webID) {
+		this.webID = webID;
+	}
+	
     /**
      * Describes the contents of the object (for parcelling).
      */
@@ -130,7 +147,59 @@ abstract class BackedObject implements Parcelable {
         out.writeSerializable(parcel);
     }
 
-    /**
+    public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getParentWebID() {
+		return parentWebID;
+	}
+
+	public void setParentWebID(String parentWebID) {
+		this.parentWebID = parentWebID;
+	}
+	
+	/**
+	 * Gets a Comparator that can compare BackedObjects for heirarchical ordering (used in WebRepository)
+	 * The Comparator defines BackedObject ordering as Task > Requirement > Fulfillment
+	 * @return The Comparator
+	 */
+	public static Comparator<BackedObject> getComparator() {
+		return new Comparator<BackedObject>() {
+			public int compare(BackedObject backedObject1, BackedObject backedObject2) {
+				//Task > Requirement
+				//Task > Fulfillment
+				if(backedObject1 instanceof Task && 
+				  (backedObject2 instanceof Requirement || backedObject2 instanceof Fulfillment)) {
+					return 1;
+				}
+				//Requirement > Fulfillment
+				if(backedObject1 instanceof Requirement && backedObject2 instanceof Fulfillment) {
+					return 1;
+				}
+				//Requirement < Task
+				if(backedObject1 instanceof Requirement && backedObject2 instanceof Task) {
+					return -1;
+				}
+				//Fulfillment < Task
+				//Fulfillment < Requirement
+				if(backedObject1 instanceof Fulfillment && 
+				  (backedObject2 instanceof Task || backedObject2 instanceof Requirement)) {
+					return -1;
+				}
+				//We'll never get here; this is to satisfy the compiler :)
+				throw new RuntimeException("The compared BackedObject is not an instance of " +
+						"Task, Requirement, or Fulfillment. What is it? Have we added a new " +
+						"feature and not accomodated it here?");
+			}
+		};
+	}
+
+	/**
      * Returns a BackedObject conforming with the type of BackedObject that was parcelled.
      * 		- Possible types: Task, Requirement, Fulfillment
      */

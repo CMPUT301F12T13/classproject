@@ -96,6 +96,8 @@ public class Requirement extends BackedObject {
     	}
     	try {
     		json.put("id", getId());
+    		json.put("parentId", getParentId());
+    		json.put("parentWebID", getParentWebID());
     		json.put("description", getDescription());
 			json.put("fulfillmentCount", getFullfillmentCount());
 			json.put("contentType", this.desiredContent.ordinal());

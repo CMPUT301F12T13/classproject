@@ -20,7 +20,6 @@
 package ca.cmput301.team13.taskman.model;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -28,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import utils.ObjectWriter;
 import android.graphics.Bitmap;
 import android.util.Log;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
@@ -39,7 +37,8 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
  */
 public class Fulfillment extends BackedObject implements Serializable {
 
-    private contentType content;
+	private static final long serialVersionUID = -455954352936661277L;
+	private contentType content;
     private Bitmap image;
     private String text;
     private short[] audioBuffer;
@@ -107,9 +106,12 @@ public class Fulfillment extends BackedObject implements Serializable {
     	JSONObject json = new JSONObject();
     	try {
     		json.put("id", getId());
+    		json.put("parentId", getParentId());
+    		json.put("parentWebID", getParentWebID());
     		json.put("created", getCreatedDate().getTime());
     		json.put("lastModified", getLastModifiedDate().getTime());
 			json.put("contentType", content.ordinal());
+			json.put("creator", getCreator().toString());
 			//Serialize the contained data
 			switch(content) {
 				case text:

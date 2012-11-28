@@ -26,8 +26,6 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ca.cmput301.team13.taskman.TaskMan;
-
 import android.os.Parcelable;
 import android.util.Log;
 
@@ -99,6 +97,12 @@ public class Task extends BackedObject implements Parcelable, Serializable {
 			e.printStackTrace();
 		}
     	return null;
+    }
+    
+    public void loadFromTask(Task t) {
+    	setLastModifiedDate(t.getLastModifiedDate());
+    	setTitle(t.getTitle());
+    	setDescription(t.getDescription());
     }
 
     private void loadRequirements() {

@@ -20,6 +20,7 @@
 package ca.cmput301.team13.taskman.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
@@ -52,6 +53,11 @@ public class VirtualRepository {
      */
     public Task createTask(User creator) {
         return local.createTask(creator);
+    }
+    
+    public Task createTask(Task t) {
+    	System.out.println("loading from virtual");
+    	return local.createTask(t);
     }
 
     /**
@@ -231,6 +237,14 @@ public class VirtualRepository {
     	} else {
     		return true;
     	}
+    }
+    
+    /**
+     * Get the newest modification that has been done in the LocalRepository
+     * @return The newest modification date
+     */
+    public Date getNewestLocalModification() {
+    	return local.getNewestModification();
     }
 
 
