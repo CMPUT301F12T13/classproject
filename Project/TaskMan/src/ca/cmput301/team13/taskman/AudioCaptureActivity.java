@@ -161,10 +161,11 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
         
         //Return to the Task Viewer
-        super.save();
-        fulfillment.setAudio(audioShorts);
-        finish();
-
+        if(audioShorts != null) {
+            super.save();
+            fulfillment.setAudio(audioShorts);
+            finish();
+        }
     }
     
     /**
