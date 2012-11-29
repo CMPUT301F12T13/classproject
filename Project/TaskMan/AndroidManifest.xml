@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ca.cmput301.team13.taskman"
     android:versionCode="1"
@@ -13,12 +14,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="TaskMan"
+        android:name="ca.cmput301.team13.taskman.TaskMan"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".RootActivity"
+            android:name="ca.cmput301.team13.taskman.RootActivity"
             android:label="@string/title_activity_root" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,27 +28,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TaskActivity"
+            android:name="ca.cmput301.team13.taskman.TaskActivity"
             android:label="@string/title_activity_task"
             android:windowSoftInputMode="adjustPan" >
             <intent-filter>
             </intent-filter>
         </activity>
         <activity
-            android:name=".AudioCaptureActivity"
+            android:name="ca.cmput301.team13.taskman.AudioCaptureActivity"
             android:label="@string/title_activity_audio_capture" >
             <intent-filter>
             </intent-filter>
         </activity>
         <activity
-            android:name=".ImageCaptureActivity"
+            android:name="ca.cmput301.team13.taskman.ImageCaptureActivity"
             android:label="@string/title_activity_camera_capture" >
             <intent-filter>
             </intent-filter>
         </activity>
         <activity
-            android:name=".TextCaptureActivity"
-            android:label="@string/title_activity_text_capture" > 
+            android:name="ca.cmput301.team13.taskman.TextCaptureActivity"
+            android:label="@string/title_activity_text_capture" >
             <intent-filter>
             </intent-filter>
         </activity>

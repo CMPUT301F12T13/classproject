@@ -39,7 +39,8 @@ public class Requirement extends BackedObject {
     public static enum contentType {
         text,
         image,
-        audio
+        audio,
+        video
     };
 
     //private state variables
@@ -70,7 +71,7 @@ public class Requirement extends BackedObject {
      * Construct a Requirement with backing in the persistent store.
      * @param id - the id of the requirement
      * @param description - the description of the requirement
-     * @param fulfillments - the list of fulfillments of the requirement
+     * @param fulfillmentCount - the quantity of fulfillments
      * @param repo - the repository backing this object
      */
     public Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {

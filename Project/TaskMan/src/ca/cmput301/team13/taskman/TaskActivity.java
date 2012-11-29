@@ -64,6 +64,11 @@ public class TaskActivity extends Activity implements OnClickListener {
             setEditingFields();
             ((Button)findViewById(R.id.save_button)).setOnClickListener(this);
             ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
+            if(getMode().equals("edit")) {
+                ((Button)findViewById(R.id.delete_button)).setOnClickListener(this);
+            } else {
+                findViewById(R.id.delete_button).setVisibility((View.INVISIBLE));
+            }
         } else {
             setContentView(R.layout.activity_view_task);
             setViewingFields();
@@ -91,6 +96,7 @@ public class TaskActivity extends Activity implements OnClickListener {
         ((ImageButton)findViewById(R.id.req_addTxt_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addImg_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.req_addAud_btn)).setOnClickListener(this);
+        ((ImageButton)findViewById(R.id.req_addVid_btn)).setOnClickListener(this);
         //TODO: Set the requirements
         reqAdapter = new RequirementListAdapter(task, "edit", this);
         //Disconnect our Requirements from the repository
@@ -188,6 +194,19 @@ public class TaskActivity extends Activity implements OnClickListener {
     }
 
     /**
+     * Delete the task and return to the root activity
+     */
+    private void deleteTask() {
+        //Destroy the associated Task
+        TaskMan.getInstance().getRepository().removeTask(task);
+        Intent i = new Intent(this, RootActivity.class);
+        //clear backlog of activities so RootActivity's back-button does not
+        //back into the view activity of a no longer existent task
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+    }
+    
+    /**
      * Handles click events.
      */
     public void onClick(View source) {
@@ -195,6 +214,8 @@ public class TaskActivity extends Activity implements OnClickListener {
             saveTask();
         } else if(source.equals(findViewById(R.id.cancel_button))) {
             cancelTask();
+        } else if(source.equals(findViewById(R.id.delete_button))) {
+            deleteTask();
         } else if  (source.getId() == R.id.req_addTxt_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text);
             reqAdapter.update();
@@ -203,6 +224,9 @@ public class TaskActivity extends Activity implements OnClickListener {
             reqAdapter.update();
         } else if  (source.getId() == R.id.req_addAud_btn) {
             TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio);
+            reqAdapter.update();
+        } else if  (source.getId() == R.id.req_addVid_btn) {
+            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.video);
             reqAdapter.update();
         } else if  (source.getId() == R.id.task_edit_btn) {
             Bundle b = new Bundle();

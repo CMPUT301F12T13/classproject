@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/bgMinorColor"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/audio_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:text="Audio Fulfillment"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Save" />
+        
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Cancel" />    
+            
+    </LinearLayout>
+
+        <TextView android:id="@+id/audio_fulfillment"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="5dp"
+            android:gravity="bottom"
+            android:textColor="#00CCFF"   
+            android:text="Acquire Audio" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#00CCFF"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        
+        <TextView
+            android:id="@+id/audio_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/record_button"
+            android:layout_alignParentTop="true"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/collection_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:text="Choose From Collection"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/record_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/collection_button"
+            android:layout_alignParentLeft="true"
+            android:text="Start Recording"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+        </RelativeLayout>
+</LinearLayout>

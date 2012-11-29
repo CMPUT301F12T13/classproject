@@ -40,7 +40,7 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.text_fulfillment);
+        setContentView(R.layout.activity_text_capture);
         
         //setup our listeners
         ((Button)findViewById(R.id.text_save_button)).setOnClickListener(this);
@@ -52,7 +52,7 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.text_fulfillment, menu);
+        getMenuInflater().inflate(R.menu.activity_text_capture, menu);
         return true;
     }
 

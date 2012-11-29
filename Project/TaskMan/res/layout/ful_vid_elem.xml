@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/fulTime"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:text="On XX/XX/XX:"
@@ -16,13 +16,13 @@
     </TextView>
 
     <ImageButton
-        android:id="@+id/audio_play_btn"
+        android:id="@+id/video_play_btn"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:contentDescription="Video Play Button"
         android:background="#FFFFFF"
-        android:contentDescription="Audio Play Button"
         android:src="@drawable/playbtn" />
 
 </RelativeLayout>

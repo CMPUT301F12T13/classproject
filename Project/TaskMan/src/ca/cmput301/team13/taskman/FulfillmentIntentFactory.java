@@ -27,6 +27,7 @@ package ca.cmput301.team13.taskman;
 
 import android.app.Activity;
 import android.content.Intent;
+import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
 
 /**
@@ -64,8 +65,12 @@ public class FulfillmentIntentFactory {
         else if(req.getContentType() == Requirement.contentType.text) {
             i = new Intent(source, TextCaptureActivity.class);
         }
+        else if(req.getContentType() == Requirement.contentType.video) {
+            i = new Intent(source, VideoCaptureActivity.class);
+        }
 
         i.putExtra("requirement", req);
         return i;
     }
+
 }

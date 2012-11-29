@@ -61,7 +61,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.image_fulfillment);
+        setContentView(R.layout.activity_image_capture);
 
         //setup our listeners
         ((Button)findViewById(R.id.take_button)).setOnClickListener(this);
@@ -91,7 +91,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.image_fulfillment, menu);
+        getMenuInflater().inflate(R.menu.activity_image_capture, menu);
         return true;
     }
 

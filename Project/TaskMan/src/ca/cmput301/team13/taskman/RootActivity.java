@@ -61,6 +61,7 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         ((ImageButton)findViewById(R.id.imgfilter_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.audfilter_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.txtfilter_btn)).setOnClickListener(this);
+        ((ImageButton)findViewById(R.id.vidfilter_btn)).setOnClickListener(this);
     }
 
     /**
@@ -106,7 +107,8 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         }else if(source.equals(findViewById(R.id.alltasks_btn)) ||
                 source.equals(findViewById(R.id.imgfilter_btn)) ||
                 source.equals(findViewById(R.id.audfilter_btn)) ||
-                source.equals(findViewById(R.id.txtfilter_btn))) {
+                source.equals(findViewById(R.id.txtfilter_btn)) ||
+                source.equals(findViewById(R.id.vidfilter_btn))) {
             Notifications.showToast(getApplicationContext(), Notifications.NOT_IMPLEMENTED);
         }
     }
