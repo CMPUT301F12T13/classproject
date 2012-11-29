@@ -107,7 +107,11 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
             selectAPhoto();
         }
         else if (source.equals(findViewById(R.id.save_button))) {
-            save();
+            if (photoTaken) {
+                save();
+            } else {
+                Notifications.showToast(getApplicationContext(), "No photo selected");
+            }
         }
         else if (source.equals(findViewById(R.id.cancel_button))) {
             cancel();
@@ -118,14 +122,9 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected photo to our parent and exit the Activity.
      */
     public void save() {
-        //test if a photo has been selected.
-        if (photoTaken) {
-            super.save();
-            fulfillment.setImage(selectedImage);
-            finish();
-        } else {
-            Notifications.showToast(getApplicationContext(), "No photo selected");
-        }
+        super.save();
+        fulfillment.setImage(selectedImage);
+        finish();
     }
     
     /**

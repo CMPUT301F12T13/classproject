@@ -136,7 +136,11 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             audioFromCollection();
         }
         else if (source.equals(findViewById(R.id.save_button))) {
-            save();
+            if(audioFileUri != null || fileName != null ) {
+                save();
+            } else {
+                Notifications.showToast(getApplicationContext(), "No Audio selected");
+            }   
         }
         else if (source.equals(findViewById(R.id.cancel_button))) {
             cancel();
@@ -147,25 +151,20 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected audio to our parent and exit the Activity.
      */
     public void save() {
-    	short[] audioShorts;
-            //Get audio from collection
-            if(audioFileUri != null) {
-            	audioShorts = getAudioShort(resolveAudioPath(getBaseContext(), audioFileUri));
-            //Get audio from the recorder
-            } else if(fileName != null) {
-            	audioShorts = getAudioShort(fileName);
-            } else {
-            	audioShorts = null;
-            }
-            
-            //Return to the Task Viewer if audio was selected
-            if(audioShorts != null) {
-                super.save();
-            	fulfillment.setAudio(audioShorts);
-            	finish();
-            } else {
-            	Notifications.showToast(getApplicationContext(), "No Audio selected");
-            }
+    	short[] audioShorts = null;
+        //Get audio from collection
+        if(audioFileUri != null) {
+        	audioShorts = getAudioShort(resolveAudioPath(getBaseContext(), audioFileUri));
+        //Get audio from the recorder
+        } else if(fileName != null) {
+        	audioShorts = getAudioShort(fileName);
+        }
+        
+        //Return to the Task Viewer
+        super.save();
+        fulfillment.setAudio(audioShorts);
+        finish();
+
     }
     
     /**

@@ -90,7 +90,13 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
             selectVideo();
         }
         else if (source.equals(findViewById(R.id.save_button))) {
-            save();
+            if(videoFileUri != null) {
+                save();
+            }
+            else {
+                Notifications.showToast(getApplicationContext(), "No Video Selected");
+            }
+            
         }
         else if (source.equals(findViewById(R.id.cancel_button))) {
             cancel();
@@ -101,20 +107,12 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected video to our parent and exit the Activity.
      */
     public void save() {
-        short[] videoShorts;
-        if (videoFileUri != null) {
-            videoShorts = getVideoShort(resolveVideoPath(getBaseContext(), videoFileUri));
-        } else {
-            videoShorts = null;
-        }
-        
-        //Return to the Task Viewer if video was selected
+        super.save();
+        short[] videoShorts = getVideoShort(resolveVideoPath(getBaseContext(), videoFileUri));
+        //Return to the Task Viewer
         if(videoShorts != null) {
-            super.save();
             fulfillment.setVideo(videoShorts);
             finish();
-        } else {
-            Notifications.showToast(getApplicationContext(), "No Video Selected");
         }
     }
     
