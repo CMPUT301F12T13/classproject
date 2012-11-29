@@ -110,6 +110,7 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
         
         //Return to the Task Viewer if video was selected
         if(videoShorts != null) {
+            super.save();
             fulfillment.setVideo(videoShorts);
             finish();
         } else {

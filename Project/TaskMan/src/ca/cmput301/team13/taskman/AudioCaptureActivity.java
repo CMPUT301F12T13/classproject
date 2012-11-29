@@ -160,6 +160,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             
             //Return to the Task Viewer if audio was selected
             if(audioShorts != null) {
+                super.save();
             	fulfillment.setAudio(audioShorts);
             	finish();
             } else {

@@ -58,17 +58,22 @@ public abstract class FulfillmentActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         this.requirement = (Requirement) this.getIntent().getParcelableExtra("requirement");
+        
+    }
 
+    /**
+     * Create the new fulfillment
+     */
+    public void save() {
         fulfillment = TaskMan.getInstance().getRepository().addFulfillmentToRequirement(
                 TaskMan.getInstance().getUser(),
                 requirement);
     }
-
+    
     /**
      * Cancel the Activity.
      */
     public void cancel() {
-        requirement.removeFulfillment(fulfillment);
         finish();
     }
 }

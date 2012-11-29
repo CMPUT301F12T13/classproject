@@ -120,6 +120,7 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
     public void save() {
         //test if a photo has been selected.
         if (photoTaken) {
+            super.save();
             fulfillment.setImage(selectedImage);
             finish();
         } else {

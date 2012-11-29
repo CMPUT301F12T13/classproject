@@ -73,6 +73,7 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
      * Send the entered text to our parent and exit the Activity
      */
     public void save() {
+        super.save();
         //get the text
         String text = ((EditText) findViewById(R.id.text_fulfillment)).getText().toString();
         //return the text
