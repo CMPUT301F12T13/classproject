@@ -28,6 +28,7 @@ public class CrowdSourcerObject {
 	
 	//The ID of the entity
 	private int id;
+	private int webId;
 	//The entity type (TASK or FULFILLMENT)
 	//This is stored in the "summary" field
 	private entityType type; 
@@ -239,6 +240,8 @@ public class CrowdSourcerObject {
 						);
 				}
 				//Actually set this object's fulfillment
+				f.setParentId(data.getInt("parentId"));
+				f.setParentWebID(data.getString("parentWebID"));
 				f.setWebID(content.getString("id"));
 				setContent(f);
 			break;
@@ -254,6 +257,8 @@ public class CrowdSourcerObject {
 					data.getInt("fulfillmentCount"), 
 					TaskMan.getInstance().getRepository()
 				);
+				r.setParentId(data.getInt("parentId"));
+				r.setParentWebID(data.getString("parentWebID"));
 				r.setWebID(content.getString("id"));
 				setContent(r);
 			break;

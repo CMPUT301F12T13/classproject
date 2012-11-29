@@ -84,17 +84,29 @@ public class LocalRepository {
                 "LocalRepository: The repo's DB connection needs to be instantiated " +
                 "before creating a task. Call open() first.");
     }
+    
+    /**
+     * Creates a new Task with a default ID
+     * @see createTask(User, int) for full implementation details
+     */
+    Task createTask(User creator) {
+    	return createTask(creator, -1);
+    }
 
     /**
      * Creates a new Task, with no title, description, or requirements
+     * 		*NOTE: The provided ID is used as this Task's ID. It MUST not conflict with a current ID.
      * @param creator The User that has created the Task
      * @return the Task, with no non-housekeeping values yet set
      */
-    Task createTask(User creator) {
+    Task createTask(User creator, int id) {
         assertOpen();
 
         Task t = null;
         ContentValues values = new ContentValues();
+        if(id > 0) {
+        	values.put(RepoHelper.ID_COL, id);
+        }
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
         values.put(RepoHelper.TITLE_COL, "");
@@ -130,7 +142,7 @@ public class LocalRepository {
     }
     
     Task createTask(Task t) {
-    	Task createdTask = createTask(t.getCreator());
+    	Task createdTask = createTask(t.getCreator(), t.getId());
     	createdTask.setTitle(t.getTitle());
     	createdTask.setDescription(t.getDescription());
     	createdTask.setLastModifiedDate(t.getLastModifiedDate());
@@ -140,17 +152,30 @@ public class LocalRepository {
     	updateNewestModificationDate(createdTask);
     	return createdTask;
     }
+    
+    /**
+     * Creates a new Requirement, with no description or fulfillments. Adds a default ID.
+     * @see createRequirement(User, Task, Requirement.contentType, int) for full implementation.
+     */
+    Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
+    	return createRequirement(creator, task, contentType, -1);
+    }
 
     /**
      * Creates a new Requirement, with no description or fulfillments
      * @param creator The User that has created the Requirement
      * @param task The Task to add the Requirement to
      * @param contentType The desired content type of the requirement
+     * @param id	The desired ID for the Requirement. -1 if a default ID should be generated.
      * @return the Requirement, with no non-housekeeping values yet set
      */
-    Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
+    Requirement createRequirement(User creator, Task task, Requirement.contentType contentType, int id) {
         assertOpen();
         ContentValues values = new ContentValues();
+        //If a custom ID is supplied, insert it
+        if(id > 0) {
+        	values.put(RepoHelper.ID_COL, id);
+        }
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
         values.put(RepoHelper.TASK_COL, task.getId());
@@ -186,16 +211,29 @@ public class LocalRepository {
         cursor.close();
         return r;
     }
+    
+    /**
+     * Creates a new Fulfillment, with no content yet set. An ID will be generated.
+     * @see createFulfillment(User, Requirement, int) for full implementation
+     */
+    Fulfillment createFulfillment(User creator, Requirement req) {
+    	return createFulfillment(creator, req, -1);
+    }
 
     /**
      * Creates a new Fulfillment, with no content yet set
      * @param creator The User that has created the Fulfillment
      * @param req The Requirement to add the FUlfillment to
+     * @param id	The desired ID for the Fulfillment. -1 if a default ID should be generated.
      * @return the Fulfillment, with no content yet attached
      */
-    Fulfillment createFulfillment(User creator, Requirement req) {
+    Fulfillment createFulfillment(User creator, Requirement req, int id) {
         assertOpen();
         ContentValues values = new ContentValues();
+        //If an ID was supplied, use it
+        if(id > 0) {
+        	values.put(RepoHelper.ID_COL, id);
+        }
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
         values.put(RepoHelper.REQ_COL, req.getId());

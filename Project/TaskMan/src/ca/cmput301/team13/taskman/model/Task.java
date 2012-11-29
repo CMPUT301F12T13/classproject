@@ -110,6 +110,10 @@ public class Task extends BackedObject implements Parcelable, Serializable {
     	setDescription(t.getDescription());
     	this.reqCount = t.reqCount;
     }
+    
+    private void changeId() {
+    	
+    }
 
     private void loadRequirements() {
         Log.w(toString(),"Performing lazy-load");
@@ -206,6 +210,10 @@ public class Task extends BackedObject implements Parcelable, Serializable {
             loadRequirements();
 
         return requirements.get(index);
+    }
+    
+    public int getOrderValue() {
+    	return 1;
     }
 
     /**

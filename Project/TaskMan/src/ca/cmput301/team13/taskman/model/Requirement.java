@@ -210,6 +210,10 @@ public class Requirement extends BackedObject {
             loaded = true;
         }
     }
+    
+    public int getOrderValue() {
+    	return 2;
+    }
 
     /**
      * Returns a string representation of the Requirement.

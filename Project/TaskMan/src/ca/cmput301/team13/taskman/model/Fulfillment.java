@@ -270,6 +270,10 @@ public class Fulfillment extends BackedObject implements Serializable {
     public contentType getContentType() {
         return content;
     }
+    
+    public int getOrderValue() {
+    	return 3;
+    }
 
     /**
      * Returns a string representation of the fulfillment.

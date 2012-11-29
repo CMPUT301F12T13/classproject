@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -138,7 +139,6 @@ public class WebRepository {
 		requestHandler.run();
 	}
 	
-	//TODO: Test this method!
 	/**
 	 * Loads a Task from CrowdSourcer into the local repository
 	 * 		*NOTE: This method runs asynchronously
@@ -161,7 +161,6 @@ public class WebRepository {
 						if(vr.getTask(bo.getId()) == null) {
 							vr.createTask((Task)bo);
 						}						
-						//TODO: Add Requirements and Fulfillments here?
 					} else if(bo != null) {
 						throw new RuntimeException("Treating " + bo.getClass().getName() + " as Task.");
 					} else {
@@ -182,7 +181,7 @@ public class WebRepository {
 	public void pullChanges(final WebActionCallback callback) {
 			//Objects need to be updated in the order { Task -> Requirement -> Fulfillment } to ensure that
 			//parent objects exist before their children are updated
-			final PriorityQueue<BackedObject> updatedObjects = new PriorityQueue<BackedObject>(20, BackedObject.getComparator());
+			final List<BackedObject> updatedObjects = new ArrayList<BackedObject>();
 			
 			//Go through the list of all objects in CrowdSourcer and change things that are newer than local versions
 			requestQueue.add(new Request(
@@ -201,16 +200,18 @@ public class WebRepository {
 									//If the CrowdSourcer version is newer than the local version, it needs to be pulled
 									if(lastModifiedDate.after(vr.getNewestLocalModification())) {
 										//Add this object to the update queue
-										updatedObjects.add(getObject(currentObject.getString("id")).getContent(BackedObject.class));
+										updatedObjects.add(getObject(currentObject.getString("id"), BackedObject.class));
 									}
 								}
 							}
 							
 							//Do all of the updates
+							Collections.sort(updatedObjects);
 							Iterator<BackedObject> itr = updatedObjects.iterator();
-							while(itr.hasNext()) {
+							while (itr.hasNext()) {
 								pullObject(itr.next());
 							}
+							invokeActionCallback(callback, true, "Changes were successfully pulled from CrowdSourcer.");
 						} catch (JSONException e) {
 							invokeActionCallback(callback, false, "An invalid object list was returned from pullChanges.");
 						} catch (ParseException e) {
@@ -252,7 +253,7 @@ public class WebRepository {
 			if(vr.getRequirement(bo.getId()) == null) {
 				Task parentTask = vr.getTask(bo.getParentId());
 				if(parentTask != null) {
-					Requirement newRequirement = vr.addRequirementToTask(bo.getCreator(), parentTask, ((Requirement)bo).getContentType());
+					Requirement newRequirement = vr.addRequirementToTask(bo.getCreator(), parentTask, ((Requirement)bo).getContentType(), bo.getId());
 					newRequirement.loadFromRequirement((Requirement)bo);
 				} else {
 					throw new RuntimeException("The pulled Requirement's parent does not exist. No hook point is available.");
@@ -268,7 +269,7 @@ public class WebRepository {
 			if(vr.getFulfillment(bo.getId()) == null) {
 				Requirement parentRequirement = vr.getRequirement(bo.getParentId());
 				if(parentRequirement != null) {
-					Fulfillment newFulfillment = vr.addFulfillmentToRequirement(bo.getCreator(), parentRequirement);
+					Fulfillment newFulfillment = vr.addFulfillmentToRequirement(bo.getCreator(), parentRequirement, bo.getId());
 					newFulfillment.loadFromFulfillment((Fulfillment)bo);
 				} else {
 					throw new RuntimeException("The pulled Fulfillment's parent does not exist. No hook point is available.");
@@ -290,7 +291,6 @@ public class WebRepository {
 			new RequestArgument("action", "get"),
 			new RequestArgument("id", id)
 		});
-		//TODO: Get "content" before data
 		try {
 			CrowdSourcerObject co = new CrowdSourcerObject(taskJSON);
 			return co;
@@ -373,7 +373,6 @@ public class WebRepository {
 			}
 			
 			return jsonString.toString();
-			//TODO: Check whether it was successful
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
@@ -446,8 +445,13 @@ public class WebRepository {
 		return "?" + getArguments.toString();
 	}
 	
+	/**
+	 * Invokes the supplied ActionCallback if one was supplied
+	 * @param callback		The callback to invoke
+	 * @param success		The success parameter to pass into the callback
+	 * @param message		The message parameter to pass into the callback
+	 */
 	private void invokeActionCallback(WebActionCallback callback, boolean success, String message) {
-//		if(message == null) message = "TEST";
 		if(callback != null) callback.run(success, message);
 	}
 	
@@ -455,6 +459,9 @@ public class WebRepository {
 	 * Asynchronous Request Mechanisms *
 	 **********************************/
 	
+	/**
+	 * Runs queued Requests from requestQueue on a separate thread
+	 */
 	private Runnable requestHandler = new Runnable() {
 
 		public void run() {
@@ -512,10 +519,22 @@ public class WebRepository {
 		public void run(boolean success) { } //This is invoked when a call errors
 	}
 	
+	/**
+	 * A callback that is passed into asynchronous WebRepository methods to allow the caller
+	 * to be notified when the method has completed, and to get the status of the resulting
+	 * request
+	 */
 	public static class WebActionCallback {
 		public void run(boolean success, String message) { }
 	}
-	
+
+	/**
+	 * A web request consisiting of JSON api endpoint, parameters, and a callback for invocation
+	 * once the request is complete. 
+	 * 
+	 * The Request should be initiated by putting it into the requestQueue
+	 * and invoking requestHandler.run()
+	 */
 	private class Request {
 		
 		private requestType type;

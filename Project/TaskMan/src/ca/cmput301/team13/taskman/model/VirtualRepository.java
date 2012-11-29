@@ -22,11 +22,11 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
-import ca.cmput301.team13.taskman.TaskMan;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
-
 import android.content.Context;
 import android.util.Log;
+import ca.cmput301.team13.taskman.TaskMan;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+import ca.cmput301.team13.taskman.model.WebRepository.WebActionCallback;
 
 /**
  * A facade combining {@link LocalRepository} and a remote
@@ -34,6 +34,7 @@ import android.util.Log;
  */
 public class VirtualRepository {
     private LocalRepository local;
+    private WebRepository web;
 
     /**
      * Instantiates a new {@link VirtualRepository} object.
@@ -43,6 +44,7 @@ public class VirtualRepository {
     	if(local == null) {
     		local = new LocalRepository(context, this);
         	local.open();
+        	web = new WebRepository(this);
     	}
     }
 
@@ -56,7 +58,6 @@ public class VirtualRepository {
     }
     
     public Task createTask(Task t) {
-    	System.out.println("loading from virtual");
     	return local.createTask(t);
     }
 
@@ -89,20 +90,37 @@ public class VirtualRepository {
     public ArrayList<Task> getTasksForFilter(TaskFilter tf) {
         return local.loadTasks(tf);
     }
+    
+    /**
+     * Creates a Requirement and links it to a Task. Initializes it with a default ID.
+     * @see addRequirementsToTask(User, Task, contentType, int) for full implementation
+     */
+    public Requirement addRequirementToTask(User creator, Task t, contentType content) {
+    	return addRequirementToTask(creator, t, content, -1);
+    }
 
     /**
      * Creates a Requirement and links it to a Task.
      * @param creator The User creating the requirement (null to use Task's creator)
      * @param t The Task to add the Requirement to
      * @param content The content type specified by the Requirement
+     * @param id	The desired ID for the Requirement. -1 if a default ID should be generated.
      * @return
      */
-    public Requirement addRequirementToTask(User creator, Task t, contentType content) {
+    public Requirement addRequirementToTask(User creator, Task t, contentType content, int id) {
         if(creator == null) {
             creator = t.getCreator();
         }
-        Requirement r = local.createRequirement(creator, t, content);
+        Requirement r = local.createRequirement(creator, t, content, id);
         return r;
+    }
+    
+    /**
+     * Creates a Fulfillment and links it to a Requirement. Adds a default ID
+     * @see addFulfillmentToRequirement(User, Requirement, int) for full implementation
+     */
+    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r) {
+    	return addFulfillmentToRequirement(creator, r, -1);
     }
 
     /**
@@ -111,7 +129,7 @@ public class VirtualRepository {
      * @param r The Requirement to add the Fulfillment to
      * @return
      */
-    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r) {
+    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r, int id) {
         if(creator == null) {
             creator = r.getCreator();
         }
@@ -247,5 +265,8 @@ public class VirtualRepository {
     	return local.getNewestModification();
     }
 
+    public void synchronize(WebActionCallback callback) {
+    	web.pullChanges(callback);
+    }
 
 }

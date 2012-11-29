@@ -29,7 +29,7 @@ import ca.cmput301.team13.taskman.TaskMan;
 /**
  * Base class for objects that reside in the database.
  */
-abstract class BackedObject implements Parcelable {
+abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 
 
     private int id;
@@ -163,40 +163,10 @@ abstract class BackedObject implements Parcelable {
 		this.parentWebID = parentWebID;
 	}
 	
-	/**
-	 * Gets a Comparator that can compare BackedObjects for heirarchical ordering (used in WebRepository)
-	 * The Comparator defines BackedObject ordering as Task > Requirement > Fulfillment
-	 * @return The Comparator
-	 */
-	public static Comparator<BackedObject> getComparator() {
-		return new Comparator<BackedObject>() {
-			public int compare(BackedObject backedObject1, BackedObject backedObject2) {
-				//Task > Requirement
-				//Task > Fulfillment
-				if(backedObject1 instanceof Task && 
-				  (backedObject2 instanceof Requirement || backedObject2 instanceof Fulfillment)) {
-					return 1;
-				}
-				//Requirement > Fulfillment
-				if(backedObject1 instanceof Requirement && backedObject2 instanceof Fulfillment) {
-					return 1;
-				}
-				//Requirement < Task
-				if(backedObject1 instanceof Requirement && backedObject2 instanceof Task) {
-					return -1;
-				}
-				//Fulfillment < Task
-				//Fulfillment < Requirement
-				if(backedObject1 instanceof Fulfillment && 
-				  (backedObject2 instanceof Task || backedObject2 instanceof Requirement)) {
-					return -1;
-				}
-				//We'll never get here; this is to satisfy the compiler :)
-				throw new RuntimeException("The compared BackedObject is not an instance of " +
-						"Task, Requirement, or Fulfillment. What is it? Have we added a new " +
-						"feature and not accomodated it here?");
-			}
-		};
+	abstract public int getOrderValue();
+	
+	public int compareTo(BackedObject bo) {
+		return this.getOrderValue() - bo.getOrderValue();
 	}
 
 	/**
