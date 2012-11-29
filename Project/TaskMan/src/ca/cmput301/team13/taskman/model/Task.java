@@ -99,10 +99,16 @@ public class Task extends BackedObject implements Parcelable, Serializable {
     	return null;
     }
     
+    /**
+     * Update this Task's mutable properties from the provided
+     * Task object
+     * @param t
+     */
     public void loadFromTask(Task t) {
     	setLastModifiedDate(t.getLastModifiedDate());
     	setTitle(t.getTitle());
     	setDescription(t.getDescription());
+    	this.reqCount = t.reqCount;
     }
 
     private void loadRequirements() {

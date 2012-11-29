@@ -110,6 +110,17 @@ public class Requirement extends BackedObject {
 		}
     	return json;
     }
+    
+    /**
+     * Update this Requirement's mutable properties from
+     * the provided Requirement
+     * @param r
+     */
+    public void loadFromRequirement(Requirement r) {
+    	this.setDescription(r.getDescription());
+    	this.setLastModifiedDate(r.getLastModifiedDate());
+    	this.fulfillmentCount = r.getFullfillmentCount();
+    }
 
     /**
      * Returns the description of the Requirement.

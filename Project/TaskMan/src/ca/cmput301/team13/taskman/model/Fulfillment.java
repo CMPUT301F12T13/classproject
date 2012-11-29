@@ -140,6 +140,26 @@ public class Fulfillment extends BackedObject implements Serializable {
 		}
     	return json;
     }
+    
+    /**
+     * Update this Fulfillment's mutable properties from the
+     * provided Fulfillment
+     * @param f
+     */
+    public void loadFromFulfillment(Fulfillment f) {
+    	setLastModifiedDate(f.getLastModifiedDate());
+    	switch(content) {
+	    	case text:
+				setText(f.getText());
+			break;
+			case audio:
+				setAudio(f.getAudio());
+			break;
+			case image:
+				setImage(f.getImage());
+			break;
+    	}
+    }
 
     /**
      * Returns the image content associated with this fulfillment.

@@ -50,17 +50,17 @@ public class WebRepository {
 	 * Invokes pushObject(BackedObject, boolean) with the second parameter as true
 	 * @see pushObject(BackedObject, boolean)
 	 */
-	public void pushObject(BackedObject o) {
-		pushObject(o, true);
+	public void pushObject(BackedObject o, final WebActionCallback callback) {
+		pushObject(o, true, callback);
 	}
 	
 	/**
 	 * Create or update an object in the CrowdSourcer database
-	 * 		NOTE: This method runs asynchronously
+	 * 		*NOTE: This method runs asynchronously
 	 * @param o			The BackedObject to transfer to CrowdSourcer
 	 * @param update	Whether existing objects should be updated
 	 */
-	public void pushObject(BackedObject o, boolean update) {
+	public void pushObject(BackedObject o, boolean update, final WebActionCallback callback) {
 		if(o.isLocal) return; //Don't upload local objects
 		
 		CrowdSourcerObject co = new CrowdSourcerObject(o);
@@ -111,7 +111,7 @@ public class WebRepository {
 								Requirement r = t.getRequirement(i);
 								r.setParentId(t.getId());
 								r.setParentWebID(t.getWebID());
-								pushObject(r, doUpdate);
+								pushObject(r, doUpdate, null);
 							}
 						}
 					} else if(bo instanceof Fulfillment) {
@@ -127,10 +127,11 @@ public class WebRepository {
 								Fulfillment f = r.getFulfillment(i);
 								f.setParentId(r.getId());
 								f.setParentWebID(r.getWebID());
-								pushObject(f, doUpdate);
+								pushObject(f, doUpdate, null);
 							}
 						}
 					}
+					invokeActionCallback(callback, true, "The object was successfully added to CrowdSourcer.");
 				}
 			}
 		));
@@ -139,6 +140,11 @@ public class WebRepository {
 	}
 	
 	//TODO: Test this method!
+	/**
+	 * Loads a Task from CrowdSourcer into the local repository
+	 * 		*NOTE: This method runs asynchronously
+	 * @param taskId	The webID of the task to load
+	 */
 	public void loadTask(String taskId) {
 		
 		requestQueue.add(new Request(
@@ -149,7 +155,6 @@ public class WebRepository {
 			},
 			new RequestCallback() {
 				public void run(CrowdSourcerObject co) {
-					System.out.println("callback running");
 					BackedObject bo = co.getContent(BackedObject.class);
 					//If a Task was returned and doesn't already exist, add it
 					if(bo != null && bo instanceof Task) {
@@ -168,11 +173,14 @@ public class WebRepository {
 		));
 		
 		requestHandler.run();
-		loadRequirementsForTask(taskId);
 		
 	}
 	
-	public void pullChanges() {
+	/**
+	 * Pull all objects from CrowdSourcer that have been modified more recently than local versions
+	 * 		*NOTE: This method runs asynchronously
+	 */
+	public void pullChanges(final WebActionCallback callback) {
 			//Objects need to be updated in the order { Task -> Requirement -> Fulfillment } to ensure that
 			//parent objects exist before their children are updated
 			final PriorityQueue<BackedObject> updatedObjects = new PriorityQueue<BackedObject>(20, BackedObject.getComparator());
@@ -205,10 +213,14 @@ public class WebRepository {
 								pullObject(itr.next());
 							}
 						} catch (JSONException e) {
-							throw new RuntimeException("An invalid object list was returned from pullChanges.");
+							invokeActionCallback(callback, false, "An invalid object list was returned from pullChanges.");
 						} catch (ParseException e) {
-							throw new RuntimeException("An invalid date string was stored with the list object.");
-						}
+							invokeActionCallback(callback, false, "An invalid date string was stored with the list object.");
+						} /*catch (Exception e) {
+							//PullObject failed
+							System.out.println("EXCEPTION!: " + e.getMessage());
+							invokeActionCallback(callback, false, e.getMessage());
+						}*/
 					}
 				}
 			));
@@ -219,7 +231,10 @@ public class WebRepository {
 	/**
 	 * Pull the object into the local repository by adding it if it doesn't
 	 * exist, or updating it if it does exist
+	 * 		*NOTE: 	If this BackedObject is a Requirement or Fulfillment, its parent
+	 * 				MUST exist locally before invoking this method.
 	 * @param bo
+	 * @throws Exception 
 	 */
 	public void pullObject(BackedObject bo) {
 		//Update or add objects as necessary
@@ -233,31 +248,37 @@ public class WebRepository {
 			}
 		} else if(bo instanceof Requirement) {
 			//Add the Requirement if necessary:
-				//Get the Requirement's task with parentId
+				//Get the Requirement's Task with parentId
 				//Add the Requirement
 			if(vr.getRequirement(bo.getId()) == null) {
-				//TODO: Implement Requirement.loadFromRequirement(Requirement)
+				Task parentTask = vr.getTask(bo.getParentId());
+				if(parentTask != null) {
+					Requirement newRequirement = vr.addRequirementToTask(bo.getCreator(), parentTask, ((Requirement)bo).getContentType());
+					newRequirement.loadFromRequirement((Requirement)bo);
+				} else {
+					throw new RuntimeException("The pulled Requirement's parent does not exist. No hook point is available.");
+				}
 			//or update the Requirement if it exists
 			} else {
-				
+				vr.getRequirement(bo.getId()).loadFromRequirement((Requirement)bo);
 			}
 		} else if(bo instanceof Fulfillment) {
 			//Add the Fulfillment if necessary:
 				//Get the Fulfillment's Requirement with parentId
 				//Add the Fulfillment
 			if(vr.getFulfillment(bo.getId()) == null) {
-				//TODO: Implement Fulfillment.loadFromFulfillment(Fulfillment)
+				Requirement parentRequirement = vr.getRequirement(bo.getParentId());
+				if(parentRequirement != null) {
+					Fulfillment newFulfillment = vr.addFulfillmentToRequirement(bo.getCreator(), parentRequirement);
+					newFulfillment.loadFromFulfillment((Fulfillment)bo);
+				} else {
+					throw new RuntimeException("The pulled Fulfillment's parent does not exist. No hook point is available.");
+				}
 			//or update the Fulfillment if it exists
 			} else {
-				
+				vr.getFulfillment(bo.getId()).loadFromFulfillment((Fulfillment)bo);
 			}
 		}
-	}
-	
-	public void loadRequirementsForTask(String taskId) {
-		//Load task if it's not loaded
-		
-		//
 	}
 	
 	/**
@@ -266,9 +287,14 @@ public class WebRepository {
 	 * @return		The requested BackedObject (null if none is found)
 	 */
 	public CrowdSourcerObject getObject(String id) {
-		JSONObject taskJSON = getJSON(REPO_URL, new RequestArgument[]{new RequestArgument("id", id)});
+		JSONObject taskJSON = getJSON(REPO_URL, new RequestArgument[]{
+			new RequestArgument("action", "get"),
+			new RequestArgument("id", id)
+		});
+		//TODO: Get "content" before data
 		try {
-			return (CrowdSourcerObject)taskJSON.get("data");
+			CrowdSourcerObject co = new CrowdSourcerObject(taskJSON);
+			return co;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -359,10 +385,6 @@ public class WebRepository {
 		return null;
 	}
 	
-	private String postContent(String uri, RequestArgument[] getParams, RequestArgument[] postParams) {
-		return postContent(uri + getArgumentString(getParams), postParams);
-	}
-	
 	/**
 	 * Builds a JSON string from the response provided by the specified endpoint
 	 * @param uri
@@ -425,6 +447,11 @@ public class WebRepository {
 		return "?" + getArguments.toString();
 	}
 	
+	private void invokeActionCallback(WebActionCallback callback, boolean success, String message) {
+//		if(message == null) message = "TEST";
+		if(callback != null) callback.run(success, message);
+	}
+	
 	/***********************************
 	 * Asynchronous Request Mechanisms *
 	 **********************************/
@@ -450,7 +477,6 @@ public class WebRepository {
 					}
 					//If a result was fetched, turn it into a CrowdSourcerObject and run its Callback
 					if(result != null) {
-						System.out.println(result);
 						try {
 							//Treat it like a CrowdSourcerObject; this will succeed if it is
 							co = new CrowdSourcerObject(new JSONObject(result));
@@ -485,6 +511,10 @@ public class WebRepository {
 		public void run(CrowdSourcerObject co) { } //This is invoked when a CrowdSourcerObject is returned from the API
 		public void run(JSONArray ja) { } //This is invoked when an object listing is returned from the API
 		public void run(boolean success) { } //This is invoked when a call errors
+	}
+	
+	public static class WebActionCallback {
+		public void run(boolean success, String message) { }
 	}
 	
 	private class Request {
