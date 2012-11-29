@@ -107,6 +107,7 @@ public class LocalRepository {
         if(id > 0) {
         	values.put(RepoHelper.ID_COL, id);
         }
+        values.put(RepoHelper.WEBID_COL, "");
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
         values.put(RepoHelper.TITLE_COL, "");
@@ -135,21 +136,25 @@ public class LocalRepository {
                     vr
                     );
             updateNewestModificationDate(t);
+            t.setWebID(cursor.getString(6));
         }
-
+        
         cursor.close();
         return t;
     }
     
     Task createTask(Task t) {
     	Task createdTask = createTask(t.getCreator(), t.getId());
+    	createdTask.delaySaves(true);
+    	createdTask.setWebID(t.getWebID());
     	createdTask.setTitle(t.getTitle());
     	createdTask.setDescription(t.getDescription());
     	createdTask.setLastModifiedDate(t.getLastModifiedDate());
+    	updateNewestModificationDate(createdTask);
     	createdTask.reqsLoaded = false;
     	createdTask.reqCount = 0;
-    	createdTask.isLocal = false;
-    	updateNewestModificationDate(createdTask);
+    	createdTask.isLocal = t.isLocal;
+    	createdTask.delaySaves(false);
     	return createdTask;
     }
     
@@ -176,6 +181,7 @@ public class LocalRepository {
         if(id > 0) {
         	values.put(RepoHelper.ID_COL, id);
         }
+        values.put(RepoHelper.WEBID_COL, "");
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
         values.put(RepoHelper.TASK_COL, task.getId());
@@ -205,6 +211,7 @@ public class LocalRepository {
                 vr
                 );
         
+        r.setWebID(cursor.getString(7));
         task.addRequirement(r);
         updateNewestModificationDate(r);
 
@@ -234,6 +241,7 @@ public class LocalRepository {
         if(id > 0) {
         	values.put(RepoHelper.ID_COL, id);
         }
+        values.put(RepoHelper.WEBID_COL, "");
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
         values.put(RepoHelper.REQ_COL, req.getId());
@@ -260,6 +268,7 @@ public class LocalRepository {
                 vr
                 );
 
+        f.setWebID(cursor.getString(7));
         req.addFulfillment(f);
         updateNewestModificationDate(f);
 
@@ -277,6 +286,7 @@ public class LocalRepository {
     	
         assertOpen();
         ContentValues values = new ContentValues();
+        values.put(RepoHelper.WEBID_COL, t.getWebID());
         values.put(RepoHelper.CREATED_COL, t.getCreatedDate().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, t.getLastModifiedDate().getTime());
         values.put(RepoHelper.TITLE_COL, t.getTitle());
@@ -324,6 +334,7 @@ public class LocalRepository {
     	
         assertOpen();
         ContentValues values = new ContentValues();
+        values.put(RepoHelper.WEBID_COL, r.getWebID());
         values.put(RepoHelper.CREATED_COL, r.getCreatedDate().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, r.getLastModifiedDate().getTime());
         values.put(RepoHelper.ID_COL, r.getId());
@@ -362,6 +373,7 @@ public class LocalRepository {
     void updateFulfillment(Fulfillment f) {
         assertOpen();
         ContentValues values = new ContentValues();
+        values.put(RepoHelper.WEBID_COL, f.getWebID());
         values.put(RepoHelper.CREATED_COL, f.getCreatedDate().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, f.getLastModifiedDate().getTime());
         values.put(RepoHelper.ID_COL, f.getId());
@@ -427,6 +439,7 @@ public class LocalRepository {
                         loadRequirements(cursor.getInt(0)),//Current requirements
                         vr
                         );
+                t.setWebID(cursor.getString(7));
                 tasks.add(t);
                 updateNewestModificationDate(t);
             } while (cursor.moveToNext());
@@ -470,6 +483,7 @@ public class LocalRepository {
                         getFulfillmentCount(cursor.getInt(0)),//load current fulfillments
                         vr
                         );
+                r.setWebID(cursor.getString(7));
                 reqs.add(r);
                 updateNewestModificationDate(r);
             } while (cursor.moveToNext());
@@ -544,7 +558,7 @@ public class LocalRepository {
                         break;
                     }
                 }
-                
+                f.setWebID(cursor.getString(7));
                 fulfillments.add(f);
                 updateNewestModificationDate(f);
             } while (cursor.moveToNext());
@@ -576,6 +590,7 @@ public class LocalRepository {
                     loadRequirements(taskId),//Current requirements
                     vr
                     );
+            t.setWebID(cursor.getString(6));
             cursor.close();
             return t;
         } else {
@@ -591,6 +606,24 @@ public class LocalRepository {
      */
     Task getTaskUpdate(Task t) {
     	return getTask(t.getId());
+    }
+    
+    /**
+     * Get updated data for the requested Requirement
+     * @param t		The Requirement to get updated data for
+     * @return		The updated Requirement
+     */
+    Requirement getRequirementUpdate(Requirement r) {
+    	return getRequirement(r.getId());
+    }
+    
+    /**
+     * Get updated data for the requested Fulfillment
+     * @param t		The Fulfillment to get updated data for
+     * @return		The updated Fulfillment
+     */
+    Fulfillment getFulfillmentUpdate(Fulfillment f) {
+    	return getFulfillment(f.getId());
     }
 
     /**
@@ -615,6 +648,7 @@ public class LocalRepository {
                     getFulfillmentCount(requirementId),
                     vr
                     );
+            r.setWebID(cursor.getString(7));
             cursor.close();
             return r;
         } else {
@@ -663,6 +697,7 @@ public class LocalRepository {
                     new User(cursor.getString(3)),//Creator
                     vr
                     );
+            f.setWebID(cursor.getString(7));
             cursor.close();
             return f;
         } else {
@@ -737,6 +772,7 @@ class RepoHelper  extends SQLiteOpenHelper{
     public static final String FULS_TBL = "fulfillments";
     //Columns
     public static final String ID_COL = "id";
+    public static final String WEBID_COL = "webID";
     public static final String TITLE_COL = "title";
     public static final String DESC_COL = "description";
     public static final String CREATED_COL = "created";
@@ -747,12 +783,12 @@ class RepoHelper  extends SQLiteOpenHelper{
     public static final String CONTENTTYPE_COL = "contentType";
     public static final String CONTENT_COL = "content";
     //Columns as found in tables
-    public static final String[] TASKS_COLS = {ID_COL, TITLE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
-    private static final String[] TASKS_COLTYPES = {"integer primary key autoincrement", "text not null", "integer not null", "integer not null", "integer not null", "integer not null"};
-    public static final String[] REQS_COLS = {ID_COL, TASK_COL, CONTENTTYPE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL};
-    private static final String[] REQS_COLTYPES = {"integer primary key autoincrement", "integer not null", "integer not null", "text not null", "text not null", "integer not null", "integer not null"};
-    public static final String[] FULS_COLS = {ID_COL, REQ_COL, CONTENT_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, CONTENTTYPE_COL};
-    private static final String[] FULS_COLTYPES = {"integer primary key autoincrement", "integer not null", "blob", "text not null", "integer not null", "integer not null", "integer not null"};
+    public static final String[] TASKS_COLS = {ID_COL, TITLE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, WEBID_COL};
+    private static final String[] TASKS_COLTYPES = {"integer primary key autoincrement", "text not null", "integer not null", "integer not null", "integer not null", "integer not null", "text not null"};
+    public static final String[] REQS_COLS = {ID_COL, TASK_COL, CONTENTTYPE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, WEBID_COL};
+    private static final String[] REQS_COLTYPES = {"integer primary key autoincrement", "integer not null", "integer not null", "text not null", "text not null", "integer not null", "integer not null", "text not null"};
+    public static final String[] FULS_COLS = {ID_COL, REQ_COL, CONTENT_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, CONTENTTYPE_COL, WEBID_COL};
+    private static final String[] FULS_COLTYPES = {"integer primary key autoincrement", "integer not null", "blob", "text not null", "integer not null", "integer not null", "integer not null", "text not null"};
     //The name of our database, and SQL Schema version
     private static final String DBNAME = "taskman.db";
     private static final int VERSION = 1;

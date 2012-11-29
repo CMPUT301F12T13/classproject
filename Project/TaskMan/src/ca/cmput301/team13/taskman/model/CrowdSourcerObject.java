@@ -179,7 +179,8 @@ public class CrowdSourcerObject {
 					data.getInt("reqCount"), 
 					TaskMan.getInstance().getRepository()
 				);
-				t.setWebID(content.getString("id"));
+				t.isLocal = false;
+				t.setWebID(json.getString("id"));
 				setContent(t);
 			break;
 			case FULFILLMENT:
@@ -240,9 +241,10 @@ public class CrowdSourcerObject {
 						);
 				}
 				//Actually set this object's fulfillment
+				f.isLocal = false;
 				f.setParentId(data.getInt("parentId"));
 				f.setParentWebID(data.getString("parentWebID"));
-				f.setWebID(content.getString("id"));
+				f.setWebID(json.getString("id"));
 				setContent(f);
 			break;
 			case REQUIREMENT:
@@ -257,9 +259,10 @@ public class CrowdSourcerObject {
 					data.getInt("fulfillmentCount"), 
 					TaskMan.getInstance().getRepository()
 				);
+				r.isLocal = false;
 				r.setParentId(data.getInt("parentId"));
 				r.setParentWebID(data.getString("parentWebID"));
-				r.setWebID(content.getString("id"));
+				r.setWebID(json.getString("id"));
 				setContent(r);
 			break;
 		}

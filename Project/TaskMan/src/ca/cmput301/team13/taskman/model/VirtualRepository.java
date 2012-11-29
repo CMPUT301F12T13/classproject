@@ -143,18 +143,31 @@ public class VirtualRepository {
      * @param backedObject - the object with changes
      */
     boolean saveUpdate(BackedObject backedObject) {
+    	boolean updated = false;
         if(backedObject instanceof Task) {
             local.updateTask((Task)backedObject);
-            return true;
+            updated = true;
         } else if(backedObject instanceof Requirement) {
             local.updateRequirement((Requirement)backedObject);
-            return true;
+            updated = true;
         } else if(backedObject instanceof Fulfillment) {
             local.updateFulfillment((Fulfillment)backedObject);
-            return true;
+            updated = true;
         }
-        //If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?
-        Log.w("VirtualRepository", "Attempted to save changes to unknown object: "+backedObject.getClass().toString());
+        
+        //Push to web if necessary
+        if(!backedObject.isLocal) {
+        	System.out.println("going to save to web!");
+        	/*web.pushObject(backedObject, true, new WebActionCallback() {
+        		public void run(boolean success, String message) {
+        			//TODO: If this fails, pop up a Toast or something? With an option to retry?
+        		}
+        	});*/
+        }
+        
+        if(!updated)
+        	//If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?
+        	Log.w("VirtualRepository", "Attempted to save changes to unknown object: "+backedObject.getClass().toString());
         return false;
     }
 
@@ -192,6 +205,24 @@ public class VirtualRepository {
      */
     public Task getTaskUpdate(Task t) {
     	return local.getTaskUpdate(t);
+    }
+    
+    /**
+     * Get updated data for the requested Requirement
+     * @param t		The Requirement to get updated data for
+     * @return		The updated Requirement
+     */
+    Requirement getRequirementUpdate(Requirement r) {
+    	return local.getRequirementUpdate(r);
+    }
+    
+    /**
+     * Get updated data for the requested Fulfillment
+     * @param t		The Fulfillment to get updated data for
+     * @return		The updated Fulfillment
+     */
+    Fulfillment getFulfillmentUpdate(Fulfillment f) {
+    	return local.getFulfillmentUpdate(f);
     }
 
     /**

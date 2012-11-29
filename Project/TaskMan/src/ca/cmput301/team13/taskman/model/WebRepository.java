@@ -252,12 +252,10 @@ public class WebRepository {
 				//Add the Requirement
 			if(vr.getRequirement(bo.getId()) == null) {
 				Task parentTask = vr.getTask(bo.getParentId());
-				if(parentTask != null) {
-					Requirement newRequirement = vr.addRequirementToTask(bo.getCreator(), parentTask, ((Requirement)bo).getContentType(), bo.getId());
-					newRequirement.loadFromRequirement((Requirement)bo);
-				} else {
-					throw new RuntimeException("The pulled Requirement's parent does not exist. No hook point is available.");
-				}
+				parentTask.delaySaves(true);
+				Requirement newRequirement = vr.addRequirementToTask(bo.getCreator(), parentTask, ((Requirement)bo).getContentType(), bo.getId());
+				newRequirement.loadFromRequirement((Requirement)bo);
+				parentTask.delaySaves(false);
 			//or update the Requirement if it exists
 			} else {
 				vr.getRequirement(bo.getId()).loadFromRequirement((Requirement)bo);
@@ -268,12 +266,10 @@ public class WebRepository {
 				//Add the Fulfillment
 			if(vr.getFulfillment(bo.getId()) == null) {
 				Requirement parentRequirement = vr.getRequirement(bo.getParentId());
-				if(parentRequirement != null) {
-					Fulfillment newFulfillment = vr.addFulfillmentToRequirement(bo.getCreator(), parentRequirement, bo.getId());
-					newFulfillment.loadFromFulfillment((Fulfillment)bo);
-				} else {
-					throw new RuntimeException("The pulled Fulfillment's parent does not exist. No hook point is available.");
-				}
+				parentRequirement.delaySaves(true);
+				Fulfillment newFulfillment = vr.addFulfillmentToRequirement(bo.getCreator(), parentRequirement, bo.getId());
+				newFulfillment.loadFromFulfillment((Fulfillment)bo);
+				parentRequirement.delaySaves(false);
 			//or update the Fulfillment if it exists
 			} else {
 				vr.getFulfillment(bo.getId()).loadFromFulfillment((Fulfillment)bo);

@@ -105,14 +105,14 @@ public class Task extends BackedObject implements Parcelable, Serializable {
      * @param t
      */
     public void loadFromTask(Task t) {
+    	delaySaves(true);
+    	setWebID(t.getWebID());
     	setLastModifiedDate(t.getLastModifiedDate());
     	setTitle(t.getTitle());
     	setDescription(t.getDescription());
-    	this.reqCount = t.reqCount;
-    }
-    
-    private void changeId() {
-    	
+    	reqCount = t.reqCount;
+    	isLocal = t.isLocal;
+    	delaySaves(false);
     }
 
     private void loadRequirements() {

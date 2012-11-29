@@ -33,7 +33,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 
 
     private int id;
-    private String webID;
+    private String webID = "";
     private int parentId = -1;
     private String parentWebID = "";
 	private Date created;
@@ -41,7 +41,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 	private User creator;
     transient VirtualRepository repo;
     boolean delaySave = false;
-    boolean isLocal = false;
+    boolean isLocal = true;
     
     /**
      * Creates a BackedObject.

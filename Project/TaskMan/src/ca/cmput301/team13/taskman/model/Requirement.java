@@ -117,10 +117,14 @@ public class Requirement extends BackedObject {
      * the provided Requirement
      * @param r
      */
-    public void loadFromRequirement(Requirement r) {
-    	this.setDescription(r.getDescription());
-    	this.setLastModifiedDate(r.getLastModifiedDate());
-    	this.fulfillmentCount = r.getFullfillmentCount();
+    public boolean loadFromRequirement(Requirement r) {
+    	delaySaves(true);
+    	isLocal = r.isLocal;
+    	setWebID(r.getWebID());
+    	setDescription(r.getDescription());
+    	setLastModifiedDate(r.getLastModifiedDate());
+    	fulfillmentCount = r.getFullfillmentCount();
+    	return delaySaves(false);
     }
 
     /**
