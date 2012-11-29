@@ -77,16 +77,6 @@ public class TextCaptureActivity extends FulfillmentActivity implements OnClickL
         String text = ((EditText) findViewById(R.id.text_fulfillment)).getText().toString();
         //return the text
         fulfillment.setText(text);
-        successful = true;
         finish();
     }
-    
-    /**
-     * Cancel the Activity
-     */
-    public void cancel() {
-        successful = false;
-        finish();
-    }
-    
 }

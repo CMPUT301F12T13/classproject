@@ -121,19 +121,10 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
         //test if a photo has been selected.
         if (photoTaken) {
             fulfillment.setImage(selectedImage);
-            successful = true;
             finish();
         } else {
             Notifications.showToast(getApplicationContext(), "No photo selected");
         }
-    }
-    
-    /**
-     * Cancel the Activity.
-     */
-    public void cancel() {
-        successful = false;
-        finish();
     }
     
     /**

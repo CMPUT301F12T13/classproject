@@ -160,11 +160,9 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             
             //Return to the Task Viewer if audio was selected
             if(audioShorts != null) {
-            	successful = true;
             	fulfillment.setAudio(audioShorts);
             	finish();
             } else {
-            	successful = false;
             	Notifications.showToast(getApplicationContext(), "No Audio selected");
             }
     }
@@ -228,14 +226,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
 
         return null;
-    }
-    
-    /**
-     * Cancel the Activity.
-     */
-    public void cancel() {
-        successful = false;
-        super.finish();
     }
     
     /**
