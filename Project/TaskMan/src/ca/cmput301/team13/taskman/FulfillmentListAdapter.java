@@ -26,15 +26,15 @@ import java.util.Collections;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.ImageButton;
+import android.widget.RelativeLayout.LayoutParams;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
 import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
@@ -76,13 +76,14 @@ public class FulfillmentListAdapter implements ListAdapter {
      * Refresh task list from the local repository.
      */
     public void update() {
+    	//Make sure our copy of Task isn't stale
     	task = TaskMan.getInstance().getRepository().getTaskUpdate(task);
     	
     	//Clear the list
         fulfillments.clear();
         //Repopulate the list
         Log.w("FulfillmentListAdapter", "In "+task.getRequirementCount()+" requirements:");
-        for(int i=0;i<task.getRequirementCount()-1;i++) {
+        for(int i=0;i<task.getRequirementCount();i++) {
         	Requirement r = task.getRequirement(i);
         	for(int j=0;j<r.getFullfillmentCount();j++) {
         		fulfillments.add(r.getFulfillment(j));
@@ -143,8 +144,11 @@ public class FulfillmentListAdapter implements ListAdapter {
         			((Fulfillment)getItem(viewIndex)).getText());
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
+        	Bitmap b = ((Fulfillment)getItem(viewIndex)).getImage();
+        	
         	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(
-        			((Fulfillment)getItem(viewIndex)).getImage());
+        			b);
+        	((ImageView)newView.findViewById(R.id.ful_img)).setLayoutParams(new LayoutParams(90, b.getHeight()*90/b.getWidth()));
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
         	//ignore audio until list adapter is fixed

@@ -527,7 +527,6 @@ public class LocalRepository {
      * @return		The updated Task
      */
     Task getTaskUpdate(Task t) {
-    	loadRequirementsForTask(t);
     	return getTask(t.getId());
     }
 
