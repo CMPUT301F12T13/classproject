@@ -76,7 +76,7 @@ public class FulfillmentListAdapter implements ListAdapter {
         fulfillments.clear();
         //Repopulate the list
         Log.w("FulfillmentListAdapter", "In "+task.getRequirementCount()+" requirements:");
-        for(int i=0;i<task.getRequirementCount()-1;i++) {
+        for(int i=0;i<task.getRequirementCount();i++) {
         	Requirement r = task.getRequirement(i);
         	for(int j=0;j<r.getFullfillmentCount();j++) {
         		fulfillments.add(r.getFulfillment(j));
