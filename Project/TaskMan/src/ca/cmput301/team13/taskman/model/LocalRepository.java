@@ -439,7 +439,7 @@ public class LocalRepository {
                         loadRequirements(cursor.getInt(0)),//Current requirements
                         vr
                         );
-                t.setWebID(cursor.getString(7));
+//                t.setWebID(cursor.getString(7));
                 tasks.add(t);
                 updateNewestModificationDate(t);
             } while (cursor.moveToNext());
@@ -483,7 +483,7 @@ public class LocalRepository {
                         getFulfillmentCount(cursor.getInt(0)),//load current fulfillments
                         vr
                         );
-                r.setWebID(cursor.getString(7));
+//                r.setWebID(cursor.getString(7));
                 reqs.add(r);
                 updateNewestModificationDate(r);
             } while (cursor.moveToNext());
@@ -558,7 +558,7 @@ public class LocalRepository {
                         break;
                     }
                 }
-                f.setWebID(cursor.getString(7));
+//                f.setWebID(cursor.getString(7));
                 fulfillments.add(f);
                 updateNewestModificationDate(f);
             } while (cursor.moveToNext());
