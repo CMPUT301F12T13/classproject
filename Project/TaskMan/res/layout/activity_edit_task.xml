@@ -85,7 +85,7 @@
                 android:hint="Description" />
 
             <TextView
-                android:id="@+id/basic_info"
+                android:id="@+id/requirements"
                 android:layout_width="fill_parent"
                 android:layout_height="30dp"
                 android:gravity="bottom"
@@ -108,47 +108,49 @@
         android:background="@color/bgMinorColor" >
 
         <ImageButton
-            android:id="@+id/req_addAud_btn"
+            android:id="@+id/req_addVid_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/req_addTxt_btn"
-            android:src="@drawable/audicon"
-            android:contentDescription="Audio Fulfillment" 
-            />        
-        
-        <ImageButton
-            android:id="@+id/req_addTxt_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/txticon"
-            android:layout_toLeftOf="@+id/divider" 
-            android:contentDescription="Text Fulfillment" />
-
-        <RelativeLayout
-            android:id="@id/divider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" >
-    
-        </RelativeLayout>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="Video Fulfillment"
+            android:src="@drawable/vidicon" />
 
         <ImageButton
             android:id="@+id/req_addImg_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toRightOf="@+id/divider"
-            android:src="@drawable/imgicon" 
-            android:contentDescription="Image Fulfillment" 
-            />
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/req_addVid_btn"
+            android:contentDescription="Image Fulfillment"
+            android:src="@drawable/imgicon" />
 
         <ImageButton
-            android:id="@+id/req_addVid_btn"
+            android:id="@+id/req_addTxt_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_toRightOf="@+id/req_addImg_btn"
-            android:src="@drawable/vidicon" 
-            android:contentDescription="Video Fulfillment" 
-            />
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/req_addImg_btn"
+            android:contentDescription="Text Fulfillment"
+            android:src="@drawable/txticon" />
+
+        <ImageButton
+            android:id="@+id/req_addAud_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/req_addTxt_btn"
+            android:contentDescription="Audio Fulfillment"
+            android:src="@drawable/audicon" />
+
+        <RadioButton
+            android:id="@+id/private_task_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:textColor="#FFFFFF"
+            android:text="Private Task" />
 
     </RelativeLayout>
     
