@@ -179,12 +179,14 @@ public class TaskActivity extends Activity implements OnClickListener {
         if(getMode().equals("edit") || getMode().equals("create")) {
             task.setTitle(taskTitle);
             task.setDescription(taskDescription);
-            //private task check
-            if(((CheckBox)findViewById(R.id.public_checkbox)).isChecked()) {
-                task.setIsLocal(false);
-            }
-            else {
-                task.setIsLocal(true);
+            if(getMode().equals("create")) {
+                //private task check
+                if(((CheckBox)findViewById(R.id.public_checkbox)).isChecked()) {
+                    task.setIsLocal(false);
+                }
+                else {
+                    task.setIsLocal(true);
+                }
             }
             //Push all changes to the repository
             task.delaySaves(false);
