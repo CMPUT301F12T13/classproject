@@ -151,7 +151,7 @@
             android:layout_alignParentLeft="true"
             android:textColor="#FFFFFF"
             android:checked="true"
-            android:text="Private Task" />
+            android:text="Public Task" />
 
     </RelativeLayout>
     

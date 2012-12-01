@@ -181,10 +181,10 @@ public class TaskActivity extends Activity implements OnClickListener {
             task.setDescription(taskDescription);
             //private task check
             if(((CheckBox)findViewById(R.id.public_checkbox)).isChecked()) {
-                task.setIsLocal(true);
+                task.setIsLocal(false);
             }
             else {
-                task.setIsLocal(false);
+                task.setIsLocal(true);
             }
             //Push all changes to the repository
             task.delaySaves(false);
