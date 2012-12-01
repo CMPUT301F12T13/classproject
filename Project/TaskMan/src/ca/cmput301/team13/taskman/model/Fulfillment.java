@@ -161,7 +161,7 @@ public class Fulfillment extends BackedObject implements Serializable {
 			break;
     	}
     	setWebID(f.getWebID());
-    	isLocal = f.isLocal;
+    	setIsLocal(f.getIsLocal());
     	return this.saveChanges();
     }
 

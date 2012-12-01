@@ -156,7 +156,7 @@ public class VirtualRepository {
         }
         
         //Push to web if necessary
-        if(!backedObject.isLocal) {
+        if(!backedObject.getIsLocal()) {
         	System.out.println("going to save to web!");
         	/*web.pushObject(backedObject, true, new WebActionCallback() {
         		public void run(boolean success, String message) {

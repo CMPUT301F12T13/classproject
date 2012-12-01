@@ -41,7 +41,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 	private User creator;
     transient VirtualRepository repo;
     boolean delaySave = false;
-    boolean isLocal = true;
+    private boolean isLocal = true;
     
     /**
      * Creates a BackedObject.
@@ -169,7 +169,15 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 		return this.getOrderValue() - bo.getOrderValue();
 	}
 
-	/**
+	public boolean getIsLocal() {
+        return isLocal;
+    }
+
+    public void setIsLocal(boolean isLocal) {
+        this.isLocal = isLocal;
+    }
+
+    /**
      * Returns a BackedObject conforming with the type of BackedObject that was parcelled.
      * 		- Possible types: Task, Requirement, Fulfillment
      */

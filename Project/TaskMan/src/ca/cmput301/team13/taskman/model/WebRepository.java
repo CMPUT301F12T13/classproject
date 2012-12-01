@@ -61,7 +61,7 @@ public class WebRepository {
 	 * @param update	Whether existing objects should be updated
 	 */
 	public void pushObject(BackedObject o, boolean update, final WebActionCallback callback) {
-		if(o.isLocal) return; //Don't upload local objects
+		if(o.getIsLocal()) return; //Don't upload local objects
 		
 		CrowdSourcerObject co = new CrowdSourcerObject(o);
 		RequestArgument[] action;
