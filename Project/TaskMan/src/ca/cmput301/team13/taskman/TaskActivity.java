@@ -183,6 +183,10 @@ public class TaskActivity extends Activity implements OnClickListener {
             //Make sure we don't delete the Task after all this
             setMode("edit");
         }
+        //Allow all of the Requirements to be saved
+        for(int i=0; i<task.getRequirementCount(); i++) {
+        	task.getRequirement(i).delaySaves(false);
+        }
         super.finish();
     }
 
@@ -217,16 +221,16 @@ public class TaskActivity extends Activity implements OnClickListener {
         } else if(source.equals(findViewById(R.id.delete_button))) {
             deleteTask();
         } else if  (source.getId() == R.id.req_addTxt_btn) {
-            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text);
+            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.text).delaySaves(true);
             reqAdapter.update();
         } else if  (source.getId() == R.id.req_addImg_btn) {
-            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.image);
+            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.image).delaySaves(true);
             reqAdapter.update();
         } else if  (source.getId() == R.id.req_addAud_btn) {
-            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio);
+            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.audio).delaySaves(true);
             reqAdapter.update();
         } else if  (source.getId() == R.id.req_addVid_btn) {
-            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.video);
+            TaskMan.getInstance().getRepository().createRequirement(TaskMan.getInstance().getUser(), task, contentType.video).delaySaves(true);
             reqAdapter.update();
         } else if  (source.getId() == R.id.task_edit_btn) {
             Bundle b = new Bundle();

@@ -22,6 +22,7 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import ca.cmput301.team13.taskman.TaskMan;
@@ -142,8 +143,30 @@ public class VirtualRepository {
      * Saves any changes to the notifying object to the permanent store.
      * @param backedObject - the object with changes
      */
-    boolean saveUpdate(BackedObject backedObject) {
+    boolean saveUpdate(final BackedObject backedObject, boolean push) {
     	boolean updated = false;
+    	final VirtualRepository vr = this;
+    	//Push to web if necessary
+    	if(!backedObject.isLocal && push) {
+    		System.out.println("going to save to web!");
+    		System.out.println("webID: " + backedObject.getWebID());
+    		web.pushObject(backedObject, true, new WebActionCallback() {
+    			public void run() {
+    				if(success) {
+    					System.out.println("pushed!");
+    					if(backedObject instanceof Task) {
+    						vr.getTaskUpdate((Task)backedObject);
+    					} else if(backedObject instanceof Requirement) {
+    						vr.getRequirementUpdate((Requirement)backedObject);
+    					} else if(backedObject instanceof Fulfillment) {
+    						vr.getFulfillmentUpdate((Fulfillment)backedObject);
+    					}
+    				}
+    			}
+    		}, null);
+    	}
+    	
+    	//Update locally
         if(backedObject instanceof Task) {
             local.updateTask((Task)backedObject);
             updated = true;
@@ -155,15 +178,6 @@ public class VirtualRepository {
             updated = true;
         }
         
-        //Push to web if necessary
-        if(!backedObject.isLocal) {
-        	System.out.println("going to save to web!");
-        	/*web.pushObject(backedObject, true, new WebActionCallback() {
-        		public void run(boolean success, String message) {
-        			//TODO: If this fails, pop up a Toast or something? With an option to retry?
-        		}
-        	});*/
-        }
         
         if(!updated)
         	//If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?
@@ -296,8 +310,8 @@ public class VirtualRepository {
     	return local.getNewestModification();
     }
 
-    public void synchronize(WebActionCallback callback) {
-    	web.pullChanges(callback);
+    public void synchronize(WebActionCallback callback, Activity context) {
+    	web.pullChanges(callback, context);
     }
 
 }

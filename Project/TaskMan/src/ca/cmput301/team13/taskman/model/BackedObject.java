@@ -19,7 +19,6 @@
 
 package ca.cmput301.team13.taskman.model;
 
-import java.util.Comparator;
 import java.util.Date;
 
 import android.os.Parcel;
@@ -41,7 +40,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 	private User creator;
     transient VirtualRepository repo;
     boolean delaySave = false;
-    boolean isLocal = true;
+    boolean isLocal = false;
     
     /**
      * Creates a BackedObject.
@@ -60,17 +59,21 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
     }
     
     public BackedObject() { }
+    
+    boolean saveChanges(boolean push) {
+    	lastModified = new Date();
+        if(delaySave)
+            return true; //If we're delaying, no errors occurred here
+
+        return repo.saveUpdate(this, push);
+    }
 
     /**
      * Save any changes that have occurred to this object.
      * @return Whether or not the save was successful
      */
     boolean saveChanges() {
-        lastModified = new Date();
-        if(delaySave)
-            return true; //If we're delaying, no errors occurred here
-
-        return repo.saveUpdate(this);
+        return saveChanges(true);
     }
 
     /**

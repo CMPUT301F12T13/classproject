@@ -26,6 +26,7 @@ import android.provider.Settings.Secure;
 import android.util.Log;
 import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
+import ca.cmput301.team13.taskman.model.WebRepository.WebActionCallback;
 
 /**
  * Singleton that provides application-wide access to the

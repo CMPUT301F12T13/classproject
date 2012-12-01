@@ -21,6 +21,7 @@ package ca.cmput301.team13.taskman;
 
 import utils.Notifications;
 import ca.cmput301.team13.taskman.model.Task;
+import ca.cmput301.team13.taskman.model.WebRepository.WebActionCallback;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -62,6 +63,20 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         ((ImageButton)findViewById(R.id.audfilter_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.txtfilter_btn)).setOnClickListener(this);
         ((ImageButton)findViewById(R.id.vidfilter_btn)).setOnClickListener(this);
+        
+        TaskMan.getInstance().getRepository().synchronize(new WebActionCallback() {
+			
+			public void run() {
+				if(success) {
+					taskAdapter.update();
+					System.out.println("success!");
+				} else {
+					System.out.println("Failure :(");
+				}
+			}
+			
+		}, this);
+        
     }
 
     /**

@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -28,6 +27,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Context;
 
 
 public class WebRepository {
@@ -50,8 +52,8 @@ public class WebRepository {
 	 * Invokes pushObject(BackedObject, boolean) with the second parameter as true
 	 * @see pushObject(BackedObject, boolean)
 	 */
-	public void pushObject(BackedObject o, final WebActionCallback callback) {
-		pushObject(o, true, callback);
+	public void pushObject(BackedObject o, final WebActionCallback callback, final Activity context) {
+		pushObject(o, true, callback, context);
 	}
 	
 	/**
@@ -60,7 +62,7 @@ public class WebRepository {
 	 * @param o			The BackedObject to transfer to CrowdSourcer
 	 * @param update	Whether existing objects should be updated
 	 */
-	public void pushObject(BackedObject o, boolean update, final WebActionCallback callback) {
+	public void pushObject(BackedObject o, boolean update, final WebActionCallback callback, final Activity context) {
 		if(o.isLocal) return; //Don't upload local objects
 		
 		CrowdSourcerObject co = new CrowdSourcerObject(o);
@@ -96,7 +98,8 @@ public class WebRepository {
 			action,
 			new RequestArgument[]{
 				new RequestArgument("content", co.toJSON().toString()),
-				new RequestArgument("summary", dateFormat.format(co.getContent(BackedObject.class).getLastModifiedDate()))
+				new RequestArgument("summary", dateFormat.format(co.getContent(BackedObject.class).getLastModifiedDate())),
+				new RequestArgument("id", o.getWebID())
 			},
 			new RequestCallback() {
 				public void run(CrowdSourcerObject co) {
@@ -106,37 +109,42 @@ public class WebRepository {
 						Task t = vr.getTask(bo.getId());
 						if(t != null) {
 							t.setWebID(bo.getWebID());
+							t.saveChanges(false);
 							//Once the Task has been uploaded and updated, add its Requirements
 							for(int i=0; i<t.getRequirementCount(); i++) {
 								Requirement r = t.getRequirement(i);
 								r.setParentId(t.getId());
 								r.setParentWebID(t.getWebID());
-								pushObject(r, doUpdate, null);
+								pushObject(r, doUpdate, null, context);
 							}
 						}
 					} else if(bo instanceof Fulfillment) {
 						Fulfillment f = vr.getFulfillment(bo.getId());
-						if(f != null)
+						if(f != null) {
 							f.setWebID(bo.getWebID());
+							f.saveChanges(false);
+						}
 					} else if(bo instanceof Requirement) {
 						Requirement r = vr.getRequirement(bo.getId());
 						if(r != null) {
 							r.setWebID(bo.getWebID());
+							r.saveChanges(false);
 							//Once the Requirement has been uploaded and updated, add its Fulfillments
 							for(int i=0; i<r.getFullfillmentCount(); i++) {
 								Fulfillment f = r.getFulfillment(i);
 								f.setParentId(r.getId());
 								f.setParentWebID(r.getWebID());
-								pushObject(f, doUpdate, null);
+								f.saveChanges(false);
+								pushObject(f, doUpdate, null, context);
 							}
 						}
 					}
-					invokeActionCallback(callback, true, "The object was successfully added to CrowdSourcer.");
+					invokeActionCallback(callback, true, "The object was successfully added to CrowdSourcer.", context);
 				}
 			}
 		));
 		
-		requestHandler.run();
+		new Thread(requestHandler).start();
 	}
 	
 	/**
@@ -170,7 +178,7 @@ public class WebRepository {
 			}
 		));
 		
-		requestHandler.run();
+		new Thread(requestHandler).start();
 		
 	}
 	
@@ -178,7 +186,7 @@ public class WebRepository {
 	 * Pull all objects from CrowdSourcer that have been modified more recently than local versions
 	 * 		*NOTE: This method runs asynchronously
 	 */
-	public void pullChanges(final WebActionCallback callback) {
+	public void pullChanges(final WebActionCallback callback, final Activity context) {
 			//Objects need to be updated in the order { Task -> Requirement -> Fulfillment } to ensure that
 			//parent objects exist before their children are updated
 			final List<BackedObject> updatedObjects = new ArrayList<BackedObject>();
@@ -211,11 +219,11 @@ public class WebRepository {
 							while (itr.hasNext()) {
 								pullObject(itr.next());
 							}
-							invokeActionCallback(callback, true, "Changes were successfully pulled from CrowdSourcer.");
+							invokeActionCallback(callback, true, "Changes were successfully pulled from CrowdSourcer.", context);
 						} catch (JSONException e) {
-							invokeActionCallback(callback, false, "An invalid object list was returned from pullChanges.");
+							invokeActionCallback(callback, false, "An invalid object list was returned from pullChanges.", context);
 						} catch (ParseException e) {
-							invokeActionCallback(callback, false, "An invalid date string was stored with the list object.");
+							invokeActionCallback(callback, false, "An invalid date string was stored with the list object.", context);
 						} /*catch (Exception e) {
 							//PullObject failed
 							System.out.println("EXCEPTION!: " + e.getMessage());
@@ -225,7 +233,7 @@ public class WebRepository {
 				}
 			));
 				
-			requestHandler.run();
+			new Thread(requestHandler).start();
 	}
 	
 	/**
@@ -447,8 +455,16 @@ public class WebRepository {
 	 * @param success		The success parameter to pass into the callback
 	 * @param message		The message parameter to pass into the callback
 	 */
-	private void invokeActionCallback(WebActionCallback callback, boolean success, String message) {
-		if(callback != null) callback.run(success, message);
+	private void invokeActionCallback(WebActionCallback callback, boolean success, String message, Activity context) {
+		if(callback != null) {
+			callback.success = success;
+			callback.message = message;
+			if(context != null) {
+				context.runOnUiThread(callback);
+			} else {
+				callback.run();
+			}
+		}
 	}
 	
 	/***********************************
@@ -520,8 +536,10 @@ public class WebRepository {
 	 * to be notified when the method has completed, and to get the status of the resulting
 	 * request
 	 */
-	public static class WebActionCallback {
-		public void run(boolean success, String message) { }
+	public static class WebActionCallback implements Runnable{
+		public boolean success;
+		public String message;
+		public void run() { }
 	}
 
 	/**

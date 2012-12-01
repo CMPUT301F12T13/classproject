@@ -527,6 +527,7 @@ public class LocalRepository {
                         new User(cursor.getString(4)),//Creator
                         vr
                         );
+                f.setWebID(cursor.getString(7));
                 if(!cursor.isNull(2)) {
                     switch(f.getContentType()) {
                     case text:
@@ -558,9 +559,8 @@ public class LocalRepository {
                         break;
                     }
                 }
-//                f.setWebID(cursor.getString(7));
-                fulfillments.add(f);
                 updateNewestModificationDate(f);
+                fulfillments.add(f);
             } while (cursor.moveToNext());
         }
 
