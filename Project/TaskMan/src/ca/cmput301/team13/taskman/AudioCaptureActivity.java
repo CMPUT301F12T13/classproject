@@ -303,15 +303,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         if (requestCode == COLLECTION_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Notifications.showToast(getApplicationContext(), "Audio Selection Successful");
-                
-                audioFileUri = data.getData();
-                @SuppressWarnings("unused")
-                InputStream audioStream = null;
-                try {
-                    audioStream = getContentResolver().openInputStream(audioFileUri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }                
+                audioFileUri = data.getData();             
             } else if (resultCode == RESULT_CANCELED) {
                 //Audio selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Audio Selection Cancelled");
