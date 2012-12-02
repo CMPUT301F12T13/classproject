@@ -60,6 +60,7 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         //Setup our list...
         taskList = (ListView)findViewById(R.id.task_list);
         taskAdapter = new TaskListAdapter(TaskMan.getInstance().getRepository(), this);
+        taskAdapter.showUserTasks(TaskMan.getInstance().getUser());
         taskList.setAdapter(taskAdapter);
         taskList.setOnItemClickListener(this);
 
