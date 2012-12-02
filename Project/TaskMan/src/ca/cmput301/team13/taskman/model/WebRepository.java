@@ -110,13 +110,13 @@ public class WebRepository {
 						if(t != null) {
 							t.setWebID(bo.getWebID());
 							t.saveChanges(false);
-							//Once the Task has been uploaded and updated, add its Requirements
+							/*//Once the Task has been uploaded and updated, add its Requirements
 							for(int i=0; i<t.getRequirementCount(); i++) {
 								Requirement r = t.getRequirement(i);
 								r.setParentId(t.getId());
 								r.setParentWebID(t.getWebID());
 								pushObject(r, doUpdate, null, context);
-							}
+							}*/
 						}
 					} else if(bo instanceof Fulfillment) {
 						Fulfillment f = vr.getFulfillment(bo.getId());

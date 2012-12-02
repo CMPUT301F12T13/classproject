@@ -25,6 +25,7 @@ import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
@@ -90,7 +91,7 @@ public class LocalRepository {
      * @see createTask(User, int) for full implementation details
      */
     Task createTask(User creator) {
-    	return createTask(creator, -1);
+    	return createTask(creator, null);
     }
 
     /**
@@ -99,14 +100,15 @@ public class LocalRepository {
      * @param creator The User that has created the Task
      * @return the Task, with no non-housekeeping values yet set
      */
-    Task createTask(User creator, int id) {
+    Task createTask(User creator, String id) {
         assertOpen();
 
         Task t = null;
         ContentValues values = new ContentValues();
-        if(id > 0) {
-        	values.put(RepoHelper.ID_COL, id);
-        }
+        if(id == null) {
+        	id = UUID.randomUUID().toString();
+        } 
+        values.put(RepoHelper.ID_COL, id);
         values.put(RepoHelper.WEBID_COL, "");
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
@@ -121,12 +123,12 @@ public class LocalRepository {
         }
 
         Cursor cursor = db.query(RepoHelper.TASKS_TBL,
-                RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
+                RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = '" + id + "'", null,
                 null, null, null);
 
         if (cursor.moveToFirst()) {
             t = new Task(
-                    cursor.getInt(0),//ID
+                    cursor.getString(0),//ID
                     new Date(cursor.getLong(4)),//Date Created
                     new Date(cursor.getLong(5)),//Date Last Modified
                     new User(cursor.getString(3)),//Creator
@@ -163,7 +165,7 @@ public class LocalRepository {
      * @see createRequirement(User, Task, Requirement.contentType, int) for full implementation.
      */
     Requirement createRequirement(User creator, Task task, Requirement.contentType contentType) {
-    	return createRequirement(creator, task, contentType, -1);
+    	return createRequirement(creator, task, contentType, null);
     }
 
     /**
@@ -174,13 +176,14 @@ public class LocalRepository {
      * @param id	The desired ID for the Requirement. -1 if a default ID should be generated.
      * @return the Requirement, with no non-housekeeping values yet set
      */
-    Requirement createRequirement(User creator, Task task, Requirement.contentType contentType, int id) {
+    Requirement createRequirement(User creator, Task task, Requirement.contentType contentType, String id) {
         assertOpen();
         ContentValues values = new ContentValues();
         //If a custom ID is supplied, insert it
-        if(id > 0) {
-        	values.put(RepoHelper.ID_COL, id);
-        }
+        if(id == null) {
+        	id = UUID.randomUUID().toString();
+        } 
+        values.put(RepoHelper.ID_COL, id);
         values.put(RepoHelper.WEBID_COL, "");
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
@@ -196,12 +199,12 @@ public class LocalRepository {
         }
 
         Cursor cursor = db.query(RepoHelper.REQS_TBL,
-                RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
+                RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = '" + id + "'", null,
                 null, null, null);
         cursor.moveToFirst();
 
         Requirement r = new Requirement(
-                cursor.getInt(0),//ID
+                cursor.getString(0),//ID
                 new Date(cursor.getLong(5)),//Date Created
                 new Date(cursor.getLong(6)),//Date Last Modified
                 new User(cursor.getString(4)),//Creator
@@ -210,7 +213,7 @@ public class LocalRepository {
                 new ArrayList<Fulfillment>(),//Current requirements
                 vr
                 );
-        
+        r.setParentId(cursor.getString(1));
         r.setWebID(cursor.getString(7));
         task.addRequirement(r);
         updateNewestModificationDate(r);
@@ -224,7 +227,7 @@ public class LocalRepository {
      * @see createFulfillment(User, Requirement, int) for full implementation
      */
     Fulfillment createFulfillment(User creator, Requirement req) {
-    	return createFulfillment(creator, req, -1);
+    	return createFulfillment(creator, req, null);
     }
 
     /**
@@ -234,13 +237,14 @@ public class LocalRepository {
      * @param id	The desired ID for the Fulfillment. -1 if a default ID should be generated.
      * @return the Fulfillment, with no content yet attached
      */
-    Fulfillment createFulfillment(User creator, Requirement req, int id) {
+    Fulfillment createFulfillment(User creator, Requirement req, String id) {
         assertOpen();
         ContentValues values = new ContentValues();
         //If an ID was supplied, use it
-        if(id > 0) {
-        	values.put(RepoHelper.ID_COL, id);
-        }
+        if(id == null) {
+        	id = UUID.randomUUID().toString();
+        } 
+        values.put(RepoHelper.ID_COL, id);
         values.put(RepoHelper.WEBID_COL, "");
         values.put(RepoHelper.CREATED_COL, new Date().getTime());
         values.put(RepoHelper.LASTMODIFIED_COL, new Date().getTime());
@@ -255,19 +259,20 @@ public class LocalRepository {
         }
 
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
-                RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = " + insertId, null,
+                RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = '" + id + "'", null,
                 null, null, null);
         cursor.moveToFirst();
 
         Fulfillment f = new Fulfillment(
-                cursor.getInt(0),//ID
+                cursor.getString(0),//ID
                 new Date(cursor.getLong(4)),//Date Created
                 new Date(cursor.getLong(5)),//Date Last Modified
                 Requirement.contentType.values()[cursor.getInt(6)],//Content Type
                 new User(cursor.getString(3)),//Creator
                 vr
                 );
-
+        
+        f.setParentId(cursor.getString(1));
         f.setWebID(cursor.getString(7));
         req.addFulfillment(f);
         updateNewestModificationDate(f);
@@ -301,7 +306,7 @@ public class LocalRepository {
         	boolean keep = false;
         	for(int i=0; i<numTaskRequirements; i++) {
         		//If the Requirement is still present after editing, keep it
-        		if(t.getRequirement(i).getId() == r.getId()) {
+        		if(t.getRequirement(i).getId().equals(r.getId())) {
         			keep = true;
         		}
         	}
@@ -315,7 +320,7 @@ public class LocalRepository {
         String creator = t.getCreator().toString();
         String current = TaskMan.getInstance().getUser().toString();
         if(t.getCreator().equals(TaskMan.getInstance().getUser())) {
-        	int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "=" + t.getId(), null);
+        	int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "= '" + t.getId() + "'", null);
         	if(updateCount != 1)
         		throw new RuntimeException("Database update failed!");
         } else {
@@ -350,7 +355,7 @@ public class LocalRepository {
         	boolean keep = false;
         	for(int i=0; i<numFulfillments; i++) {
         		//If the Requirement is still present after editing, keep it
-        		if(r.getFulfillment(i).getId() == f.getId()) {
+        		if(r.getFulfillment(i).getId().equals(f.getId())) {
         			keep = true;
         		}
         	}
@@ -360,7 +365,7 @@ public class LocalRepository {
         	}
         }
 
-        int updateCount = db.update(RepoHelper.REQS_TBL, values, RepoHelper.ID_COL + "=" + r.getId(), null);
+        int updateCount = db.update(RepoHelper.REQS_TBL, values, RepoHelper.ID_COL + "= '" + r.getId() + "'", null);
 
         if(updateCount != 1)
             throw new RuntimeException("Database update failed!");
@@ -410,7 +415,7 @@ public class LocalRepository {
         
         updateNewestModificationDate(f);
 
-        int updateCount = db.update(RepoHelper.FULS_TBL, values, RepoHelper.ID_COL + "=" + f.getId(), null);
+        int updateCount = db.update(RepoHelper.FULS_TBL, values, RepoHelper.ID_COL + "= '" + f.getId() + "'", null);
 
         if(updateCount != 1)
             throw new RuntimeException("Database update failed!");
@@ -430,13 +435,13 @@ public class LocalRepository {
         if (cursor.moveToFirst()) {
             do {
                 Task t = new Task(
-                        cursor.getInt(0),//ID
+                        cursor.getString(0),//ID
                         new Date(cursor.getLong(4)),//Date Created
                         new Date(cursor.getLong(5)),//Date Last Modified
                         new User(cursor.getString(3)),//Creator
                         cursor.getString(1),//Title
                         cursor.getString(2),//Description
-                        loadRequirements(cursor.getInt(0)),//Current requirements
+                        loadRequirements(cursor.getString(0)),//Current requirements
                         vr
                         );
 //                t.setWebID(cursor.getString(7));
@@ -462,28 +467,29 @@ public class LocalRepository {
      * @param	taskId 	integer 					The Task ID to find Requirements for
      * @return			ArrayList<Requirement>		The list of Requirements for the specified Task
      */
-    private ArrayList<Requirement> loadRequirements(int taskId) {
+    private ArrayList<Requirement> loadRequirements(String taskId) {
         assertOpen();
         ArrayList<Requirement> reqs = new ArrayList<Requirement>();
 
         Cursor cursor = db.query(RepoHelper.REQS_TBL,
-                RepoHelper.REQS_COLS, RepoHelper.TASK_COL + " = " + taskId, null,
+                RepoHelper.REQS_COLS, RepoHelper.TASK_COL + " = '" + taskId + "'", null,
                 null, null, null);
 
         //If we have requirements, load them
         if(cursor.moveToFirst()) {
             do {
                 Requirement r = new Requirement(
-                        cursor.getInt(0),//ID
+                        cursor.getString(0),//ID
                         new Date(cursor.getLong(5)),//Date Created
                         new Date(cursor.getLong(6)),//Date Last Modified
                         new User(cursor.getString(4)),//Creator
                         cursor.getString(3),//Description
                         Requirement.contentType.values()[cursor.getInt(2)],//Content Type
-                        getFulfillmentCount(cursor.getInt(0)),//load current fulfillments
+                        getFulfillmentCount(cursor.getString(0)),//load current fulfillments
                         vr
                         );
-//                r.setWebID(cursor.getString(7));
+                r.setParentId(cursor.getString(1));
+                r.setWebID(cursor.getString(7));
                 reqs.add(r);
                 updateNewestModificationDate(r);
             } while (cursor.moveToNext());
@@ -506,12 +512,12 @@ public class LocalRepository {
      * @param	r 	Requirement 				The requirement to find fulfillments for
      * @return		ArrayList<Fulfillment>		The list of fulfillments for the specified requirement
      */
-    private ArrayList<Fulfillment> loadFulfillments(int reqId, contentType reqContentType) {
+    private ArrayList<Fulfillment> loadFulfillments(String reqId, contentType reqContentType) {
         assertOpen();
         ArrayList<Fulfillment> fulfillments = new ArrayList<Fulfillment>();
 
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
-                RepoHelper.FULS_COLS, RepoHelper.REQ_COL + " = " + reqId, null,
+                RepoHelper.FULS_COLS, RepoHelper.REQ_COL + " = '" + reqId + "'", null,
                 null, null, null);
 
         //TODO: Content should be loaded on instantiation, not afterwards.
@@ -520,13 +526,14 @@ public class LocalRepository {
         if(cursor.moveToFirst()) {
             do {
                 Fulfillment f = new Fulfillment(
-                        cursor.getInt(0),//ID
+                        cursor.getString(0),//ID
                         new Date(cursor.getLong(5)),//Date Created
                         new Date(cursor.getLong(6)),//Date Last Modified
                         reqContentType, //Content type
                         new User(cursor.getString(4)),//Creator
                         vr
                         );
+                f.setParentId(cursor.getString(1));
                 f.setWebID(cursor.getString(7));
                 if(!cursor.isNull(2)) {
                     switch(f.getContentType()) {
@@ -573,15 +580,15 @@ public class LocalRepository {
      * @param taskId the ID
      * @return the Task
      */
-    Task getTask(int taskId) {
+    Task getTask(String taskId) {
 
         Cursor cursor = db.query(RepoHelper.TASKS_TBL,
-                RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = " + taskId, null,
+                RepoHelper.TASKS_COLS, RepoHelper.ID_COL + " = '" + taskId + "'", null,
                 null, null, null);
 
         if (cursor.moveToFirst()) {
             Task t = new Task(
-                    cursor.getInt(0),//ID
+                    cursor.getString(0),//ID
                     new Date(cursor.getLong(4)),//Date Created
                     new Date(cursor.getLong(5)),//Date Last Modified
                     new User(cursor.getString(3)),//Creator
@@ -631,15 +638,15 @@ public class LocalRepository {
      * @param requirementId the ID
      * @return the Requirement
      */
-    Requirement getRequirement(int requirementId) {
+    Requirement getRequirement(String requirementId) {
 
         Cursor cursor = db.query(RepoHelper.REQS_TBL,
-                RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = " + requirementId, null,
+                RepoHelper.REQS_COLS, RepoHelper.ID_COL + " = '" + requirementId + "'", null,
                 null, null, null);
 
         if (cursor.moveToFirst()) {
             Requirement r = new Requirement(
-                    cursor.getInt(0),//ID
+                    cursor.getString(0),//ID
                     new Date(cursor.getLong(5)),//Date Created
                     new Date(cursor.getLong(6)),//Date Last Modified
                     new User(cursor.getString(4)),//Creator
@@ -648,6 +655,7 @@ public class LocalRepository {
                     getFulfillmentCount(requirementId),
                     vr
                     );
+            r.setParentId(cursor.getString(1));
             r.setWebID(cursor.getString(7));
             cursor.close();
             return r;
@@ -662,9 +670,9 @@ public class LocalRepository {
      * @param requirementId		The ID of the requirement
      * @return					The number of Fulfillments contained by the specified Requirement
      */
-    private int getFulfillmentCount(int requirementId) {
+    private int getFulfillmentCount(String requirementId) {
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
-                new String[] {"COUNT(*)"}, RepoHelper.REQ_COL + " = " + requirementId, null,
+                new String[] {"COUNT(*)"}, RepoHelper.REQ_COL + " = '" + requirementId + "'", null,
                 null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -682,21 +690,22 @@ public class LocalRepository {
      * @param fulfillmentId the ID
      * @return the Fulfillment
      */
-    Fulfillment getFulfillment(int fulfillmentId) {
+    Fulfillment getFulfillment(String fulfillmentId) {
 
         Cursor cursor = db.query(RepoHelper.FULS_TBL,
-                RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = " + fulfillmentId, null,
+                RepoHelper.FULS_COLS, RepoHelper.ID_COL + " = '" + fulfillmentId + "'", null,
                 null, null, null);
 
         if (cursor.moveToFirst()) {
             Fulfillment f = new Fulfillment(
-                    cursor.getInt(0),//ID
+                    cursor.getString(0),//ID
                     new Date(cursor.getLong(4)),//Date Created
                     new Date(cursor.getLong(5)),//Date Last Modified
                     Requirement.contentType.values()[cursor.getInt(6)],
                     new User(cursor.getString(3)),//Creator
                     vr
                     );
+            f.setParentId(cursor.getString(1));
             f.setWebID(cursor.getString(7));
             cursor.close();
             return f;
@@ -715,7 +724,7 @@ public class LocalRepository {
         for(int i=0; i<numRequirements; i++) {
             removeRequirement(t.getRequirement(i));
         }
-    	db.delete(RepoHelper.TASKS_TBL, RepoHelper.ID_COL + " = " + t.getId(), null);
+    	db.delete(RepoHelper.TASKS_TBL, RepoHelper.ID_COL + " = '" + t.getId() + "'", null);
     }
 
     /**
@@ -727,7 +736,7 @@ public class LocalRepository {
         for(int i=0; i<numFulfillments; i++) {
     		removeFulfillment(r.getFulfillment(i));
         }
-        db.delete(RepoHelper.REQS_TBL, RepoHelper.ID_COL + " = " + r.getId(), null);
+        db.delete(RepoHelper.REQS_TBL, RepoHelper.ID_COL + " = '" + r.getId() + "'", null);
     }
 
     /**
@@ -735,7 +744,7 @@ public class LocalRepository {
      * @param f The Fulfillment
      */
     void removeFulfillment(Fulfillment f) {
-        db.delete(RepoHelper.FULS_TBL, RepoHelper.ID_COL + " = " + f.getId(), null);
+        db.delete(RepoHelper.FULS_TBL, RepoHelper.ID_COL + " = '" + f.getId() + "'", null);
     }
     
     /**
@@ -784,14 +793,14 @@ class RepoHelper  extends SQLiteOpenHelper{
     public static final String CONTENT_COL = "content";
     //Columns as found in tables
     public static final String[] TASKS_COLS = {ID_COL, TITLE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, WEBID_COL};
-    private static final String[] TASKS_COLTYPES = {"integer primary key autoincrement", "text not null", "integer not null", "integer not null", "integer not null", "integer not null", "text not null"};
+    private static final String[] TASKS_COLTYPES = {"text primary key", "text not null", "integer not null", "integer not null", "integer not null", "integer not null", "text not null"};
     public static final String[] REQS_COLS = {ID_COL, TASK_COL, CONTENTTYPE_COL, DESC_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, WEBID_COL};
-    private static final String[] REQS_COLTYPES = {"integer primary key autoincrement", "integer not null", "integer not null", "text not null", "text not null", "integer not null", "integer not null", "text not null"};
+    private static final String[] REQS_COLTYPES = {"text primary key", "text not null", "integer not null", "text not null", "text not null", "integer not null", "integer not null", "text not null"};
     public static final String[] FULS_COLS = {ID_COL, REQ_COL, CONTENT_COL, CREATOR_COL, CREATED_COL, LASTMODIFIED_COL, CONTENTTYPE_COL, WEBID_COL};
-    private static final String[] FULS_COLTYPES = {"integer primary key autoincrement", "integer not null", "blob", "text not null", "integer not null", "integer not null", "integer not null", "text not null"};
+    private static final String[] FULS_COLTYPES = {"text primary key", "text not null", "blob", "text not null", "integer not null", "integer not null", "integer not null", "text not null"};
     //The name of our database, and SQL Schema version
     private static final String DBNAME = "taskman.db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 3;
 
     public RepoHelper(Context context) {
         super(context, DBNAME, null, VERSION);

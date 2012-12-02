@@ -51,7 +51,7 @@ public class Task extends BackedObject implements Parcelable, Serializable {
      * @param requirements - A List of requirements dependent on the task
      * @param repo - the repository in which we are stored
      */
-    Task(int id, Date created, Date lastModified, User creator, String title, String description, ArrayList<Requirement> requirements, VirtualRepository repo) {
+    Task(String id, Date created, Date lastModified, User creator, String title, String description, ArrayList<Requirement> requirements, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.title = title;
         this.description = description;
@@ -68,7 +68,7 @@ public class Task extends BackedObject implements Parcelable, Serializable {
      * @param reqCount - The number of requirements this task has
      * @param repo - the repository in which we are stored
      */
-    Task(int id, Date created, Date lastModified, User creator, String title, String description, int reqCount, VirtualRepository repo) {
+    Task(String id, Date created, Date lastModified, User creator, String title, String description, int reqCount, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.title = title;
         this.description = description;

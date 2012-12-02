@@ -97,7 +97,7 @@ public class VirtualRepository {
      * @see addRequirementsToTask(User, Task, contentType, int) for full implementation
      */
     public Requirement addRequirementToTask(User creator, Task t, contentType content) {
-    	return addRequirementToTask(creator, t, content, -1);
+    	return addRequirementToTask(creator, t, content, null);
     }
 
     /**
@@ -108,7 +108,7 @@ public class VirtualRepository {
      * @param id	The desired ID for the Requirement. -1 if a default ID should be generated.
      * @return
      */
-    public Requirement addRequirementToTask(User creator, Task t, contentType content, int id) {
+    public Requirement addRequirementToTask(User creator, Task t, contentType content, String id) {
         if(creator == null) {
             creator = t.getCreator();
         }
@@ -121,7 +121,7 @@ public class VirtualRepository {
      * @see addFulfillmentToRequirement(User, Requirement, int) for full implementation
      */
     public Fulfillment addFulfillmentToRequirement(User creator, Requirement r) {
-    	return addFulfillmentToRequirement(creator, r, -1);
+    	return addFulfillmentToRequirement(creator, r, null);
     }
 
     /**
@@ -130,7 +130,7 @@ public class VirtualRepository {
      * @param r The Requirement to add the Fulfillment to
      * @return
      */
-    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r, int id) {
+    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r, String id) {
         if(creator == null) {
             creator = r.getCreator();
         }
@@ -153,7 +153,6 @@ public class VirtualRepository {
     		web.pushObject(backedObject, true, new WebActionCallback() {
     			public void run() {
     				if(success) {
-    					System.out.println("pushed!");
     					if(backedObject instanceof Task) {
     						vr.getTaskUpdate((Task)backedObject);
     					} else if(backedObject instanceof Requirement) {
@@ -176,16 +175,6 @@ public class VirtualRepository {
         } else if(backedObject instanceof Fulfillment) {
             local.updateFulfillment((Fulfillment)backedObject);
             updated = true;
-        }
-        
-        //Push to web if necessary
-        if(!backedObject.getIsLocal()) {
-        	System.out.println("going to save to web!");
-        	/*web.pushObject(backedObject, true, new WebActionCallback() {
-        		public void run(boolean success, String message) {
-        			//TODO: If this fails, pop up a Toast or something? With an option to retry?
-        		}
-        	});*/
         }
         
         if(!updated)
@@ -217,7 +206,7 @@ public class VirtualRepository {
      * @param taskId the ID
      * @return the Task
      */
-    public Task getTask(int taskId) {
+    public Task getTask(String taskId) {
         return local.getTask(taskId);
     }
     
@@ -253,7 +242,7 @@ public class VirtualRepository {
      * @param requirementId the ID
      * @return the Requirement
      */
-    public Requirement getRequirement(int requirementId) {
+    public Requirement getRequirement(String requirementId) {
         return local.getRequirement(requirementId);
     }
 
@@ -262,7 +251,7 @@ public class VirtualRepository {
      * @param fulfillmentId the ID
      * @return the Fulfillment
      */
-    public Fulfillment getFulfillment(int fulfillmentId) {
+    public Fulfillment getFulfillment(String fulfillmentId) {
         return local.getFulfillment(fulfillmentId);
     }
 

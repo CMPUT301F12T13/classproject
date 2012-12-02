@@ -30,17 +30,16 @@ import ca.cmput301.team13.taskman.TaskMan;
  */
 abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 
-
-    private int id;
+    private String id;
     private String webID = "";
-    private int parentId = -1;
+    private String parentId = null;
     private String parentWebID = "";
 	private Date created;
     private Date lastModified;
 	private User creator;
     transient VirtualRepository repo;
     boolean delaySave = false;
-    private boolean isLocal = true;
+    private boolean isLocal = false;
     
     /**
      * Creates a BackedObject.
@@ -50,7 +49,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
      * @param creator		The User who created this Object
      * @param repo			The VirtualRepository this Object is wrapped under
      */
-    BackedObject(int id, Date created, Date lastModified, User creator, VirtualRepository repo) {
+    BackedObject(String id, Date created, Date lastModified, User creator, VirtualRepository repo) {
         this.id = id;
         this.repo = repo;
         this.creator = creator;
@@ -94,7 +93,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
      * Access the ID of this object.
      * @return the id
      */
-    int getId() {
+    String getId() {
         return id;
     }
 
@@ -150,11 +149,11 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
         out.writeSerializable(parcel);
     }
 
-    public int getParentId() {
+    public String getParentId() {
 		return parentId;
 	}
 
-	public void setParentId(int parentId) {
+	public void setParentId(String parentId) {
 		this.parentId = parentId;
 	}
 

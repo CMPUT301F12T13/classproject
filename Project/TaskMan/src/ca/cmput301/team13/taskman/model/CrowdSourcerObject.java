@@ -27,8 +27,7 @@ public class CrowdSourcerObject {
 	}
 	
 	//The ID of the entity
-	private int id;
-	private int webId;
+	private String id;
 	//The entity type (TASK or FULFILLMENT)
 	//This is stored in the "summary" field
 	private entityType type; 
@@ -113,7 +112,7 @@ public class CrowdSourcerObject {
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		JSONObject serializedData = new JSONObject();
-		int id = -1;
+		String id = null;
 		long lastModifiedDate = -1;
 		int typeOrdinal = -1;
 		switch(type) {
@@ -170,7 +169,7 @@ public class CrowdSourcerObject {
 		switch(type) {
 			case TASK:
 				Task t = new Task(
-					data.getInt("id"), 
+					data.getString("id"), 
 					new Date(data.getLong("created")),
 					new Date(data.getLong("lastModified")), 
 					new User(data.getString("creator")), 
@@ -186,7 +185,7 @@ public class CrowdSourcerObject {
 			case FULFILLMENT:
 				//Get generic fields
 				Requirement.contentType contentType = Requirement.contentType.values()[data.getInt("contentType")];
-				int id = data.getInt("id");
+				String id = data.getString("id");
 				Date created = new Date(data.getLong("created"));
 				Date lastModified = new Date(data.getLong("lastModified"));
 				User user = new User(data.getString("creator"));
@@ -242,7 +241,7 @@ public class CrowdSourcerObject {
 				}
 				//Actually set this object's fulfillment
 				f.setIsLocal(false);
-				f.setParentId(data.getInt("parentId"));
+				f.setParentId(data.getString("parentId"));
 				f.setParentWebID(data.getString("parentWebID"));
 				f.setWebID(json.getString("id"));
 				setContent(f);
@@ -250,7 +249,7 @@ public class CrowdSourcerObject {
 			case REQUIREMENT:
 				//Create the Requirement
 				Requirement r = new Requirement(
-					data.getInt("id"), 
+					data.getString("id"), 
 					new Date(data.getInt("created")), 
 					new Date(data.getInt("lastModified")), 
 					new User(data.getString("creator")), 
@@ -260,7 +259,7 @@ public class CrowdSourcerObject {
 					TaskMan.getInstance().getRepository()
 				);
 				r.setIsLocal(false);
-				r.setParentId(data.getInt("parentId"));
+				r.setParentId(data.getString("parentId"));
 				r.setParentWebID(data.getString("parentWebID"));
 				r.setWebID(json.getString("id"));
 				setContent(r);
@@ -272,7 +271,7 @@ public class CrowdSourcerObject {
 		return type;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	

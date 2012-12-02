@@ -59,7 +59,7 @@ public class Requirement extends BackedObject {
      * @param fulfillments - the list of fulfillments of the requirement
      * @param repo - the repository backing this object
      */
-    Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, ArrayList<Fulfillment> fulfillments, VirtualRepository repo) {
+    Requirement(String id, Date created, Date lastModified, User creator, String description, contentType desiredContent, ArrayList<Fulfillment> fulfillments, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.description = description;
         this.fulfillments = fulfillments;
@@ -74,7 +74,7 @@ public class Requirement extends BackedObject {
      * @param fulfillmentCount - the quantity of fulfillments
      * @param repo - the repository backing this object
      */
-    public Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
+    public Requirement(String id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.description = description;
         this.fulfillmentCount = fulfillmentCount;

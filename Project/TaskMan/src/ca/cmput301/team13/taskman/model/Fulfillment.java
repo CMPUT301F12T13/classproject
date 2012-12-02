@@ -53,7 +53,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, contentType content, User creator, VirtualRepository repo) {
+    Fulfillment(String id, Date created, Date lastModified, contentType content, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = content;
     }
@@ -67,7 +67,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    public Fulfillment(int id, Date created, Date lastModified, Bitmap image, User creator, VirtualRepository repo) {
+    public Fulfillment(String id, Date created, Date lastModified, Bitmap image, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.image;
         this.image = image;
@@ -82,7 +82,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    public Fulfillment(int id, Date created, Date lastModified, String text, User creator, VirtualRepository repo) {
+    public Fulfillment(String id, Date created, Date lastModified, String text, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.text;
         this.text = text;
@@ -97,7 +97,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    public Fulfillment(int id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
+    public Fulfillment(String id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.audio;
         this.audioBuffer = buffer;
