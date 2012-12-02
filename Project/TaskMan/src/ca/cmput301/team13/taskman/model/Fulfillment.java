@@ -148,6 +148,7 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param f
      */
     public boolean loadFromFulfillment(Fulfillment f) {
+    	delaySaves(true);
     	setLastModifiedDate(f.getLastModifiedDate());
     	switch(content) {
 	    	case text:
@@ -162,7 +163,7 @@ public class Fulfillment extends BackedObject implements Serializable {
     	}
     	setWebID(f.getWebID());
     	setIsLocal(f.getIsLocal());
-    	return this.saveChanges();
+    	return this.delaySaves(false, false);
     }
 
     //TODO: constructor for video

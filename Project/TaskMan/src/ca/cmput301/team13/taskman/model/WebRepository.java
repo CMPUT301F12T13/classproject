@@ -154,6 +154,11 @@ public class WebRepository {
 								f.setParentId(r.getId());
 								f.setParentWebID(r.getWebID());
 								f.saveChanges(false);
+								try{
+									throw new RuntimeException();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 								pushObject(f, doUpdate, null, context);
 							}
 						}
@@ -282,7 +287,7 @@ public class WebRepository {
 				parentTask.delaySaves(true);
 				Requirement newRequirement = vr.addRequirementToTask(bo.getCreator(), parentTask, ((Requirement)bo).getContentType(), bo.getId());
 				newRequirement.loadFromRequirement((Requirement)bo);
-				parentTask.delaySaves(false);
+				parentTask.delaySaves(false, false);
 			//or update the Requirement if it exists
 			} else {
 				vr.getRequirement(bo.getId()).loadFromRequirement((Requirement)bo);
@@ -296,7 +301,7 @@ public class WebRepository {
 				parentRequirement.delaySaves(true);
 				Fulfillment newFulfillment = vr.addFulfillmentToRequirement(bo.getCreator(), parentRequirement, bo.getId());
 				newFulfillment.loadFromFulfillment((Fulfillment)bo);
-				parentRequirement.delaySaves(false);
+				parentRequirement.delaySaves(false, false);
 			//or update the Fulfillment if it exists
 			} else {
 				vr.getFulfillment(bo.getId()).loadFromFulfillment((Fulfillment)bo);

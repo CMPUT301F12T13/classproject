@@ -528,6 +528,7 @@ public class LocalRepository {
                         );
                 f.setParentId(cursor.getString(1));
                 f.setWebID(cursor.getString(7));
+                f.delaySave = true;
                 if(!cursor.isNull(2)) {
                     switch(f.getContentType()) {
                     case text:
@@ -559,6 +560,7 @@ public class LocalRepository {
                         break;
                     }
                 }
+                f.delaySave = false;
                 updateNewestModificationDate(f);
                 fulfillments.add(f);
             } while (cursor.moveToNext());
@@ -700,6 +702,7 @@ public class LocalRepository {
                     );
             f.setParentId(cursor.getString(1));
             f.setWebID(cursor.getString(7));
+            f.delaySave = true;
             
             if(!cursor.isNull(2)) {
                 switch(f.getContentType()) {
@@ -732,7 +735,7 @@ public class LocalRepository {
                     break;
                 }
             }
-            
+            f.delaySave = false;
             cursor.close();
             return f;
         } else {
