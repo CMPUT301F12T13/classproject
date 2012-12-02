@@ -110,5 +110,26 @@ public class AudioVideoConversion {
         }
         return shorts;
     }
+
+    /**
+     * Gets the short array of audio data
+     * @param audioFileUri
+     * @param fileName
+     * @param audioCaptureActivity
+     * @return  audio data
+     */
+    public short[] audioShorts(Uri audioFileUri, String fileName,
+            AudioCaptureActivity audioCaptureActivity) {
+        short[] audioShorts = null;
+        if (audioFileUri != null) {
+            audioShorts = getShort(resolvePath(
+                    audioCaptureActivity.getBaseContext(), audioFileUri));
+        } else {
+            if (fileName != null) {
+                audioShorts = getShort(fileName);
+            }
+        }
+        return audioShorts;
+    }
     
 }

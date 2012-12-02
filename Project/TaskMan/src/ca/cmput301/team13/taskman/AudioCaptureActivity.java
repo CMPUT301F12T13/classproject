@@ -137,7 +137,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected audio to our parent and exit the Activity.
      */
     public void save() {
-    	short[] audioShorts = audioShorts();
+    	short[] audioShorts = av.audioShorts(audioFileUri, fileName, this);
         //Return to the Task Viewer
         if(audioShorts != null) {
             super.save();
@@ -146,23 +146,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
     }
 
-    /**
-     * Gets the short array of audio data
-     * @return audio data
-     */
-    private short[] audioShorts() {
-        short[] audioShorts = null;
-        if (audioFileUri != null) {
-            audioShorts = av.getShort(av.resolvePath(getBaseContext(),
-                    audioFileUri));
-        } else {
-            if (fileName != null) {
-                audioShorts = av.getShort(fileName);
-            }
-        }
-        return audioShorts;
-    }
-    
     /**
      * Takes the user to the built-in audio selector where an
      * existing audio file can be selected for use.
