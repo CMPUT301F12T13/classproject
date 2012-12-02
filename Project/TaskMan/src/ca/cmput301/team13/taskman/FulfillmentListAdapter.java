@@ -64,7 +64,8 @@ public class FulfillmentListAdapter implements ListAdapter {
 
     /**
      * Construct a FulfillmentListAdapter.
-     * @param vr the VirtualRepository instance
+     * @param task the task whose fulfillments to list
+     * @param context the context of the activity
      */
     public FulfillmentListAdapter(Task task, Context context) {
         this.task = task;
@@ -174,12 +175,15 @@ public class FulfillmentListAdapter implements ListAdapter {
         return newView;
     }
 
+    /**
+     * Launch an appropriate viewer for either audio or video content.
+     * @param data the fulfillment content as a short array
+     * @param ct the content type of the data (either audio or video)
+     */
     private void view_short_array(short[] data, contentType ct) {
         // TODO: assert that ct is either audio or video
         assert(ct == contentType.audio || ct == contentType.video);
 
-        // TODO: figure out what these should be
-        // (maybe it doesn't matter?)
         String audio_ext = "3gp";
         String video_ext = "mp4";
 
