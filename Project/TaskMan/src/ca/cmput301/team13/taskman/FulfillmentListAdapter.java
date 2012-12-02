@@ -181,8 +181,7 @@ public class FulfillmentListAdapter implements ListAdapter {
 
     /**
      * Launch an appropriate viewer for either audio or video content.
-     * @param data the fulfillment content as a short array
-     * @param ct the content type of the data (either audio or video)
+     * @param f the fulfillment whose content to view array
      */
     private void view_short_array(Fulfillment f) {
         // TODO: assert that the content is either audio or video
