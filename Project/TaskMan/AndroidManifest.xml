@@ -23,7 +23,7 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,26 +31,18 @@
             android:name="ca.cmput301.team13.taskman.TaskActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" >
-            <intent-filter>
-            </intent-filter>
         </activity>
         <activity
             android:name="ca.cmput301.team13.taskman.AudioCaptureActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-            </intent-filter>
         </activity>
         <activity
             android:name="ca.cmput301.team13.taskman.ImageCaptureActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-            </intent-filter>
         </activity>
         <activity
             android:name="ca.cmput301.team13.taskman.TextCaptureActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-            </intent-filter>
         </activity>
         <activity
              android:name="ca.cmput301.team13.taskman.VideoCaptureActivity"
