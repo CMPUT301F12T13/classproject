@@ -124,21 +124,18 @@ public class FulfillmentListAdapter implements ListAdapter {
             newView = convertView;
         } else {
             //Instantiate a new view
-            if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
-            	newView = inflater.inflate(R.layout.ful_text_elem, null);
-            	
-            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
-            	newView = inflater.inflate(R.layout.ful_img_elem, null);
-            	
-            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
-            	newView = inflater.inflate(R.layout.ful_aud_elem, null);
-            	
-            } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.video)) {
-                newView = inflater.inflate(R.layout.ful_vid_elem, null);
-                
-            } else {
-            	Log.w("FulfillmentListAdapter", "Unknown content type");
-            	newView = inflater.inflate(R.layout.ful_text_elem, null);
+            switch(((Fulfillment)getItem(viewIndex)).getContentType()) {
+            case text:
+                newView = inflater.inflate(R.layout.ful_text_elem, null); break;
+            case image:
+                newView = inflater.inflate(R.layout.ful_img_elem, null); break;
+            case audio:
+                newView = inflater.inflate(R.layout.ful_aud_elem, null); break;
+            case video:
+                newView = inflater.inflate(R.layout.ful_vid_elem, null); break;
+            default:
+                Log.w("FulfillmentListAdapter", "Unknown content type");
+                newView = inflater.inflate(R.layout.ful_text_elem, null);
             }
         }
         
@@ -147,28 +144,27 @@ public class FulfillmentListAdapter implements ListAdapter {
         DateFormat df = new SimpleDateFormat("'On' MMM dd, yyyy 'at' h:mm");
         ((TextView)newView.findViewById(R.id.fulTime)).setText(df.format(((Fulfillment)getItem(viewIndex)).getCreatedDate()));
         
-        if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.text)) {
-        	((TextView)newView.findViewById(R.id.ful_text)).setText(
-        			((Fulfillment)getItem(viewIndex)).getText());
-        	
-        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
-        	Bitmap b = ((Fulfillment)getItem(viewIndex)).getImage();
-        	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(b);
-        	((ImageView)newView.findViewById(R.id.ful_img)).setLayoutParams(new LayoutParams(b.getWidth()*90/b.getHeight(), 90));
-        	
-        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
-        	//ignore audio until list adapter is fixed
-            final int index = viewIndex;
+        final int index = viewIndex;
+        switch(((Fulfillment)getItem(viewIndex)).getContentType()) {
+        case text:
+            ((TextView)newView.findViewById(R.id.ful_text)).setText(
+                    ((Fulfillment)getItem(viewIndex)).getText());
+            break;
+        case image:
+            Bitmap b = ((Fulfillment)getItem(viewIndex)).getImage();
+            ((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(b);
+            ((ImageView)newView.findViewById(R.id.ful_img)).setLayoutParams(new LayoutParams(b.getWidth()*90/b.getHeight(), 90));
+            break;
+        case audio:
+            //ignore audio until list adapter is fixed
             ((ImageButton)newView.findViewById(R.id.audio_play_btn)).setOnClickListener(new OnClickListener() {
                 public void onClick(View source) {
                     view_short_array(((Fulfillment)getItem((index))));
                 }
             });
-            
-        	
-        } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.video)) {
+            break;
+        case video:
             //ignore video until list adapter is fixed
-            final int index = viewIndex;
             ((ImageButton)newView.findViewById(R.id.video_play_btn)).setOnClickListener(new OnClickListener() {
                 public void onClick(View source) {
                     view_short_array(((Fulfillment)getItem((index))));
