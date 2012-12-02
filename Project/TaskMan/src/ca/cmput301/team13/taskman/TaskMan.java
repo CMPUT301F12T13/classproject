@@ -64,23 +64,31 @@ public class TaskMan extends Application {
      */
     @Override
     public void onCreate() {
-    	String androidString;
+    	String androidString = androidString();
         super.onCreate();
         instance = this;
         //instantiate a global context for the repository
         repository = new VirtualRepository(this.getApplicationContext());
-        if(Secure.ANDROID_ID == null) {
-        	androidString = Identifiers.randomString(15);
-        } else {
-	        androidString = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
-	        //If an ANROID_ID is not available, generate a pseudo-random string instead (most likely
-	        //we're running a Test Case if this problem is encountered)
-	        if(androidString == null) {
-	        	androidString = Identifiers.randomString(15);
-	        }
-        }
         user = new User(androidString);
         Log.w("TaskMan","User set as: "+user);
+    }
+
+    /**
+     * Gets the Device ID string
+     * @return String androidString
+     */
+    private String androidString() {
+        String androidString;
+        if (Secure.ANDROID_ID == null) {
+            androidString = Identifiers.randomString(15);
+        } else {
+            androidString = Secure.getString(this.getContentResolver(),
+                    Secure.ANDROID_ID);
+            if (androidString == null) {
+                androidString = Identifiers.randomString(15);
+            }
+        }
+        return androidString;
     }
 
     /**
