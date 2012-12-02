@@ -316,16 +316,9 @@ public class LocalRepository {
         	}
         }
         
-        //Only update a Task created by the current User
-        String creator = t.getCreator().toString();
-        String current = TaskMan.getInstance().getUser().toString();
-        if(t.getCreator().equals(TaskMan.getInstance().getUser())) {
-        	int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "= '" + t.getId() + "'", null);
-        	if(updateCount != 1)
-        		throw new RuntimeException("Database update failed!");
-        } else {
-        	throw new RuntimeException("Attempted to update a Task from a foreign User.");
-        }
+        int updateCount = db.update(RepoHelper.TASKS_TBL, values, RepoHelper.ID_COL + "= '" + t.getId() + "'", null);
+        if(updateCount != 1)
+        	throw new RuntimeException("Database update failed!");
 
     }
 
