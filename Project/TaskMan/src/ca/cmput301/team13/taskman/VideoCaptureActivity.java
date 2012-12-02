@@ -20,11 +20,7 @@
 package ca.cmput301.team13.taskman;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
 
 import utils.Notifications;
 import android.media.ThumbnailUtils;
@@ -32,9 +28,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.view.Menu;
 import android.view.View;
@@ -52,6 +46,7 @@ import android.widget.ImageView;
 public class VideoCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri videoFileUri;
+    private AudioVideoConversion av = new AudioVideoConversion();
     private static final int VIDEO_CAPTURE_ACTIVITY_REQUEST_CODE = 400;
     private static final int VIDEO_GALLERY_ACTIVITY_REQUEST_CODE = 500;
 
@@ -108,73 +103,12 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
      */
     public void save() {
         super.save();
-        short[] videoShorts = getVideoShort(resolveVideoPath(getBaseContext(), videoFileUri));
+        short[] videoShorts = av.getShort(av.resolvePath(getBaseContext(), videoFileUri));
         //Return to the Task Viewer
         if(videoShorts != null) {
             fulfillment.setVideo(videoShorts);
             finish();
         }
-    }
-    
-    /**
-     * Creates a short array from audio data stored at the given file path.
-     * @param path      The path to the audio file
-     * @return          The short[] representing the audio data
-     */
-    public short[] getVideoShort(String path) {
-        File videoFile;
-        FileInputStream videoStream = null;
-        byte[] videoBytes = null;
-        short[] videoShorts = null;
-        videoFile = new File(path);
-        //If video of some kind was generated, attempt to convert it and pass it back to the Task Viewer
-        if(videoFile != null) {
-            try {
-                videoStream = new FileInputStream(videoFile);
-                videoBytes = new byte[(int)videoFile.length()];
-                videoStream.read(videoBytes);
-                videoStream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        //Do the conversion
-        if(videoBytes != null) {
-            videoShorts = new short[videoBytes.length/2];
-            // to turn bytes to shorts as either big endian or little endian. 
-            ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(videoShorts);
-        }
-        return videoShorts;
-    }
-    
-    /**
-     * Resolves a Uri to an absolute file path.
-     *      - Paul Burke's getPath method from: http://stackoverflow.com/a/7857102/95764
-     * @param context       The Activity's Context
-     * @param uri           The Uri to resolve
-     * @return              The resolved Uri
-     */
-    private String resolveVideoPath(Context context, Uri uri) {
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
-            Cursor cursor = null;
-
-            try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                int column_index = cursor
-                .getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) { }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
     }
     
     /**
@@ -249,7 +183,7 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
                 videoFileUri = data.getData();
                 
                 //create a thumbnail
-                Bitmap bm = ThumbnailUtils.createVideoThumbnail(resolveVideoPath(getBaseContext(), videoFileUri), 
+                Bitmap bm = ThumbnailUtils.createVideoThumbnail(av.resolvePath(getBaseContext(), videoFileUri), 
                         MediaStore.Video.Thumbnails.MICRO_KIND);
 
                 //set the preview to show the image

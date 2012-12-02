@@ -161,7 +161,7 @@ public class FulfillmentListAdapter implements ListAdapter {
             final int index = viewIndex;
             ((ImageButton)newView.findViewById(R.id.audio_play_btn)).setOnClickListener(new OnClickListener() {
                 public void onClick(View source) {
-                    view_short_array(((Fulfillment)getItem((index))).getAudio(), contentType.audio);
+                    view_short_array(((Fulfillment)getItem((index))));
                 }
             });
             
@@ -171,7 +171,7 @@ public class FulfillmentListAdapter implements ListAdapter {
             final int index = viewIndex;
             ((ImageButton)newView.findViewById(R.id.video_play_btn)).setOnClickListener(new OnClickListener() {
                 public void onClick(View source) {
-                    view_short_array(((Fulfillment)getItem((index))).getVideo(), contentType.video);
+                    view_short_array(((Fulfillment)getItem((index))));
                 }
             });
         }
@@ -184,9 +184,10 @@ public class FulfillmentListAdapter implements ListAdapter {
      * @param data the fulfillment content as a short array
      * @param ct the content type of the data (either audio or video)
      */
-    private void view_short_array(short[] data, contentType ct) {
-        // TODO: assert that ct is either audio or video
-        assert(ct == contentType.audio || ct == contentType.video);
+    private void view_short_array(Fulfillment f) {
+        // TODO: assert that the content is either audio or video
+        assert( f.getContentType() == contentType.audio ||
+                f.getContentType() == contentType.video);
 
         String audio_ext = "3gp";
         String video_ext = "mp4";
@@ -195,9 +196,12 @@ public class FulfillmentListAdapter implements ListAdapter {
         File contentfile = new File(
                 Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/tmp/taskman_fulfillment_content."
-                        + (ct == contentType.audio ?
+                        + (f.getContentType() == contentType.audio ?
                                 audio_ext : video_ext));
         Uri contentfileuri = Uri.fromFile(contentfile);
+
+        short[] data = (f.getContentType() == contentType.audio ?
+                f.getAudio() : f.getVideo());
 
         try {
             BufferedOutputStream output =
@@ -222,7 +226,7 @@ public class FulfillmentListAdapter implements ListAdapter {
                 (new Intent())
                     .setAction(android.content.Intent.ACTION_VIEW)
                     .setDataAndType(contentfileuri,
-                            (ct == contentType.audio ?
+                            (f.getContentType() == contentType.audio ?
                                     "audio/*" : "video/*")));
     }
 
