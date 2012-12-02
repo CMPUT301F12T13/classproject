@@ -151,21 +151,30 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected audio to our parent and exit the Activity.
      */
     public void save() {
-    	short[] audioShorts = null;
-        //Get audio from collection
-        if(audioFileUri != null) {
-        	audioShorts = getAudioShort(resolveAudioPath(getBaseContext(), audioFileUri));
-        //Get audio from the recorder
-        } else if(fileName != null) {
-        	audioShorts = getAudioShort(fileName);
-        }
-        
+    	short[] audioShorts = audioShorts();
         //Return to the Task Viewer
         if(audioShorts != null) {
             super.save();
             fulfillment.setAudio(audioShorts);
             finish();
         }
+    }
+
+    /**
+     * Gets the short array of audio data
+     * @return audio data
+     */
+    private short[] audioShorts() {
+        short[] audioShorts = null;
+        if (audioFileUri != null) {
+            audioShorts = getAudioShort(resolveAudioPath(getBaseContext(),
+                    audioFileUri));
+        } else {
+            if (fileName != null) {
+                audioShorts = getAudioShort(fileName);
+            }
+        }
+        return audioShorts;
     }
     
     /**
