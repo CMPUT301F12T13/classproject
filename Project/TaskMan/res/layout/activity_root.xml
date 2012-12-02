@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/bgColor" >
 
-    <View
-        android:id="@+id/strut"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerHorizontal="true" />
-
     <Button
         android:id="@+id/mytasks_btn"
         android:layout_width="wrap_content"
@@ -32,49 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/mytasks_btn"
-        android:background="@color/bgMinorColor" >
-
-        <ImageButton
-            android:id="@+id/audfilter_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/txtfilter_btn"
-            android:src="@drawable/audicon"
-            android:contentDescription="Audio Filter" 
-            />
-        
-        <ImageButton
-            android:id="@+id/txtfilter_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_toLeftOf="@+id/divider"
-            android:src="@drawable/txticon" 
-            android:contentDescription="Text Filter" />
-        
-        <RelativeLayout
-            android:id="@id/divider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" >
-        </RelativeLayout>
-
-        <ImageButton
-            android:id="@+id/imgfilter_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_toRightOf="@+id/divider"
-            android:src="@drawable/imgicon" 
-            android:contentDescription="Image Filter" 
-            />
-        
-        <ImageButton
-            android:id="@+id/vidfilter_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_toRightOf="@+id/imgfilter_btn"
-            android:src="@drawable/vidicon" 
-            android:contentDescription="Video Filter" 
-            />
+        android:background="@color/bgMinorColor" >  
         
         <Button
             android:id="@+id/addTask_btn"
@@ -83,6 +35,15 @@
             android:layout_alignParentRight="true"
             android:text="+"
             />
+        
+         <EditText
+             android:id="@+id/search_txt"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_alignParentLeft="true"
+             android:text="search"
+             android:layout_toLeftOf="@+id/addTask_btn" />
+                
     </RelativeLayout>
 
     <ListView

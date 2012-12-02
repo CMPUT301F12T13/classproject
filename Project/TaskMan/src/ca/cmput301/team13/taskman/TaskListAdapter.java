@@ -34,6 +34,7 @@ import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 import ca.cmput301.team13.taskman.model.Task;
 import ca.cmput301.team13.taskman.model.TaskFilter;
+import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
 
 /**
@@ -46,6 +47,8 @@ public class TaskListAdapter implements ListAdapter {
     private ArrayList<Task> tasks;
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
+    private User userFilter;
+    private String[] searchTerms;
 
     // Task Filters
     private TaskFilter taskFilter;
@@ -75,6 +78,7 @@ public class TaskListAdapter implements ListAdapter {
      */
     public void update() {
         tasks = repo.getTasksForFilter(taskFilter);
+        filterTasks();
         sortByCreatedDate();
         notifyObservers();
     }
@@ -212,4 +216,51 @@ public class TaskListAdapter implements ListAdapter {
         // TODO mark headers unlabelled
         return true;
     }
+    
+    private void filterTasks() {
+    	//Perform user filtering, if present
+    	if(userFilter != null) {
+    		for(int i=0;i<tasks.size();i++) {
+    			if(!tasks.get(i).getCreator().equals(userFilter)) {
+    				tasks.remove(i);
+    				i--;
+    			}
+    		}
+    	}
+    	//Perform keyword searching, if present
+    	if(searchTerms != null) {
+    		ArrayList<Task> tasks = new ArrayList<Task>();
+    		for(Task t : this.tasks) {
+    			boolean match = true;
+    			for(String term : searchTerms)
+    				if(!t.getTitle().contains(term)){
+    					match = false;
+    					break;
+    				}
+    			if(match) {
+    				tasks.add(t);
+    			}
+    		}
+    		this.tasks = tasks;
+    	}
+    		
+    }
+    public void setSearchTerms(String s) {
+    	if(s == null) {
+    		searchTerms = null;
+    	} else {
+    		searchTerms = s.split(" ");
+    	}
+    	update();
+    }
+
+	public void showAll() {
+		userFilter = null;
+		update();
+	}
+
+	public void showUserTasks(User user) {
+		userFilter = user;
+		update();
+	}
 }
