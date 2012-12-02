@@ -210,11 +210,8 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      */
     private String resolveAudioPath(Context context, Uri uri) {
     	if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
-            Cursor cursor = null;
-
+            Cursor cursor = cursor(context, uri);
             try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
                 int column_index = cursor
                 .getColumnIndexOrThrow("_data");
                 if (cursor.moveToFirst()) {
@@ -227,6 +224,20 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
 
         return null;
+    }
+
+    /**
+     * Gets a cursor
+     * @param context   The Activity's Context
+     * @param uri       The Uri to resolve
+     * @return          The cursor
+     */
+    private Cursor cursor(Context context, Uri uri) {
+        String[] projection = { "_data" };
+        Cursor cursor = null;
+        cursor = context.getContentResolver().query(uri, projection, null,
+                null, null);
+        return cursor;
     }
     
     /**
