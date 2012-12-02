@@ -30,6 +30,7 @@ import java.util.Collections;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -41,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout.LayoutParams;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
 import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
@@ -57,6 +59,7 @@ public class FulfillmentListAdapter implements ListAdapter {
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
     private ArrayList<Fulfillment> fulfillments;
+
     /**
      * Used for launching intents for media viewing.
      */
@@ -149,8 +152,9 @@ public class FulfillmentListAdapter implements ListAdapter {
         			((Fulfillment)getItem(viewIndex)).getText());
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.image)) {
-        	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(
-        			((Fulfillment)getItem(viewIndex)).getImage());
+        	Bitmap b = ((Fulfillment)getItem(viewIndex)).getImage();
+        	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(b);
+        	((ImageView)newView.findViewById(R.id.ful_img)).setLayoutParams(new LayoutParams(b.getWidth()*90/b.getHeight(), 90));
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
         	//ignore audio until list adapter is fixed
