@@ -37,7 +37,6 @@ import ca.cmput301.team13.taskman.model.Requirement;
 public class FulfillmentIntentFactory {
 
     private Activity source;
-    private Intent intent;
 
     /**
      * Creates an instance of FulfillmentIntentFactory.
@@ -55,7 +54,7 @@ public class FulfillmentIntentFactory {
      * @return An intent to launch the fulfillment activity
      */
     public Intent createIntent(Requirement req) {
-        intent = null;
+        Intent intent = null;
 
         if (req.getContentType() == Requirement.contentType.image) {
             intent = new Intent(source, ImageCaptureActivity.class);
@@ -70,8 +69,7 @@ public class FulfillmentIntentFactory {
             intent = new Intent(source, VideoCaptureActivity.class);
         }
 
-        intent.putExtra("requirement", req);
-        return intent;
+        return intent.putExtra("requirement", req);
     }
 
 }
