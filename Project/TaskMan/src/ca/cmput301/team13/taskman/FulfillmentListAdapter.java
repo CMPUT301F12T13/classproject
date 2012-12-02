@@ -52,11 +52,6 @@ public class FulfillmentListAdapter implements ListAdapter {
     private LayoutInflater inflater;
     private ArrayList<Fulfillment> fulfillments;
 
-    //View types
-    enum viewType {
-        Header,
-        Task
-    };
 
     /**
      * Construct a FulfillmentListAdapter.
@@ -148,7 +143,7 @@ public class FulfillmentListAdapter implements ListAdapter {
         	
         	((ImageView)newView.findViewById(R.id.ful_img)).setImageBitmap(
         			b);
-        	((ImageView)newView.findViewById(R.id.ful_img)).setLayoutParams(new LayoutParams(90, b.getHeight()*90/b.getWidth()));
+        	((ImageView)newView.findViewById(R.id.ful_img)).setLayoutParams(new LayoutParams(b.getWidth()*90/b.getHeight(), 90));
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
         	//ignore audio until list adapter is fixed
@@ -179,7 +174,7 @@ public class FulfillmentListAdapter implements ListAdapter {
      * Returns the number of view types.
      */
     public int getViewTypeCount() {
-        return viewType.values().length;
+        return Requirement.contentType.values().length;
     }
 
     /**
