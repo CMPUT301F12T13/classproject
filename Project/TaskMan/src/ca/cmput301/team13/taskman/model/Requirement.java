@@ -119,7 +119,7 @@ public class Requirement extends BackedObject {
      */
     public boolean loadFromRequirement(Requirement r) {
     	delaySaves(true);
-    	isLocal = r.isLocal;
+    	setIsLocal(r.getIsLocal());
     	setWebID(r.getWebID());
     	setDescription(r.getDescription());
     	setLastModifiedDate(r.getLastModifiedDate());

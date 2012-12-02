@@ -29,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -66,6 +67,7 @@ public class TaskActivity extends Activity implements OnClickListener {
             ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
             if(getMode().equals("edit")) {
                 ((Button)findViewById(R.id.delete_button)).setOnClickListener(this);
+                findViewById(R.id.public_checkbox).setVisibility((View.INVISIBLE));
             } else {
                 findViewById(R.id.delete_button).setVisibility((View.INVISIBLE));
             }
@@ -177,6 +179,15 @@ public class TaskActivity extends Activity implements OnClickListener {
         if(getMode().equals("edit") || getMode().equals("create")) {
             task.setTitle(taskTitle);
             task.setDescription(taskDescription);
+            if(getMode().equals("create")) {
+                //private task check
+                if(((CheckBox)findViewById(R.id.public_checkbox)).isChecked()) {
+                    task.setIsLocal(false);
+                }
+                else {
+                    task.setIsLocal(true);
+                }
+            }
             //Push all changes to the repository
             task.delaySaves(false);
             reqAdapter.delaySaves(false);

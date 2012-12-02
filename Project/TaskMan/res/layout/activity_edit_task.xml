@@ -143,14 +143,15 @@
             android:contentDescription="Audio Fulfillment"
             android:src="@drawable/audicon" />
 
-        <RadioButton
-            android:id="@+id/private_task_radio"
+        <CheckBox
+            android:id="@+id/public_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
             android:textColor="#FFFFFF"
-            android:text="Private Task" />
+            android:checked="true"
+            android:text="Public Task" />
 
     </RelativeLayout>
     

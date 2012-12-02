@@ -147,7 +147,7 @@ public class VirtualRepository {
     	boolean updated = false;
     	final VirtualRepository vr = this;
     	//Push to web if necessary
-    	if(!backedObject.isLocal && push) {
+    	if(!backedObject.getIsLocal() && push) {
     		System.out.println("going to save to web!");
     		System.out.println("webID: " + backedObject.getWebID());
     		web.pushObject(backedObject, true, new WebActionCallback() {
@@ -178,6 +178,15 @@ public class VirtualRepository {
             updated = true;
         }
         
+        //Push to web if necessary
+        if(!backedObject.getIsLocal()) {
+        	System.out.println("going to save to web!");
+        	/*web.pushObject(backedObject, true, new WebActionCallback() {
+        		public void run(boolean success, String message) {
+        			//TODO: If this fails, pop up a Toast or something? With an option to retry?
+        		}
+        	});*/
+        }
         
         if(!updated)
         	//If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?

@@ -19,13 +19,19 @@
 
 package ca.cmput301.team13.taskman;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,13 +57,19 @@ public class FulfillmentListAdapter implements ListAdapter {
     private ArrayList<DataSetObserver> observers;
     private LayoutInflater inflater;
     private ArrayList<Fulfillment> fulfillments;
+    /**
+     * Used for launching intents for media viewing.
+     */
+    private Context context;
 
     /**
      * Construct a FulfillmentListAdapter.
-     * @param vr the VirtualRepository instance
+     * @param task the task whose fulfillments to list
+     * @param context the context of the activity
      */
     public FulfillmentListAdapter(Task task, Context context) {
         this.task = task;
+        this.context = context;
         observers = new ArrayList<DataSetObserver>();
         inflater = LayoutInflater.from(context);
         fulfillments = new ArrayList<Fulfillment>();
@@ -142,27 +154,72 @@ public class FulfillmentListAdapter implements ListAdapter {
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.audio)) {
         	//ignore audio until list adapter is fixed
-            /*((ImageButton)newView.findViewById(R.id.audio_play_btn)).setOnClickListener(new OnClickListener() {
+            final int index = viewIndex;
+            ((ImageButton)newView.findViewById(R.id.audio_play_btn)).setOnClickListener(new OnClickListener() {
                 public void onClick(View source) {
-                    
-                    //TODO: convert byte[] to uri
-                    //TODO: launch built-in player
+                    view_short_array(((Fulfillment)getItem((index))).getAudio(), contentType.audio);
                 }
-            });*/
+            });
             
         	
         } else if(((Fulfillment)getItem(viewIndex)).getContentType().equals(contentType.video)) {
             //ignore video until list adapter is fixed
-            /*((ImageButton)newView.findViewById(R.id.video_play_btn)).setOnClickListener(new OnClickListener() {
+            final int index = viewIndex;
+            ((ImageButton)newView.findViewById(R.id.video_play_btn)).setOnClickListener(new OnClickListener() {
                 public void onClick(View source) {
-                    
-                    //TODO: convert byte[] to Uri
-                    //TODO: launch built-in player
+                    view_short_array(((Fulfillment)getItem((index))).getVideo(), contentType.video);
                 }
-            });*/
+            });
         }
         
         return newView;
+    }
+
+    /**
+     * Launch an appropriate viewer for either audio or video content.
+     * @param data the fulfillment content as a short array
+     * @param ct the content type of the data (either audio or video)
+     */
+    private void view_short_array(short[] data, contentType ct) {
+        // TODO: assert that ct is either audio or video
+        assert(ct == contentType.audio || ct == contentType.video);
+
+        String audio_ext = "3gp";
+        String video_ext = "mp4";
+
+        // TODO: check that tmp directory exists.
+        File contentfile = new File(
+                Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/tmp/taskman_fulfillment_content."
+                        + (ct == contentType.audio ?
+                                audio_ext : video_ext));
+        Uri contentfileuri = Uri.fromFile(contentfile);
+
+        try {
+            BufferedOutputStream output =
+                new BufferedOutputStream(
+                    new FileOutputStream(contentfile));
+
+            // Note: the method of writing bytes must be appropriate for the endianness
+            // in which the bytes were turned into a short array.
+            for(int i = 0; i < data.length; i++) {
+                output.write((byte)(data[i] & 0xff));
+                output.write((byte)((data[i] >> 8) & 0xff));
+            }
+
+            output.close();
+        }
+        catch (Exception e) {
+            // TODO: Handle this exception
+        }
+
+        // Launch built-in player
+        context.startActivity(
+                (new Intent())
+                    .setAction(android.content.Intent.ACTION_VIEW)
+                    .setDataAndType(contentfileuri,
+                            (ct == contentType.audio ?
+                                    "audio/*" : "video/*")));
     }
 
     /**

@@ -153,7 +153,7 @@ public class LocalRepository {
     	updateNewestModificationDate(createdTask);
     	createdTask.reqsLoaded = false;
     	createdTask.reqCount = 0;
-    	createdTask.isLocal = t.isLocal;
+    	createdTask.setIsLocal(t.getIsLocal());
     	createdTask.delaySaves(false);
     	return createdTask;
     }

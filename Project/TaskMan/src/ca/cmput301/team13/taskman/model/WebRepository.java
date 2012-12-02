@@ -63,7 +63,7 @@ public class WebRepository {
 	 * @param update	Whether existing objects should be updated
 	 */
 	public void pushObject(BackedObject o, boolean update, final WebActionCallback callback, final Activity context) {
-		if(o.isLocal) return; //Don't upload local objects
+		if(o.getIsLocal()) return; //Don't upload local objects
 		
 		CrowdSourcerObject co = new CrowdSourcerObject(o);
 		RequestArgument[] action;
@@ -456,14 +456,12 @@ public class WebRepository {
 	 * @param message		The message parameter to pass into the callback
 	 */
 	private void invokeActionCallback(WebActionCallback callback, boolean success, String message, Activity context) {
-		if(callback != null) {
+		if(callback != null && context != null) {
 			callback.success = success;
 			callback.message = message;
-			if(context != null) {
-				context.runOnUiThread(callback);
-			} else {
-				callback.run();
-			}
+			context.runOnUiThread(callback);
+		} else if(callback != null && context == null){
+			
 		}
 	}
 	

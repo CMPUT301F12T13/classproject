@@ -42,6 +42,7 @@ import android.widget.ListView;
 public class RootActivity extends Activity implements OnClickListener, OnItemClickListener {
     ListView taskList;
     TaskListAdapter taskAdapter;
+    Intent intent;
 
     /**
      * Handles initialization of the activity.
@@ -115,9 +116,9 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
             b.putParcelable("task", TaskMan.getInstance().getRepository().createTask(TaskMan.getInstance().getUser()));
             b.putString("mode", "create");
             //Create the intent and execute it
-            Intent i = new Intent(this, TaskActivity.class);
-            i.putExtras(b);
-            startActivity(i);
+            intent = new Intent(this, TaskActivity.class);
+            intent.putExtras(b);
+            startActivity(intent);
             //Handle not-implemented feature notification
         }else if(source.equals(findViewById(R.id.alltasks_btn)) ||
                 source.equals(findViewById(R.id.imgfilter_btn)) ||
@@ -140,9 +141,9 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
 
         b.putString("mode", "view");
 
-        Intent i = new Intent(this, TaskActivity.class);
-        i.putExtras(b);
-        startActivity(i);
+        intent = new Intent(this, TaskActivity.class);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 
 }
