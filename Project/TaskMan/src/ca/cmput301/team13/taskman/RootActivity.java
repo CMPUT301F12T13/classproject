@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -42,7 +43,7 @@ import android.widget.ListView;
  * The main activity for the app, provides a list of tasks and allows
  * users to navigate to task creation, viewing, and editing activities.
  */
-public class RootActivity extends Activity implements OnClickListener, OnItemClickListener, TextWatcher {
+public class RootActivity extends Activity implements OnClickListener, OnItemClickListener, TextWatcher, OnFocusChangeListener {
     ListView taskList;
     TaskListAdapter taskAdapter;
     Intent intent;
@@ -64,9 +65,11 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         ((Button)findViewById(R.id.addTask_btn)).setOnClickListener(this);
         ((Button)findViewById(R.id.mytasks_btn)).setOnClickListener(this);
         ((Button)findViewById(R.id.alltasks_btn)).setOnClickListener(this);
+        ((EditText)findViewById(R.id.search_txt)).setOnFocusChangeListener(this);
         ((EditText)findViewById(R.id.search_txt)).addTextChangedListener(this);
         ((Button)findViewById(R.id.mytasks_btn)).setEnabled(false);
         ((Button)findViewById(R.id.alltasks_btn)).setEnabled(true);
+
     }
 
     /**
@@ -145,8 +148,6 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
 			if(((EditText)source).getEditableText().toString().equals("")) {
 				((EditText)source).setText("Search");
 				taskAdapter.setSearchTerms(null);
-			} else {
-				taskAdapter.setSearchTerms(((EditText)source).getEditableText().toString());
 			}
 		}
 	}
