@@ -151,21 +151,30 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected audio to our parent and exit the Activity.
      */
     public void save() {
-    	short[] audioShorts = null;
-        //Get audio from collection
-        if(audioFileUri != null) {
-        	audioShorts = getAudioShort(resolveAudioPath(getBaseContext(), audioFileUri));
-        //Get audio from the recorder
-        } else if(fileName != null) {
-        	audioShorts = getAudioShort(fileName);
-        }
-        
+    	short[] audioShorts = audioShorts();
         //Return to the Task Viewer
         if(audioShorts != null) {
             super.save();
             fulfillment.setAudio(audioShorts);
             finish();
         }
+    }
+
+    /**
+     * Gets the short array of audio data
+     * @return audio data
+     */
+    private short[] audioShorts() {
+        short[] audioShorts = null;
+        if (audioFileUri != null) {
+            audioShorts = getAudioShort(resolveAudioPath(getBaseContext(),
+                    audioFileUri));
+        } else {
+            if (fileName != null) {
+                audioShorts = getAudioShort(fileName);
+            }
+        }
+        return audioShorts;
     }
     
     /**
@@ -210,11 +219,8 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      */
     private String resolveAudioPath(Context context, Uri uri) {
     	if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
-            Cursor cursor = null;
-
+            Cursor cursor = cursor(context, uri);
             try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
                 int column_index = cursor
                 .getColumnIndexOrThrow("_data");
                 if (cursor.moveToFirst()) {
@@ -227,6 +233,20 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         }
 
         return null;
+    }
+
+    /**
+     * Gets a cursor
+     * @param context   The Activity's Context
+     * @param uri       The Uri to resolve
+     * @return          The cursor
+     */
+    private Cursor cursor(Context context, Uri uri) {
+        String[] projection = { "_data" };
+        Cursor cursor = null;
+        cursor = context.getContentResolver().query(uri, projection, null,
+                null, null);
+        return cursor;
     }
     
     /**

@@ -527,10 +527,10 @@ public class LocalRepository {
             do {
                 Fulfillment f = new Fulfillment(
                         cursor.getString(0),//ID
-                        new Date(cursor.getLong(5)),//Date Created
-                        new Date(cursor.getLong(6)),//Date Last Modified
+                        new Date(cursor.getLong(4)),//Date Created
+                        new Date(cursor.getLong(5)),//Date Last Modified
                         reqContentType, //Content type
-                        new User(cursor.getString(4)),//Creator
+                        new User(cursor.getString(3)),//Creator
                         vr
                         );
                 f.setParentId(cursor.getString(1));

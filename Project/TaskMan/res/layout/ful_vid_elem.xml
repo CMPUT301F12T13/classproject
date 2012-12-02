@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:text="On XX/XX/XX:"
-        android:textSize="15dp" >
+        android:textSize="9dp" >
 
     </TextView>
 
@@ -21,6 +21,7 @@
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_marginRight="15dp"
         android:contentDescription="Video Play Button"
         android:background="#FFFFFF"
         android:src="@drawable/playbtn" />

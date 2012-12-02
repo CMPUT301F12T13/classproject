@@ -76,7 +76,7 @@
 		<ListView
 		    android:id="@+id/requirement_list"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent">
+		    android:layout_height="150dp">
 		</ListView>            
          
          <TextView android:id="@+id/activity"

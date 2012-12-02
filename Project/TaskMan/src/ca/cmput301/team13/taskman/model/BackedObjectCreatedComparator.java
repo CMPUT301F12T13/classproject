@@ -30,7 +30,7 @@ public class BackedObjectCreatedComparator implements Comparator<BackedObject> {
 	 * Compares the creation dates of two {@link BackedObject} instances.
 	 */
     public int compare(BackedObject bo1, BackedObject bo2) {
-        return bo1.getCreatedDate().compareTo(bo2.getCreatedDate());
+        return bo2.getCreatedDate().compareTo(bo1.getCreatedDate());
     }
 
 }
