@@ -83,9 +83,13 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
      * @return whether or not the operation was successful
      */
     public boolean delaySaves(boolean delay) {
+        return delaySaves(delay, true);
+    }
+    
+    public boolean delaySaves(boolean delay, boolean push) {
         delaySave = delay;
         if(!delay)
-            return saveChanges();
+            return saveChanges(push);
         return true;
     }
 
