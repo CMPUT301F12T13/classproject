@@ -700,6 +700,39 @@ public class LocalRepository {
                     );
             f.setParentId(cursor.getString(1));
             f.setWebID(cursor.getString(7));
+            
+            if(!cursor.isNull(2)) {
+                switch(f.getContentType()) {
+                case text:
+                    //COnvert the Byte Array to a String
+                    f.setText(new String(cursor.getBlob(2)));
+                    break;
+                case audio:
+                    //Directly convert the byte[] to short[]
+                    byte[] audioBytes = cursor.getBlob(2);
+                    ByteBuffer bb = ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN);
+                    short[] audio = new short[audioBytes.length/2];
+                    for(int i=0;i<audio.length;i++)
+                        audio[i]=bb.getShort();
+                    f.setAudio(audio);
+                    break;
+                case video:
+                    //Directly convert the byte[] to short[]
+                    byte[] videoBytes = cursor.getBlob(2);
+                    ByteBuffer vbb = ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN);
+                    short[] video = new short[videoBytes.length/2];
+                    for(int i=0;i<video.length;i++)
+                        video[i]=vbb.getShort();
+                    f.setVideo(video);
+                    break;
+                case image:
+                    //Convert the byte array to a Bitmap
+                    byte[] imgBytes = cursor.getBlob(2);
+                    f.setImage(BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length));
+                    break;
+                }
+            }
+            
             cursor.close();
             return f;
         } else {
