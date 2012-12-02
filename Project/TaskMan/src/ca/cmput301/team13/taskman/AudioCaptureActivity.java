@@ -20,17 +20,11 @@
 package ca.cmput301.team13.taskman;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
 
 import utils.Notifications;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +44,7 @@ import android.widget.TextView;
 public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri audioFileUri;
+    private AudioVideoConversion av = new AudioVideoConversion();
     private static final int COLLECTION_ACTIVITY_REQUEST_CODE = 300;
     private MediaRecorder recorder;
     private boolean recording;
@@ -95,15 +90,6 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
             ((Button)findViewById(R.id.record_button)).setText("Start Recording");
         }
     }
-    
-    /**
-     * Handles stop event.
-     */
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
     /**
      * Constructs menu options.
      */
@@ -167,86 +153,14 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
     private short[] audioShorts() {
         short[] audioShorts = null;
         if (audioFileUri != null) {
-            audioShorts = getAudioShort(resolveAudioPath(getBaseContext(),
+            audioShorts = av.getShort(av.resolvePath(getBaseContext(),
                     audioFileUri));
         } else {
             if (fileName != null) {
-                audioShorts = getAudioShort(fileName);
+                audioShorts = av.getShort(fileName);
             }
         }
         return audioShorts;
-    }
-    
-    /**
-     * Creates a short array from audio data stored at the given file path.
-     * @param path		The path to the audio file
-     * @return			The short[] representing the audio data
-     */
-    public short[] getAudioShort(String path) {
-    	File audioFile;
-    	FileInputStream audioStream = null;
-    	byte[] audioBytes = null;
-    	short[] audioShorts = null;
-    	audioFile = new File(path);
-    	//If audio of some kind was generated, attempt to convert it and pass it back to the Task Viewer
-        if(audioFile != null) {
-			try {
-				audioStream = new FileInputStream(audioFile);
-				audioBytes = new byte[(int)audioFile.length()];
-				audioStream.read(audioBytes);
-				audioStream.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        }
-        //Do the conversion
-        if(audioBytes != null) {
-        	audioShorts = new short[audioBytes.length/2];
-        	// to turn bytes to shorts as either big endian or little endian. 
-        	ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(audioShorts);
-        }
-        return audioShorts;
-    }
-    
-    /**
-     * Resolves a Uri to an absolute file path.
-     * 		- Paul Burke's getPath method from: http://stackoverflow.com/a/7857102/95764
-     * @param context		The Activity's Context
-     * @param uri			The Uri to resolve
-     * @return				The resolved Uri
-     */
-    private String resolveAudioPath(Context context, Uri uri) {
-    	if ("content".equalsIgnoreCase(uri.getScheme())) {
-            Cursor cursor = cursor(context, uri);
-            try {
-                int column_index = cursor
-                .getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) { }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets a cursor
-     * @param context   The Activity's Context
-     * @param uri       The Uri to resolve
-     * @return          The cursor
-     */
-    private Cursor cursor(Context context, Uri uri) {
-        String[] projection = { "_data" };
-        Cursor cursor = null;
-        cursor = context.getContentResolver().query(uri, projection, null,
-                null, null);
-        return cursor;
     }
     
     /**
@@ -303,15 +217,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
         if (requestCode == COLLECTION_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Notifications.showToast(getApplicationContext(), "Audio Selection Successful");
-                
-                audioFileUri = data.getData();
-                @SuppressWarnings("unused")
-                InputStream audioStream = null;
-                try {
-                    audioStream = getContentResolver().openInputStream(audioFileUri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }                
+                audioFileUri = data.getData();             
             } else if (resultCode == RESULT_CANCELED) {
                 //Audio selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Audio Selection Cancelled");
