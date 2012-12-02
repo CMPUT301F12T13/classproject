@@ -169,27 +169,13 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ImageView preview = (ImageView)findViewById(R.id.image_view);
-
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 //Photo Taking was a success
                 Notifications.showToast(getApplicationContext(), "Photo Taken");
                 photoTaken = true;
                 
-                InputStream imageStream = null;
-                try {
-                    imageStream = getContentResolver().openInputStream(imageFileUri);
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                //convert the image to a bitmap
-                Bitmap bm = BitmapFactory.decodeStream(imageStream);
-
-                //set the preview to show the image
-                preview.setImageBitmap(bm);
-                setSelectedImage(bm);
+                setBitmapPreview();
             } else if (resultCode == RESULT_CANCELED) {
                 //Photo Taking was Cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Cancelled");
@@ -205,19 +191,8 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 
                 //get the returned image from the Intent
                 imageFileUri = data.getData();
-                InputStream imageStream = null;
-                try {
-                    imageStream = getContentResolver().openInputStream(imageFileUri);
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                //convert the image to a bitmap
-                Bitmap bm = BitmapFactory.decodeStream(imageStream);
+                setBitmapPreview();
                 
-                //set the preview to show the image
-                preview.setImageBitmap(bm);
-                setSelectedImage(bm);
             } else if (resultCode == RESULT_CANCELED) {
                 //Photo selection was cancelled
                 Notifications.showToast(getApplicationContext(), "Photo Selection Cancelled");
@@ -226,6 +201,27 @@ public class ImageCaptureActivity extends FulfillmentActivity implements OnClick
                 Notifications.showToast(getApplicationContext(), "Error choosing Photo" + resultCode);
             }
         }
+    }
+
+    /**
+     * Set the preview image as a bitmap from imageFileUri.
+     */
+    private void setBitmapPreview() {
+        ImageView preview = (ImageView)findViewById(R.id.image_view);
+
+        InputStream imageStream = null;
+        try {
+            imageStream = getContentResolver().openInputStream(imageFileUri);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //convert the image to a bitmap
+        Bitmap bm = BitmapFactory.decodeStream(imageStream);
+
+        //set the preview to show the image
+        preview.setImageBitmap(bm);
+        setSelectedImage(bm);
     }
 
     /**
