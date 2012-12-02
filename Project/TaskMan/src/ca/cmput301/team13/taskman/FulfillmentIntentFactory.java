@@ -37,6 +37,7 @@ import ca.cmput301.team13.taskman.model.Requirement;
 public class FulfillmentIntentFactory {
 
     private Activity source;
+    private Intent intent;
 
     /**
      * Creates an instance of FulfillmentIntentFactory.
@@ -54,48 +55,23 @@ public class FulfillmentIntentFactory {
      * @return An intent to launch the fulfillment activity
      */
     public Intent createIntent(Requirement req) {
-        Intent i = null;
+        intent = null;
 
         if (req.getContentType() == Requirement.contentType.image) {
-            i = new Intent(source, ImageCaptureActivity.class);
+            intent = new Intent(source, ImageCaptureActivity.class);
         }
         else if(req.getContentType() == Requirement.contentType.audio) {
-            i = new Intent(source, AudioCaptureActivity.class);
+            intent = new Intent(source, AudioCaptureActivity.class);
         }
         else if(req.getContentType() == Requirement.contentType.text) {
-            i = new Intent(source, TextCaptureActivity.class);
+            intent = new Intent(source, TextCaptureActivity.class);
         }
         else if(req.getContentType() == Requirement.contentType.video) {
-            i = new Intent(source, VideoCaptureActivity.class);
+            intent = new Intent(source, VideoCaptureActivity.class);
         }
 
-        i.putExtra("requirement", req);
-        return i;
+        intent.putExtra("requirement", req);
+        return intent;
     }
 
-    /**
-     * Creates an intent for launching an appropriate
-     * viewer activity for a given fulfillment.
-     * @param ful The fulfillment to use to select an activity
-     * @return An intent to launch the fulfillment view activity
-     */
-    public Intent createViewIntent(Fulfillment ful) {
-        Intent i = null;
-
-        if (ful.getContentType() == Requirement.contentType.image) {
-            i = new Intent(source, ImageViewActivity.class);
-        }
-        else if(ful.getContentType() == Requirement.contentType.audio) {
-            i = new Intent(source, AudioViewActivity.class);
-        }
-        else if(ful.getContentType() == Requirement.contentType.text) {
-            i = new Intent(source, TextViewActivity.class);
-        }
-        else if(ful.getContentType() == Requirement.contentType.video) {
-            i = new Intent(source, VideoViewActivity.class);
-        }
-
-        i.putExtra("fulfillment", ful);
-        return i;
-    }
 }

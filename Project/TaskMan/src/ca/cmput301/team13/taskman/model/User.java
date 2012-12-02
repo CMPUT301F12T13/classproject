@@ -19,11 +19,15 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.io.Serializable;
+
 /**
  * Holds the identity of a user.
  */
-public class User {
-    private String identifier;
+public class User implements Serializable {
+
+	private static final long serialVersionUID = 805912187647638458L;
+	private String identifier;
     /**
      * Creates a new instance.
      * @param identifier the string to identify the user

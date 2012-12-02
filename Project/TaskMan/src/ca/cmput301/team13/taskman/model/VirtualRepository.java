@@ -20,12 +20,13 @@
 package ca.cmput301.team13.taskman.model;
 
 import java.util.ArrayList;
-
-import ca.cmput301.team13.taskman.TaskMan;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
+import java.util.Date;
 
 import android.content.Context;
 import android.util.Log;
+import ca.cmput301.team13.taskman.TaskMan;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
+import ca.cmput301.team13.taskman.model.WebRepository.WebActionCallback;
 
 /**
  * A facade combining {@link LocalRepository} and a remote
@@ -33,6 +34,7 @@ import android.util.Log;
  */
 public class VirtualRepository {
     private LocalRepository local;
+    private WebRepository web;
 
     /**
      * Instantiates a new {@link VirtualRepository} object.
@@ -42,6 +44,7 @@ public class VirtualRepository {
     	if(local == null) {
     		local = new LocalRepository(context, this);
         	local.open();
+        	web = new WebRepository(this);
     	}
     }
 
@@ -52,6 +55,10 @@ public class VirtualRepository {
      */
     public Task createTask(User creator) {
         return local.createTask(creator);
+    }
+    
+    public Task createTask(Task t) {
+    	return local.createTask(t);
     }
 
     /**
@@ -83,20 +90,37 @@ public class VirtualRepository {
     public ArrayList<Task> getTasksForFilter(TaskFilter tf) {
         return local.loadTasks(tf);
     }
+    
+    /**
+     * Creates a Requirement and links it to a Task. Initializes it with a default ID.
+     * @see addRequirementsToTask(User, Task, contentType, int) for full implementation
+     */
+    public Requirement addRequirementToTask(User creator, Task t, contentType content) {
+    	return addRequirementToTask(creator, t, content, -1);
+    }
 
     /**
      * Creates a Requirement and links it to a Task.
      * @param creator The User creating the requirement (null to use Task's creator)
      * @param t The Task to add the Requirement to
      * @param content The content type specified by the Requirement
+     * @param id	The desired ID for the Requirement. -1 if a default ID should be generated.
      * @return
      */
-    public Requirement addRequirementToTask(User creator, Task t, contentType content) {
+    public Requirement addRequirementToTask(User creator, Task t, contentType content, int id) {
         if(creator == null) {
             creator = t.getCreator();
         }
-        Requirement r = local.createRequirement(creator, t, content);
+        Requirement r = local.createRequirement(creator, t, content, id);
         return r;
+    }
+    
+    /**
+     * Creates a Fulfillment and links it to a Requirement. Adds a default ID
+     * @see addFulfillmentToRequirement(User, Requirement, int) for full implementation
+     */
+    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r) {
+    	return addFulfillmentToRequirement(creator, r, -1);
     }
 
     /**
@@ -105,7 +129,7 @@ public class VirtualRepository {
      * @param r The Requirement to add the Fulfillment to
      * @return
      */
-    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r) {
+    public Fulfillment addFulfillmentToRequirement(User creator, Requirement r, int id) {
         if(creator == null) {
             creator = r.getCreator();
         }
@@ -119,18 +143,31 @@ public class VirtualRepository {
      * @param backedObject - the object with changes
      */
     boolean saveUpdate(BackedObject backedObject) {
+    	boolean updated = false;
         if(backedObject instanceof Task) {
             local.updateTask((Task)backedObject);
-            return true;
+            updated = true;
         } else if(backedObject instanceof Requirement) {
             local.updateRequirement((Requirement)backedObject);
-            return true;
+            updated = true;
         } else if(backedObject instanceof Fulfillment) {
             local.updateFulfillment((Fulfillment)backedObject);
-            return true;
+            updated = true;
         }
-        //If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?
-        Log.w("VirtualRepository", "Attempted to save changes to unknown object: "+backedObject.getClass().toString());
+        
+        //Push to web if necessary
+        if(!backedObject.getIsLocal()) {
+        	System.out.println("going to save to web!");
+        	/*web.pushObject(backedObject, true, new WebActionCallback() {
+        		public void run(boolean success, String message) {
+        			//TODO: If this fails, pop up a Toast or something? With an option to retry?
+        		}
+        	});*/
+        }
+        
+        if(!updated)
+        	//If we're here, then we didn't detect a type. Perhaps a new feature isn't fully implemented?
+        	Log.w("VirtualRepository", "Attempted to save changes to unknown object: "+backedObject.getClass().toString());
         return false;
     }
 
@@ -168,6 +205,24 @@ public class VirtualRepository {
      */
     public Task getTaskUpdate(Task t) {
     	return local.getTaskUpdate(t);
+    }
+    
+    /**
+     * Get updated data for the requested Requirement
+     * @param t		The Requirement to get updated data for
+     * @return		The updated Requirement
+     */
+    Requirement getRequirementUpdate(Requirement r) {
+    	return local.getRequirementUpdate(r);
+    }
+    
+    /**
+     * Get updated data for the requested Fulfillment
+     * @param t		The Fulfillment to get updated data for
+     * @return		The updated Fulfillment
+     */
+    Fulfillment getFulfillmentUpdate(Fulfillment f) {
+    	return local.getFulfillmentUpdate(f);
     }
 
     /**
@@ -232,6 +287,17 @@ public class VirtualRepository {
     		return true;
     	}
     }
+    
+    /**
+     * Get the newest modification that has been done in the LocalRepository
+     * @return The newest modification date
+     */
+    public Date getNewestLocalModification() {
+    	return local.getNewestModification();
+    }
 
+    public void synchronize(WebActionCallback callback) {
+    	web.pullChanges(callback);
+    }
 
 }

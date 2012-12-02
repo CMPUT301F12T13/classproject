@@ -19,6 +19,7 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import android.os.Parcel;
@@ -28,15 +29,19 @@ import ca.cmput301.team13.taskman.TaskMan;
 /**
  * Base class for objects that reside in the database.
  */
-abstract class BackedObject implements Parcelable {
+abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 
 
     private int id;
-    private Date created;
+    private String webID = "";
+    private int parentId = -1;
+    private String parentWebID = "";
+	private Date created;
     private Date lastModified;
-    private User creator;
-    VirtualRepository repo;
+	private User creator;
+    transient VirtualRepository repo;
     boolean delaySave = false;
+    private boolean isLocal = true;
     
     /**
      * Creates a BackedObject.
@@ -53,6 +58,8 @@ abstract class BackedObject implements Parcelable {
         this.created = created;
         this.lastModified = lastModified;
     }
+    
+    public BackedObject() { }
 
     /**
      * Save any changes that have occurred to this object.
@@ -103,6 +110,10 @@ abstract class BackedObject implements Parcelable {
     public Date getLastModifiedDate() {
         return lastModified;
     }
+    
+    public void setLastModifiedDate(Date lastModified) {
+		this.lastModified = lastModified;
+	}
 
     /**
      * Returns the {@link User} who created the object.
@@ -111,7 +122,15 @@ abstract class BackedObject implements Parcelable {
     public User getCreator() {
         return creator;
     }
+    
+    public String getWebID() {
+		return webID;
+	}
 
+	public void setWebID(String webID) {
+		this.webID = webID;
+	}
+	
     /**
      * Describes the contents of the object (for parcelling).
      */
@@ -126,6 +145,36 @@ abstract class BackedObject implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         BackedObjectParcel parcel = new BackedObjectParcel(getId(), getClass().getName());
         out.writeSerializable(parcel);
+    }
+
+    public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getParentWebID() {
+		return parentWebID;
+	}
+
+	public void setParentWebID(String parentWebID) {
+		this.parentWebID = parentWebID;
+	}
+	
+	abstract public int getOrderValue();
+	
+	public int compareTo(BackedObject bo) {
+		return this.getOrderValue() - bo.getOrderValue();
+	}
+
+	public boolean getIsLocal() {
+        return isLocal;
+    }
+
+    public void setIsLocal(boolean isLocal) {
+        this.isLocal = isLocal;
     }
 
     /**

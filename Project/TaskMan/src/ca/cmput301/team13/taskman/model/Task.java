@@ -19,8 +19,12 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.Parcelable;
 import android.util.Log;
@@ -29,12 +33,12 @@ import android.util.Log;
  * Holds the information associated with a task;
  * aggregates {@link Requirement}.
  */
-public class Task extends BackedObject implements Parcelable{
+public class Task extends BackedObject implements Parcelable, Serializable {
 
-
-    private String title;
+	private static final long serialVersionUID = -4003796765447519712L;
+	private String title;
     private String description;
-    private ArrayList<Requirement> requirements;
+    transient private ArrayList<Requirement> requirements;
     //Implementation of requirements handoff
     boolean reqsLoaded = false;
     int reqCount = 0;
@@ -70,6 +74,45 @@ public class Task extends BackedObject implements Parcelable{
         this.description = description;
         reqsLoaded = false;
         this.reqCount = reqCount;
+    }
+    
+    /**
+     * Required to make Tasks serializable. The created Task object will not be used as an independent object; it will instead be used to store intermediate data
+     * until a proper object can be created in, or fetched from, the LocalRepository
+     */
+    public Task() { }
+    
+    public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();
+    	try {
+			json.put("id", getId());
+			json.put("title", getTitle());
+			json.put("description", getDescription());
+			json.put("created", getCreatedDate().getTime());
+			json.put("lastModified", getLastModifiedDate().getTime());
+			json.put("creator", getCreator().toString());
+			json.put("reqCount", getRequirementCount());
+			return json;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    /**
+     * Update this Task's mutable properties from the provided
+     * Task object
+     * @param t
+     */
+    public void loadFromTask(Task t) {
+    	delaySaves(true);
+    	setWebID(t.getWebID());
+    	setLastModifiedDate(t.getLastModifiedDate());
+    	setTitle(t.getTitle());
+    	setDescription(t.getDescription());
+    	reqCount = t.reqCount;
+    	setIsLocal(t.getIsLocal());
+    	delaySaves(false);
     }
 
     private void loadRequirements() {
@@ -167,6 +210,10 @@ public class Task extends BackedObject implements Parcelable{
             loadRequirements();
 
         return requirements.get(index);
+    }
+    
+    public int getOrderValue() {
+    	return 1;
     }
 
     /**

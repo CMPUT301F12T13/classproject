@@ -19,7 +19,13 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.util.Date;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -29,9 +35,10 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
  * Represents a fulfillment to a task requirement;
  * aggregated by {@link Requirement}.
  */
-public class Fulfillment extends BackedObject {
+public class Fulfillment extends BackedObject implements Serializable {
 
-    private contentType content;
+	private static final long serialVersionUID = -455954352936661277L;
+	private contentType content;
     private Bitmap image;
     private String text;
     private short[] audioBuffer;
@@ -60,7 +67,7 @@ public class Fulfillment extends BackedObject {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, Bitmap image, User creator, VirtualRepository repo) {
+    public Fulfillment(int id, Date created, Date lastModified, Bitmap image, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.image;
         this.image = image;
@@ -75,7 +82,7 @@ public class Fulfillment extends BackedObject {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, String text, User creator, VirtualRepository repo) {
+    public Fulfillment(int id, Date created, Date lastModified, String text, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.text;
         this.text = text;
@@ -90,14 +97,75 @@ public class Fulfillment extends BackedObject {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    Fulfillment(int id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
+    public Fulfillment(int id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.content = contentType.audio;
         this.audioBuffer = buffer;
     }
     
-    //TODO: constructor for video
+    public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();
+    	try {
+    		json.put("id", getId());
+    		json.put("parentId", getParentId());
+    		json.put("parentWebID", getParentWebID());
+    		json.put("created", getCreatedDate().getTime());
+    		json.put("lastModified", getLastModifiedDate().getTime());
+			json.put("contentType", content.ordinal());
+			json.put("creator", getCreator().toString());
+			//Serialize the contained data
+			switch(content) {
+				case text:
+					json.put("data", text);
+				break;
+				case audio:
+					JSONArray audioByteArray = new JSONArray();
+					for(int i=0; i<audioBuffer.length; i++) {
+						audioByteArray.put((int)audioBuffer[i]);
+					}
+					json.put("data", audioByteArray);
+				break;
+				case image:
+					ByteArrayOutputStream s = new ByteArrayOutputStream();
+					image.compress(Bitmap.CompressFormat.PNG, 100, s);
+					byte[] bitmapBytes = s.toByteArray();
+					JSONArray bitmapByteArray = new JSONArray();
+					for(int i=0; i<bitmapBytes.length; i++) {
+						bitmapByteArray.put((int)bitmapBytes[i]);
+					}
+					json.put("data", bitmapByteArray);
+				break;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return json;
+    }
     
+    /**
+     * Update this Fulfillment's mutable properties from the
+     * provided Fulfillment
+     * @param f
+     */
+    public boolean loadFromFulfillment(Fulfillment f) {
+    	setLastModifiedDate(f.getLastModifiedDate());
+    	switch(content) {
+	    	case text:
+				setText(f.getText());
+			break;
+			case audio:
+				setAudio(f.getAudio());
+			break;
+			case image:
+				setImage(f.getImage());
+			break;
+    	}
+    	setWebID(f.getWebID());
+    	setIsLocal(f.getIsLocal());
+    	return this.saveChanges();
+    }
+
+    //TODO: constructor for video
     /**
      * Returns the image content associated with this fulfillment.
      * @return the {@link android.graphics.Bitmap} content associated with the fulfillment.
@@ -204,6 +272,10 @@ public class Fulfillment extends BackedObject {
      */
     public contentType getContentType() {
         return content;
+    }
+    
+    public int getOrderValue() {
+    	return 3;
     }
 
     /**

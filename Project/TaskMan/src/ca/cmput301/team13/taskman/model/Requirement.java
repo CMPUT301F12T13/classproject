@@ -22,11 +22,15 @@ package ca.cmput301.team13.taskman.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Holds the information associated with a requirement for a {@link Task};
  * aggregated by {@link Task}.
  */
-public class Requirement extends BackedObject{
+public class Requirement extends BackedObject {
 
 	/**
 	 * An enum of desired contentType for requirements.
@@ -70,12 +74,57 @@ public class Requirement extends BackedObject{
      * @param fulfillmentCount - the quantity of fulfillments
      * @param repo - the repository backing this object
      */
-    Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
+    public Requirement(int id, Date created, Date lastModified, User creator, String description, contentType desiredContent, int fulfillmentCount, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
         this.description = description;
         this.fulfillmentCount = fulfillmentCount;
         this.desiredContent = desiredContent;
         this.loaded = false;
+    }
+    
+    public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();
+    	JSONArray fulfillmentArray = new JSONArray(); //Only stores the IDs
+    	//Ensure the Fulfillments are loaded before trying to get their IDs
+    	if(!loaded) loadFulfillments(); 
+    	//Get Fulfillment IDs of this Requiremenr
+    	for(int i=0; i<fulfillments.size(); i++) {
+    		try {
+				fulfillmentArray.put(i, fulfillments.get(i).getId());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+    	}
+    	try {
+    		json.put("id", getId());
+    		json.put("parentId", getParentId());
+    		json.put("parentWebID", getParentWebID());
+    		json.put("description", getDescription());
+			json.put("fulfillmentCount", getFullfillmentCount());
+			json.put("contentType", this.desiredContent.ordinal());
+			json.put("created", getCreatedDate().getTime());
+			json.put("lastModified", getLastModifiedDate().getTime());
+			json.put("creator", getCreator().toString());
+			json.put("fulfillments", fulfillmentArray);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return json;
+    }
+    
+    /**
+     * Update this Requirement's mutable properties from
+     * the provided Requirement
+     * @param r
+     */
+    public boolean loadFromRequirement(Requirement r) {
+    	delaySaves(true);
+    	setIsLocal(r.getIsLocal());
+    	setWebID(r.getWebID());
+    	setDescription(r.getDescription());
+    	setLastModifiedDate(r.getLastModifiedDate());
+    	fulfillmentCount = r.getFullfillmentCount();
+    	return delaySaves(false);
     }
 
     /**
@@ -164,6 +213,10 @@ public class Requirement extends BackedObject{
             fulfillments = repo.getFulfillmentsForRequirement(this);
             loaded = true;
         }
+    }
+    
+    public int getOrderValue() {
+    	return 2;
     }
 
     /**

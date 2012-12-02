@@ -43,15 +43,11 @@ public abstract class FulfillmentActivity extends Activity {
 	 * The parcelled {@link Requirement}.
 	 */
     protected Requirement requirement;
+    
     /**
      * The newly created {@link Fulfillment} for the requirement.
      */
     protected Fulfillment fulfillment;
-    /**
-     * Determines whether or not to keep the fulfillment.  If false,
-     * then the fulfillment is removed when the activity is stopped.
-     */
-    protected boolean successful;
 
     /**
      * Receives the parcelled requirement object
@@ -61,23 +57,23 @@ public abstract class FulfillmentActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.successful = false;
         this.requirement = (Requirement) this.getIntent().getParcelableExtra("requirement");
+        
+    }
 
+    /**
+     * Create the new fulfillment
+     */
+    public void save() {
         fulfillment = TaskMan.getInstance().getRepository().addFulfillmentToRequirement(
                 TaskMan.getInstance().getUser(),
                 requirement);
     }
-
+    
     /**
-     * Removes the fulfillment from the requirement if the
-     * {@link successful} member variable is false.
+     * Cancel the Activity.
      */
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (!successful) {
-            requirement.removeFulfillment(fulfillment);
-        }
+    public void cancel() {
+        finish();
     }
 }
