@@ -14,7 +14,7 @@
     <TextView
         android:id="@+id/reqDescriptionText"
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/reqContentImg"
         android:ems="10"
         android:text="Requirement Description"
@@ -23,11 +23,12 @@
     
     <Button
         android:id="@+id/reqFulfillBtn"
-        android:layout_width="100dp"
-        android:layout_height="35dp"
-        android:text="Fulfill"
-        android:textSize="15dp"
-        android:layout_marginTop="20dp" >
+        android:layout_width="85dp"
+        android:layout_height="18dp"
+        android:layout_below="@+id/reqDescriptionText"
+        android:text=""
+        android:textSize="0dp"
+        android:background="@drawable/ful_btn">
     </Button>
     
 </RelativeLayout>
