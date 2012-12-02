@@ -67,19 +67,6 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
         ((Button)findViewById(R.id.mytasks_btn)).setOnClickListener(this);
         ((Button)findViewById(R.id.alltasks_btn)).setOnClickListener(this);
         
-        TaskMan.getInstance().getRepository().synchronize(new WebActionCallback() {
-			
-			public void run() {
-				if(success) {
-					taskAdapter.update();
-					System.out.println("success!");
-				} else {
-					System.out.println("Failure :(");
-				}
-			}
-			
-		}, this);
-        
         ((EditText)findViewById(R.id.search_txt)).setOnFocusChangeListener(this);
         ((EditText)findViewById(R.id.search_txt)).addTextChangedListener(this);
         ((Button)findViewById(R.id.mytasks_btn)).setEnabled(false);
@@ -100,6 +87,20 @@ public class RootActivity extends Activity implements OnClickListener, OnItemCli
     @Override
     public void onResume() {
         super.onResume();
+        
+        TaskMan.getInstance().getRepository().synchronize(new WebActionCallback() {
+			
+			public void run() {
+				if(success) {
+					taskAdapter.update();
+					System.out.println("success!");
+				} else {
+					System.out.println("Failure :(");
+				}
+			}
+			
+		}, this);
+        
         taskAdapter.update();
     }
 
