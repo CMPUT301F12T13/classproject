@@ -52,6 +52,7 @@ public class RequirementListAdapter implements ListAdapter {
     private LayoutInflater inflater;
     private String mode;
     private Activity activity;
+    private Intent intent;
     FulfillmentIntentFactory fIntentFactory;
 
     //View types
@@ -165,8 +166,8 @@ public class RequirementListAdapter implements ListAdapter {
      * @param r the requirement to launch a fulfillment activity for
      */
     private void openFulfillmentActivity(Requirement r) {
-        Intent i = fIntentFactory.createIntent(r);
-		activity.startActivity(i);
+        intent = fIntentFactory.createIntent(r);
+		activity.startActivity(intent);
     }
     
     /**
