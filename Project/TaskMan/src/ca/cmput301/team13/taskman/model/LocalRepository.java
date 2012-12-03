@@ -392,9 +392,11 @@ public class LocalRepository {
         case video:
             //Directly convert the short[] to byte[]
             short[] video = f.getVideo();
-            byte[] videoBytes = new byte[video.length * 2];
-            ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(video);
-            values.put(RepoHelper.CONTENT_COL, videoBytes);
+            if(video != null) {
+	            byte[] videoBytes = new byte[video.length * 2];
+	            ByteBuffer.wrap(videoBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(video);
+	            values.put(RepoHelper.CONTENT_COL, videoBytes);
+            }
             break;
         case image:
             //Compress and store the image

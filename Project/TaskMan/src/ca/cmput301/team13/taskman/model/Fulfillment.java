@@ -97,10 +97,20 @@ public class Fulfillment extends BackedObject implements Serializable {
      * @param creator User that created this fulfillment
      * @param repo Link to the Repository
      */
-    public Fulfillment(String id, Date created, Date lastModified, short[] buffer, User creator, VirtualRepository repo) {
+    public Fulfillment(String id, Date created, Date lastModified, short[] buffer, contentType mediaType, User creator, VirtualRepository repo) {
         super(id, created, lastModified, creator, repo);
-        this.content = contentType.audio;
-        this.audioBuffer = buffer;
+        this.content = mediaType;
+        switch(mediaType) {
+        	case audio:
+        		this.audioBuffer = buffer;
+        	break;
+        	case video:
+        		this.videoBuffer = buffer;
+        	break;
+        	default:
+        		this.videoBuffer = null;
+        		this.audioBuffer = null;
+        }
     }
     
     public JSONObject toJSON() {
@@ -135,6 +145,13 @@ public class Fulfillment extends BackedObject implements Serializable {
 					}
 					json.put("data", bitmapByteArray);
 				break;
+				case video:
+					JSONArray videoByteArray = new JSONArray();
+					for(int i=0; i<videoBuffer.length; i++) {
+						videoByteArray.put((int)videoBuffer[i]);
+					}
+					json.put("data", videoByteArray);
+				break;
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -159,6 +176,9 @@ public class Fulfillment extends BackedObject implements Serializable {
 			break;
 			case image:
 				setImage(f.getImage());
+			break;
+			case video:
+				setVideo(f.getVideo());
 			break;
     	}
     	setWebID(f.getWebID());
