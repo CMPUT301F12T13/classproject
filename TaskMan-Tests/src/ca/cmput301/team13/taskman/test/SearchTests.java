@@ -20,7 +20,7 @@
 package ca.cmput301.team13.taskman.test;
 
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import ca.cmput301.team13.taskman.model.Requirement;
@@ -36,6 +36,8 @@ public class SearchTests extends BaseSetup {
     
     public void setUp() {
         super.setUp();
+
+        expected_ids = new HashSet<String>();
 
         Task t;
 
@@ -59,7 +61,13 @@ public class SearchTests extends BaseSetup {
 
     public void test_search() {
         expected_ids = null;
+        Set<String> found_ids = new HashSet<String>();
+
         // TODO: Try several searches and confirm proper findings.
+
+        if(!found_ids.equals(expected_ids)) {
+            fail();
+        }
     }
 
     public void tearDown() {
