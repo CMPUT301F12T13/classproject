@@ -134,7 +134,7 @@ public class VirtualRepository {
         if(creator == null) {
             creator = r.getCreator();
         }
-        Fulfillment f = local.createFulfillment(creator, r);
+        Fulfillment f = local.createFulfillment(creator, r, id);
         return f;
     }
 

@@ -102,8 +102,8 @@ public class Requirement extends BackedObject {
     		json.put("description", getDescription());
 			json.put("fulfillmentCount", getFullfillmentCount());
 			json.put("contentType", this.desiredContent.ordinal());
-			json.put("created", getCreatedDate().getTime());
-			json.put("lastModified", getLastModifiedDate().getTime());
+    		json.put("created", dateFormat.format(getCreatedDate()));
+    		json.put("lastModified", dateFormat.format(getLastModifiedDate()));
 			json.put("creator", getCreator().toString());
 			json.put("fulfillments", fulfillmentArray);
 		} catch (JSONException e) {

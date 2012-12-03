@@ -19,6 +19,8 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -31,6 +33,7 @@ import ca.cmput301.team13.taskman.TaskMan;
 
 public class CrowdSourcerObject {
 	
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd kk:mm:ss:SSS Z");
 	public static enum entityType {
 		TASK("TSK"),
 		FULFILLMENT("FUL"),
@@ -132,14 +135,14 @@ public class CrowdSourcerObject {
 		JSONObject json = new JSONObject();
 		JSONObject serializedData = new JSONObject();
 		String id = null;
-		long lastModifiedDate = -1;
+		String lastModifiedDate = "";
 		int typeOrdinal = -1;
 		switch(type) {
 			case TASK:
 				if(task != null) {
 					serializedData = task.toJSON();
 					id = task.getId();
-					lastModifiedDate = task.getLastModifiedDate().getTime();
+					lastModifiedDate = dateFormat.format(task.getLastModifiedDate());
 					typeOrdinal = entityType.TASK.ordinal();
 				}
 			break;
@@ -147,7 +150,7 @@ public class CrowdSourcerObject {
 				if(fulfillment != null) {
 					serializedData = fulfillment.toJSON();
 					id = fulfillment.getId();
-					lastModifiedDate = fulfillment.getLastModifiedDate().getTime();
+					lastModifiedDate = dateFormat.format(fulfillment.getLastModifiedDate());
 					typeOrdinal = entityType.FULFILLMENT.ordinal();
 				}
 			break;
@@ -155,7 +158,7 @@ public class CrowdSourcerObject {
 				if(requirement != null) {
 					serializedData = requirement.toJSON();
 					id = requirement.getId();
-					lastModifiedDate = requirement.getLastModifiedDate().getTime();
+					lastModifiedDate = dateFormat.format(requirement.getLastModifiedDate());
 					typeOrdinal = entityType.REQUIREMENT.ordinal();
 				}
 			break;
@@ -187,10 +190,12 @@ public class CrowdSourcerObject {
 		//Populate type-specific fields
 		switch(type) {
 			case TASK:
-				Task t = new Task(
+			Task t;
+			try {
+				t = new Task(
 					data.getString("id"), 
-					new Date(data.getLong("created")),
-					new Date(data.getLong("lastModified")), 
+					dateFormat.parse(data.getString("created")),
+					dateFormat.parse(data.getString("lastModified")), 
 					new User(data.getString("creator")), 
 					data.getString("title"), 
 					data.getString("description"), 
@@ -200,13 +205,24 @@ public class CrowdSourcerObject {
 				t.setIsLocal(false);
 				t.setWebID(json.getString("id"));
 				setContent(t);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 			case FULFILLMENT:
 				//Get generic fields
 				Requirement.contentType contentType = Requirement.contentType.values()[data.getInt("contentType")];
 				String id = data.getString("id");
-				Date created = new Date(data.getLong("created"));
-				Date lastModified = new Date(data.getLong("lastModified"));
+				Date created = null;
+				Date lastModified = null;
+				try {
+					created = dateFormat.parse(data.getString("created"));
+					lastModified = dateFormat.parse(data.getString("lastModified"));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				User user = new User(data.getString("creator"));
 				VirtualRepository vr = TaskMan.getInstance().getRepository();
 				Fulfillment f = null;
@@ -285,10 +301,12 @@ public class CrowdSourcerObject {
 			break;
 			case REQUIREMENT:
 				//Create the Requirement
-				Requirement r = new Requirement(
+			Requirement r;
+			try {
+				r = new Requirement(
 					data.getString("id"), 
-					new Date(data.getInt("created")), 
-					new Date(data.getInt("lastModified")), 
+					dateFormat.parse(data.getString("created")), 
+					dateFormat.parse(data.getString("lastModified")), 
 					new User(data.getString("creator")), 
 					data.getString("description"), 
 					Requirement.contentType.values()[data.getInt("contentType")], 
@@ -300,6 +318,10 @@ public class CrowdSourcerObject {
 				r.setParentWebID(data.getString("parentWebID"));
 				r.setWebID(json.getString("id"));
 				setContent(r);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		}
 	}

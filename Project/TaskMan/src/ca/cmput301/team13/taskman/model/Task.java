@@ -88,8 +88,8 @@ public class Task extends BackedObject implements Parcelable, Serializable {
 			json.put("id", getId());
 			json.put("title", getTitle());
 			json.put("description", getDescription());
-			json.put("created", getCreatedDate().getTime());
-			json.put("lastModified", getLastModifiedDate().getTime());
+    		json.put("created", dateFormat.format(getCreatedDate()));
+    		json.put("lastModified", dateFormat.format(getLastModifiedDate()));
 			json.put("creator", getCreator().toString());
 			json.put("reqCount", getRequirementCount());
 			return json;

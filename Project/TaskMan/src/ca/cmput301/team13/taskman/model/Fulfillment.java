@@ -119,8 +119,8 @@ public class Fulfillment extends BackedObject implements Serializable {
     		json.put("id", getId());
     		json.put("parentId", getParentId());
     		json.put("parentWebID", getParentWebID());
-    		json.put("created", getCreatedDate().getTime());
-    		json.put("lastModified", getLastModifiedDate().getTime());
+    		json.put("created", dateFormat.format(getCreatedDate()));
+    		json.put("lastModified", dateFormat.format(getLastModifiedDate()));
 			json.put("contentType", content.ordinal());
 			json.put("creator", getCreator().toString());
 			//Serialize the contained data

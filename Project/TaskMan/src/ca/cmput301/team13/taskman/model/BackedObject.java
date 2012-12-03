@@ -19,6 +19,7 @@
 
 package ca.cmput301.team13.taskman.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.os.Parcel;
@@ -40,6 +41,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
     transient VirtualRepository repo;
     boolean delaySave = false;
     private boolean isLocal = false;
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd kk:mm:ss:SSS Z");
     
     /**
      * Creates a BackedObject.
