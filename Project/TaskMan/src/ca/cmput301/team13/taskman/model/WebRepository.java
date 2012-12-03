@@ -223,12 +223,12 @@ public class WebRepository {
 							for(int i=0; i<ja.length(); i++) {
 								JSONObject currentObject = ja.getJSONObject(i);
 								if(currentObject.has("summary")) {
-									Date lastModifiedDate = dateFormat.parse(currentObject.getString("summary"));
+//									Date lastModifiedDate = dateFormat.parse(currentObject.getString("summary"));
 									//If the CrowdSourcer version is newer than the local version, it needs to be pulled
-									if(lastModifiedDate.after(vr.getNewestLocalModification())) {
+//									if(lastModifiedDate.after(vr.getNewestLocalModification())) {
 										//Add this object to the update queue
 										updatedObjects.add(getObject(currentObject.getString("id"), BackedObject.class));
-									}
+//									}
 								}
 							}
 							
@@ -241,13 +241,14 @@ public class WebRepository {
 							invokeActionCallback(callback, true, "Changes were successfully pulled from CrowdSourcer.", context);
 						} catch (JSONException e) {
 							invokeActionCallback(callback, false, "An invalid object list was returned from pullChanges.", context);
-						} catch (ParseException e) {
-							invokeActionCallback(callback, false, "An invalid date string was stored with the list object.", context);
-						} /*catch (Exception e) {
+						}
+//						} catch (ParseException e) {
+//							invokeActionCallback(callback, false, "An invalid date string was stored with the list object.", context);
+//						} catch (Exception e) {
 							//PullObject failed
-							System.out.println("EXCEPTION!: " + e.getMessage());
-							invokeActionCallback(callback, false, e.getMessage());
-						}*/
+//							System.out.println("EXCEPTION!: " + e.getMessage());
+//							invokeActionCallback(callback, false, e.getMessage());
+//						}
 					}
 				}
 			));

@@ -142,7 +142,7 @@ public class FulfillmentListAdapter implements ListAdapter {
         //Setup the attributes of the view
         //TODO: DateFormatter
         DateFormat df = new SimpleDateFormat("'On' MMM dd, yyyy 'at' h:mm");
-        ((TextView)newView.findViewById(R.id.fulTime)).setText(df.format(((Fulfillment)getItem(viewIndex)).getCreatedDate()));
+        ((TextView)newView.findViewById(R.id.fulTime)).setText(df.format(((Fulfillment)getItem(viewIndex)).getLastModifiedDate()));
         
         final int index = viewIndex;
         switch(((Fulfillment)getItem(viewIndex)).getContentType()) {

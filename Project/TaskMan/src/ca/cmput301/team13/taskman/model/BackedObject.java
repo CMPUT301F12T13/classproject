@@ -62,10 +62,10 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
     public BackedObject() { }
     
     boolean saveChanges(boolean push) {
-    	lastModified = new Date();
         if(delaySave)
             return true; //If we're delaying, no errors occurred here
 
+        //lastModified = new Date();
         return repo.saveUpdate(this, push);
     }
 
