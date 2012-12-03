@@ -19,6 +19,8 @@
 
 package ca.cmput301.team13.taskman.test;
 
+import java.util.Date;
+
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Task;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
@@ -35,8 +37,6 @@ public class RequirementTests extends BaseSetup {
     }
     
     public void test_creation() {
-        task = vr.getTaskUpdate(task);
-        
         Requirement rt = vr.addRequirementToTask(testUser, task, contentType.text);
         Requirement ri = vr.addRequirementToTask(testUser, task, contentType.image);
         Requirement ra = vr.addRequirementToTask(testUser, task, contentType.audio);
@@ -65,8 +65,6 @@ public class RequirementTests extends BaseSetup {
         task.removeRequirement(rv);
     }
     public void test_deletion() {
-        task = vr.getTaskUpdate(task);
-        
         Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
         String id = r.getId();
         vr.removeRequirement(r);
@@ -82,8 +80,6 @@ public class RequirementTests extends BaseSetup {
     }
 
     public void test_modification_add_fulfillment_text() {
-        task = vr.getTaskUpdate(task);
-        
         Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
         vr.addFulfillmentToRequirement(testUser, r);
         r = vr.getRequirementUpdate(r);
@@ -96,8 +92,6 @@ public class RequirementTests extends BaseSetup {
     }
 
     public void test_modification_remove_fulfillment() {
-        task = vr.getTaskUpdate(task);
-        
         Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
         vr.addFulfillmentToRequirement(testUser, r);
         r = vr.getRequirementUpdate(r);
@@ -111,11 +105,35 @@ public class RequirementTests extends BaseSetup {
     }
     
     public void test_date_creation() {
-        // TODO: implement
+        Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+        Date creationDate = r.getCreatedDate();
+        
+        sleep();
+        
+        vr.addFulfillmentToRequirement(testUser, r);
+        
+    	if(r.getCreatedDate().compareTo(creationDate) != 0) {
+    		fail();
+    	}
     }
     public void test_date_modification() {
-        // TODO: implement
+        Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+        Date modificationDate = r.getLastModifiedDate();
+        
+        if(modificationDate.compareTo(r.getCreatedDate()) != 0) {
+        	fail();
+        }
+        
+        sleep();
+        
+        vr.addFulfillmentToRequirement(testUser, r);
+        
+    	if(r.getLastModifiedDate().compareTo(modificationDate) == 0) {
+    		fail();
+    	}
     }
     
-    public void tearDown() { }
+    public void tearDown() {
+    	vr.removeTask(task);
+    }
 }

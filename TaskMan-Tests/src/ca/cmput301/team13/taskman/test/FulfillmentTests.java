@@ -19,22 +19,13 @@
 
 package ca.cmput301.team13.taskman.test;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.Arrays;
 
-import utils.Identifiers;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
-import ca.cmput301.team13.taskman.RootActivity;
-import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.TaskFilter;
-import ca.cmput301.team13.taskman.model.User;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class FulfillmentTests extends BaseSetup {
@@ -136,9 +127,37 @@ public class FulfillmentTests extends BaseSetup {
     }
     
     public void test_date_creation() {
-    	// TODO: implement
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
+    	Date creationDate = f.getCreatedDate();
+    	
+    	sleep();
+    	
+    	f.setText("text data");
+    	
+    	if(f.getCreatedDate().compareTo(creationDate) != 0) {
+    		fail();
+    	}
     }
     public void test_date_modification() {
-    	// TODO: implement
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
+    	Date modificationDate = f.getLastModifiedDate();
+    	
+    	if(modificationDate.compareTo(f.getCreatedDate()) != 0) {
+    		fail();
+    	}
+    	
+    	sleep();
+    	
+    	f.setText("text data");
+    	
+    	if(modificationDate.compareTo(f.getLastModifiedDate()) == 0) {
+    		fail();
+    	}
+    }
+
+    public void tearDown() {
+    	vr.removeTask(task);
     }
 }

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 
+import utils.AudioVideoConversion;
 import utils.Notifications;
 import android.content.Intent;
 import android.media.MediaRecorder;
@@ -44,7 +45,6 @@ import android.widget.TextView;
 public class AudioCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri audioFileUri;
-    private AudioVideoConversion av = new AudioVideoConversion();
     private static final int COLLECTION_ACTIVITY_REQUEST_CODE = 300;
     private MediaRecorder recorder;
     private boolean recording;
@@ -137,7 +137,7 @@ public class AudioCaptureActivity extends FulfillmentActivity implements OnClick
      * Send the taken/selected audio to our parent and exit the Activity.
      */
     public void save() {
-    	short[] audioShorts = av.audioShorts(audioFileUri, fileName, this);
+    	short[] audioShorts = AudioVideoConversion.audioShorts(audioFileUri, fileName, this.getBaseContext());
         //Return to the Task Viewer
         if(audioShorts != null) {
             super.save();

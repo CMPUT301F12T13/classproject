@@ -22,6 +22,7 @@ package ca.cmput301.team13.taskman;
 import java.io.File;
 
 
+import utils.AudioVideoConversion;
 import utils.Notifications;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -46,7 +47,6 @@ import android.widget.ImageView;
 public class VideoCaptureActivity extends FulfillmentActivity implements OnClickListener {
 
     private Uri videoFileUri;
-    private AudioVideoConversion av = new AudioVideoConversion();
     private static final int VIDEO_CAPTURE_ACTIVITY_REQUEST_CODE = 400;
     private static final int VIDEO_GALLERY_ACTIVITY_REQUEST_CODE = 500;
 
@@ -103,7 +103,7 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
      */
     public void save() {
         super.save();
-        short[] videoShorts = av.getShort(av.resolvePath(getBaseContext(), videoFileUri));
+        short[] videoShorts = AudioVideoConversion.getShort(AudioVideoConversion.resolvePath(getBaseContext(), videoFileUri));
         //Return to the Task Viewer
         if(videoShorts != null) {
             fulfillment.setVideo(videoShorts);
@@ -184,7 +184,7 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
                 videoFileUri = data.getData();
                 
                 //create a thumbnail
-                Bitmap bm = ThumbnailUtils.createVideoThumbnail(av.resolvePath(getBaseContext(), videoFileUri), 
+                Bitmap bm = ThumbnailUtils.createVideoThumbnail(AudioVideoConversion.resolvePath(getBaseContext(), videoFileUri), 
                         MediaStore.Video.Thumbnails.MICRO_KIND);
 
                 //set the preview to show the image
