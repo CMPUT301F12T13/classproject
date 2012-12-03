@@ -129,6 +129,7 @@ public class VideoCaptureActivity extends FulfillmentActivity implements OnClick
         //Start the built-in camera application to get our video
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, videoFileUri);
+        intent.putExtra("android.intent.extra.durationLimit", 10000);
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0); //low quality
         startActivityForResult(intent, VIDEO_CAPTURE_ACTIVITY_REQUEST_CODE);
     }
