@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman.model;
+package ca.cmput301.team13.taskman.model.storage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

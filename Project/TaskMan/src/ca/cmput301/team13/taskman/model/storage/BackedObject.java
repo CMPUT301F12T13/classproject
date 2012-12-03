@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman.model;
+package ca.cmput301.team13.taskman.model.storage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +29,7 @@ import ca.cmput301.team13.taskman.TaskMan;
 /**
  * Base class for objects that reside in the database.
  */
-abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
+public abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
 
     private String id;
     private String webID = "";

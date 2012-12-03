@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="ca.cmput301.team13.taskman.RootActivity"
+            android:name=".ui.RootActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,26 +28,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ca.cmput301.team13.taskman.TaskActivity"
+            android:name=".ui.TaskActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name="ca.cmput301.team13.taskman.AudioCaptureActivity"
+            android:name=".ui.AudioCaptureActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="ca.cmput301.team13.taskman.ImageCaptureActivity"
+            android:name="ca.cmput301.team13.taskman.ui.ImageCaptureActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name="ca.cmput301.team13.task.ui.TextCaptureActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="ca.cmput301.team13.taskman.TextCaptureActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-             android:name="ca.cmput301.team13.taskman.VideoCaptureActivity"
+             android:name="ca.cmput301.team13.taskman.ui.VideoCaptureActivity"
              android:label="@string/app_name" >
-         </activity>
-    </application>
+        </activity>
+        
+        </application>
 
 </manifest>

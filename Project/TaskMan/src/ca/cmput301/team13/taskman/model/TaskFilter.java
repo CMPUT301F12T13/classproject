@@ -22,6 +22,9 @@ package ca.cmput301.team13.taskman.model;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import ca.cmput301.team13.taskman.model.storage.Requirement;
+import ca.cmput301.team13.taskman.model.storage.Task;
+
 /**
  * Filters tasks based on a set of {@link Requirement.contentType}.
  * enum values.

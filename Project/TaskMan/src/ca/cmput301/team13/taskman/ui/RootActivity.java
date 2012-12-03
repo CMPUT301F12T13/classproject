@@ -17,11 +17,16 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman;
+package ca.cmput301.team13.taskman.ui;
 
 import utils.Notifications;
-import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.WebRepository.WebActionCallback;
+import ca.cmput301.team13.taskman.R;
+import ca.cmput301.team13.taskman.TaskMan;
+import ca.cmput301.team13.taskman.R.id;
+import ca.cmput301.team13.taskman.R.layout;
+import ca.cmput301.team13.taskman.R.menu;
+import ca.cmput301.team13.taskman.model.storage.Task;
+import ca.cmput301.team13.taskman.model.storage.WebRepository.WebActionCallback;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;

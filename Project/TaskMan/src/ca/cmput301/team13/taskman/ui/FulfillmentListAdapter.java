@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman;
+package ca.cmput301.team13.taskman.ui;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -43,11 +43,15 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout.LayoutParams;
+import ca.cmput301.team13.taskman.R;
+import ca.cmput301.team13.taskman.TaskMan;
+import ca.cmput301.team13.taskman.R.id;
+import ca.cmput301.team13.taskman.R.layout;
 import ca.cmput301.team13.taskman.model.BackedObjectCreatedComparator;
-import ca.cmput301.team13.taskman.model.Fulfillment;
-import ca.cmput301.team13.taskman.model.Requirement;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
-import ca.cmput301.team13.taskman.model.Task;
+import ca.cmput301.team13.taskman.model.storage.Fulfillment;
+import ca.cmput301.team13.taskman.model.storage.Requirement;
+import ca.cmput301.team13.taskman.model.storage.Task;
+import ca.cmput301.team13.taskman.model.storage.Requirement.contentType;
 
 /**
  * Provides a list of tasks from the {@link VirtualRepository}

@@ -21,6 +21,8 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.Comparator;
 
+import ca.cmput301.team13.taskman.model.storage.Task;
+
 /**
  * Compares modified dates of {@link Task} objects.
  */

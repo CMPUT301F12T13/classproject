@@ -21,6 +21,8 @@ package ca.cmput301.team13.taskman.model;
 
 import java.util.Comparator;
 
+import ca.cmput301.team13.taskman.model.storage.BackedObject;
+
 /**
  * Compares the creation dates of {@link BackedObject} objects.
  */

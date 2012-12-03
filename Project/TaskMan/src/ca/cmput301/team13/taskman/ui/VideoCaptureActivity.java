@@ -17,9 +17,14 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman;
+package ca.cmput301.team13.taskman.ui;
 
 import java.io.File;
+
+import ca.cmput301.team13.taskman.R;
+import ca.cmput301.team13.taskman.R.id;
+import ca.cmput301.team13.taskman.R.layout;
+import ca.cmput301.team13.taskman.R.menu;
 
 
 import utils.AudioVideoConversion;

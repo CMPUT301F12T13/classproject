@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman.model;
+package ca.cmput301.team13.taskman.model.storage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,6 +46,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ca.cmput301.team13.taskman.model.RequestArgument;
 
 import android.app.Activity;
 import android.content.Context;

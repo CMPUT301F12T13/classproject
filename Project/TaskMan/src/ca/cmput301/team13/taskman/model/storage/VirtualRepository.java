@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman.model;
+package ca.cmput301.team13.taskman.model.storage;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,8 +26,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import ca.cmput301.team13.taskman.TaskMan;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
-import ca.cmput301.team13.taskman.model.WebRepository.WebActionCallback;
+import ca.cmput301.team13.taskman.model.TaskFilter;
+import ca.cmput301.team13.taskman.model.storage.Requirement.contentType;
+import ca.cmput301.team13.taskman.model.storage.WebRepository.WebActionCallback;
 
 /**
  * A facade combining {@link LocalRepository} and a remote

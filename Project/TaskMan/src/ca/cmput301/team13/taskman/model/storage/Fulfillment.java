@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman.model;
+package ca.cmput301.team13.taskman.model.storage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-import ca.cmput301.team13.taskman.model.Requirement.contentType;
+import ca.cmput301.team13.taskman.model.storage.Requirement.contentType;
 
 /**
  * Represents a fulfillment to a task requirement;
