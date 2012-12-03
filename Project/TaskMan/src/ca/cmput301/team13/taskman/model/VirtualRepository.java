@@ -224,7 +224,7 @@ public class VirtualRepository {
      * @param t		The Requirement to get updated data for
      * @return		The updated Requirement
      */
-    Requirement getRequirementUpdate(Requirement r) {
+    public Requirement getRequirementUpdate(Requirement r) {
     	return local.getRequirementUpdate(r);
     }
     
@@ -233,7 +233,7 @@ public class VirtualRepository {
      * @param t		The Fulfillment to get updated data for
      * @return		The updated Fulfillment
      */
-    Fulfillment getFulfillmentUpdate(Fulfillment f) {
+    public Fulfillment getFulfillmentUpdate(Fulfillment f) {
     	return local.getFulfillmentUpdate(f);
     }
 

@@ -608,7 +608,7 @@ public class LocalRepository {
      * @param t		The task to get updated data for
      * @return		The updated Task
      */
-    Task getTaskUpdate(Task t) {
+    public Task getTaskUpdate(Task t) {
     	return getTask(t.getId());
     }
     
@@ -617,7 +617,7 @@ public class LocalRepository {
      * @param t		The Requirement to get updated data for
      * @return		The updated Requirement
      */
-    Requirement getRequirementUpdate(Requirement r) {
+    public Requirement getRequirementUpdate(Requirement r) {
     	return getRequirement(r.getId());
     }
     
@@ -626,7 +626,7 @@ public class LocalRepository {
      * @param t		The Fulfillment to get updated data for
      * @return		The updated Fulfillment
      */
-    Fulfillment getFulfillmentUpdate(Fulfillment f) {
+    public Fulfillment getFulfillmentUpdate(Fulfillment f) {
     	return getFulfillment(f.getId());
     }
 

@@ -39,10 +39,6 @@ import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class FulfillmentTests extends BaseSetup {
     private Task task;
-    private Requirement req_text;
-    private Requirement req_audio;
-    private Requirement req_image;
-    private Requirement req_video;
 	short[] data = {0, 1, 2, 100, 7816};
     
     public FulfillmentTests() {
@@ -52,15 +48,12 @@ public class FulfillmentTests extends BaseSetup {
     public void setUp() {
         super.setUp();
         task = vr.createTask(testUser);
-        req_text  = vr.addRequirementToTask(testUser, task, contentType.text);
-        req_audio = vr.addRequirementToTask(testUser, task, contentType.audio);
-        req_image = vr.addRequirementToTask(testUser, task, contentType.image);
-        req_video = vr.addRequirementToTask(testUser, task, contentType.video);
     }
     
     public void test_creation () {
-        vr.addFulfillmentToRequirement(testUser, req_text);
-        if (req_text.getFullfillmentCount() != 1) {
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+        vr.addFulfillmentToRequirement(testUser, r);
+        if (r.getFullfillmentCount() != 1) {
             fail();
         }
     }
@@ -70,7 +63,8 @@ public class FulfillmentTests extends BaseSetup {
         Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
         
         String id = f.getId();
-        r.removeFulfillment(f);
+        vr.removeFulfillment(f);
+        r = vr.getRequirementUpdate(r);
         
         if (r.getFullfillmentCount() != 0) {
             fail();
@@ -83,9 +77,9 @@ public class FulfillmentTests extends BaseSetup {
         task.removeRequirement(r);
     }
     
-    public void _test_modification_text() {
-    	vr.addFulfillmentToRequirement(testUser, req_text);
-    	Fulfillment f = req_text.getFulfillment(0);
+    public void test_modification_text() {
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
     	
     	f.setText("my string");
     	if(f.getText() != "my string") {
@@ -95,10 +89,11 @@ public class FulfillmentTests extends BaseSetup {
     	if(f.getText() != "") {
     	}
     	
-    	req_text.removeFulfillment(f);
+    	task.removeRequirement(r);
     }
-    public void _test_modification_image() {
-    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, req_image);
+    public void test_modification_image() {
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.image);
+    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
     	
     	Bitmap b = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
     	f.setImage(b);
@@ -111,31 +106,33 @@ public class FulfillmentTests extends BaseSetup {
     			b_got_back.getHeight() != b.getHeight()) {
     		fail();
     	}
-    	req_image.removeFulfillment(f);
+    	task.removeRequirement(r);
     }
-    public void _test_modification_audio() {
+    public void test_modification_audio() {
     	short[] data_back;
     	
-    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, req_audio);
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.audio);
+    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
     	
     	f.setAudio(data);
     	data_back = f.getAudio();
     	if(!Arrays.asList(data).equals(Arrays.asList(data_back))) {
     		fail();
     	}
-    	req_audio.removeFulfillment(f);
+    	task.removeRequirement(r);
     }
-    public void _test_modification_video() {
+    public void test_modification_video() {
     	short[] data_back;
     	
-    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, req_video);
+    	Requirement r = vr.addRequirementToTask(testUser, task, contentType.video);
+    	Fulfillment f = vr.addFulfillmentToRequirement(testUser, r);
     	
     	f.setVideo(data);
     	data_back = f.getVideo();
     	if(!Arrays.asList(data).equals(Arrays.asList(data_back))) {
     		fail();
     	}
-    	req_video.removeFulfillment(f);
+    	task.removeRequirement(r);
     }
     
     public void test_date_creation() {
