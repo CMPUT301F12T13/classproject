@@ -19,17 +19,8 @@
 
 package ca.cmput301.team13.taskman.test;
 
-import utils.Identifiers;
-import android.content.Context;
-import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
-import ca.cmput301.team13.taskman.RootActivity;
-import ca.cmput301.team13.taskman.TaskMan;
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.TaskFilter;
-import ca.cmput301.team13.taskman.model.User;
-import ca.cmput301.team13.taskman.model.VirtualRepository;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class RequirementTests extends BaseSetup {
@@ -43,16 +34,87 @@ public class RequirementTests extends BaseSetup {
         task = vr.createTask(testUser);
     }
     
-    public void testCreation() {
-    	//vr.addRequirementToTask(testUser, task, contentType.text);
-    	//vr.getRequirement(requirementId)
+    public void test_creation() {
+        task = vr.getTaskUpdate(task);
+        
+        Requirement rt = vr.addRequirementToTask(testUser, task, contentType.text);
+        Requirement ri = vr.addRequirementToTask(testUser, task, contentType.image);
+        Requirement ra = vr.addRequirementToTask(testUser, task, contentType.audio);
+        Requirement rv = vr.addRequirementToTask(testUser, task, contentType.video);
+        
+        if(task.getRequirementCount() != 4) {
+            fail();
+        }
+        
+        if(vr.getRequirement(rt.getId()).getContentType() != contentType.text) {
+            fail();
+        }
+        if(vr.getRequirement(ri.getId()).getContentType() != contentType.image) {
+            fail();
+        }
+        if(vr.getRequirement(ra.getId()).getContentType() != contentType.audio) {
+            fail();
+        }
+        if(vr.getRequirement(rv.getId()).getContentType() != contentType.video) {
+            fail();
+        }
+        
+        task.removeRequirement(rt);
+        task.removeRequirement(ri);
+        task.removeRequirement(ra);
+        task.removeRequirement(rv);
     }
-    public void testDeletion() {
+    public void test_deletion() {
+        task = vr.getTaskUpdate(task);
+        
+        Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+        String id = r.getId();
+        vr.removeRequirement(r);
+        task = vr.getTaskUpdate(task);
+        
+        if(vr.getRequirement(id) != null) {
+            fail();
+        }
+        
+        if(task.getRequirementCount() != 0) {
+            fail();
+        }
+    }
+
+    public void test_modification_add_fulfillment_text() {
+        task = vr.getTaskUpdate(task);
+        
+        Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+        vr.addFulfillmentToRequirement(testUser, r);
+        r = vr.getRequirementUpdate(r);
+        
+        if(r.getFullfillmentCount() == 0) {
+            fail();
+        }
+        
+        vr.removeRequirement(r);
+    }
+
+    public void test_modification_remove_fulfillment() {
+        task = vr.getTaskUpdate(task);
+        
+        Requirement r = vr.addRequirementToTask(testUser, task, contentType.text);
+        vr.addFulfillmentToRequirement(testUser, r);
+        r = vr.getRequirementUpdate(r);
+        
+        vr.removeRequirement(r);
+        task = vr.getTaskUpdate(task);
+        
+        if(task.getRequirementCount() != 0) {
+            fail();
+        }
     }
     
-    public void date_creation() {
+    public void test_date_creation() {
+        // TODO: implement
     }
-    public void date_modification() {
+    public void test_date_modification() {
+        // TODO: implement
     }
     
     public void tearDown() { }
