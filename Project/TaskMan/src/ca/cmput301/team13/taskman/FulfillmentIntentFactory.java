@@ -56,16 +56,14 @@ public class FulfillmentIntentFactory {
     public Intent createIntent(Requirement req) {
         Intent intent = null;
 
-        if (req.getContentType() == Requirement.contentType.image) {
-            intent = new Intent(source, ImageCaptureActivity.class);
-        }
-        else if(req.getContentType() == Requirement.contentType.audio) {
-            intent = new Intent(source, AudioCaptureActivity.class);
-        }
-        else if(req.getContentType() == Requirement.contentType.text) {
-            intent = new Intent(source, TextCaptureActivity.class);
-        }
-        else if(req.getContentType() == Requirement.contentType.video) {
+        switch(req.getContentType()) {
+        case image:
+            intent = new Intent(source, ImageCaptureActivity.class); break;
+        case audio:
+            intent = new Intent(source, AudioCaptureActivity.class); break;
+        case text:
+            intent = new Intent(source, TextCaptureActivity.class); break;
+        case video:
             intent = new Intent(source, VideoCaptureActivity.class);
         }
 

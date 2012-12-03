@@ -132,19 +132,16 @@ public class RequirementListAdapter implements ListAdapter {
         ((TextView)newView.findViewById(R.id.reqDescriptionText)).setText(req.getDescription());
         //Figure out what Image resource to set
         int resource;
-        if(req.getContentType() == contentType.text) {
-            resource = R.drawable.txticon;
-        }
-        else if (req.getContentType() == contentType.image) {
-            resource = R.drawable.imgicon;
-        }
-        else if (req.getContentType() == contentType.audio)  {
-            resource = R.drawable.audicon;
-        }
-        else if (req.getContentType() == contentType.video)  {
-            resource = R.drawable.vidicon;
-        }
-        else {
+        switch(req.getContentType()) {
+        case text:
+            resource = R.drawable.txticon; break;
+        case image:
+            resource = R.drawable.imgicon; break;
+        case audio:
+            resource = R.drawable.audicon; break;
+        case video:
+            resource = R.drawable.vidicon; break;
+        default:
             Log.w("RequirementListAdapter", "Unknown Content Type: "+req.getContentType());
             resource = R.drawable.txticon;
         }
