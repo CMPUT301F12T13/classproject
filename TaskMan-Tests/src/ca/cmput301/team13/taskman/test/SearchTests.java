@@ -20,11 +20,15 @@
 package ca.cmput301.team13.taskman.test;
 
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import ca.cmput301.team13.taskman.model.Requirement;
 import ca.cmput301.team13.taskman.model.Task;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class SearchTests extends BaseSetup {
+    Set<String> expected_ids;
     
     public SearchTests() {
         super();
@@ -32,13 +36,32 @@ public class SearchTests extends BaseSetup {
     
     public void setUp() {
         super.setUp();
-        // TODO: Add a list of tasks with various descriptions.
+
+        Task t;
+
+        t = vr.createTask(testUser);
+        t.setDescription("this contains the keyword");
+        expected_ids.add(t.getId());
+
+        t = vr.createTask(testUser);
+        t.setDescription("this does not.");
+
+        t = vr.createTask(testUser);
+        t.setDescription("the keyword is here too.");
+        expected_ids.add(t.getId());
+
+        t = vr.createTask(testUser);
+        t.setDescription("");
+
+        t = vr.createTask(testUser);
+        t.setDescription("invisible");
     }
-    
+
     public void test_search() {
+        expected_ids = null;
         // TODO: Try several searches and confirm proper findings.
     }
-    
+
     public void tearDown() {
     }
 }
