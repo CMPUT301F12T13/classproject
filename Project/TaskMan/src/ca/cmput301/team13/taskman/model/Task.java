@@ -112,7 +112,7 @@ public class Task extends BackedObject implements Parcelable, Serializable {
     	setDescription(t.getDescription());
     	reqCount = t.reqCount;
     	setIsLocal(t.getIsLocal());
-    	delaySaves(false);
+    	delaySaves(false, false);
     }
 
     private void loadRequirements() {

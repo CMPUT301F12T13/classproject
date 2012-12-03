@@ -156,7 +156,7 @@ public class LocalRepository {
     	createdTask.reqsLoaded = false;
     	createdTask.reqCount = 0;
     	createdTask.setIsLocal(t.getIsLocal());
-    	createdTask.delaySaves(false);
+    	createdTask.delaySaves(false, false);
     	return createdTask;
     }
     

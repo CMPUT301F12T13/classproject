@@ -154,11 +154,6 @@ public class WebRepository {
 								f.setParentId(r.getId());
 								f.setParentWebID(r.getWebID());
 								f.saveChanges(false);
-								try{
-									throw new RuntimeException();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
 								pushObject(f, doUpdate, null, context);
 							}
 						}

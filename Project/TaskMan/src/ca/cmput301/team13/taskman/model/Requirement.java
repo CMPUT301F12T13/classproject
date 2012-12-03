@@ -124,7 +124,7 @@ public class Requirement extends BackedObject {
     	setDescription(r.getDescription());
     	setLastModifiedDate(r.getLastModifiedDate());
     	fulfillmentCount = r.getFullfillmentCount();
-    	return delaySaves(false);
+    	return delaySaves(false, false);
     }
 
     /**
