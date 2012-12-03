@@ -31,6 +31,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import ca.cmput301.team13.taskman.model.Requirement.contentType;
@@ -66,8 +67,11 @@ public class TaskActivity extends Activity implements OnClickListener {
             ((Button)findViewById(R.id.cancel_button)).setOnClickListener(this);
             if(getMode().equals("edit")) {
                 ((Button)findViewById(R.id.delete_button)).setOnClickListener(this);
+                findViewById(R.id.public_checkbox).setVisibility((View.INVISIBLE));
             } else {
+                ((CheckBox)findViewById(R.id.public_checkbox)).setOnClickListener(this);
                 findViewById(R.id.delete_button).setVisibility((View.INVISIBLE));
+                
             }
         } else {
             setContentView(R.layout.activity_view_task);
@@ -174,6 +178,13 @@ public class TaskActivity extends Activity implements OnClickListener {
         //TODO: Validation? Ensure each Task has a title and a single requirement, at least?
         //Update the parceled Task
         if(getMode().equals("edit") || getMode().equals("create")) {
+            if(getMode().equals("create")) {
+               if(((CheckBox)findViewById(R.id.public_checkbox)).isChecked()) {
+                   task.setIsLocal(false);
+               } else {
+                   task.setIsLocal(true);
+               }
+            }
             task.setTitle(taskTitle);
             task.setDescription(taskDescription);
             //Push all changes to the repository
