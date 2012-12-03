@@ -42,4 +42,13 @@ public abstract class BaseSetup extends ActivityInstrumentationTestCase2<RootAct
     }
     
     public void tearDown() { }
+    
+    protected void sleep() {
+    	try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			fail();
+		}
+    }
 }
