@@ -37,7 +37,7 @@ public class TaskTests extends BaseSetup {
      * Test Task creation functionality: creating tasks
      * Dependencies: VirtualRepository, Task, User
      */
-    public void testCreation() {
+    public void _testCreation() {
         TaskFilter tf = new TaskFilter();
         tf.activateAll();
         //Compare Task counts before and after creation
@@ -57,7 +57,7 @@ public class TaskTests extends BaseSetup {
      * Test Task deletion functionality: deleting tasks and the permissions surrounding those operations
      * Dependencies: VirtualRepository, Task, User
      */
-    public void testDeletion() {
+    public void _testDeletion() {
         //Create a task from this user
         Task userCreatedTask     = vr.createTask(testUser);
         Task externalTask         = vr.createTask(new User(Identifiers.randomString(15)));
@@ -77,7 +77,7 @@ public class TaskTests extends BaseSetup {
         }
     }
     
-    public void testUpdating() {
+    public void _testUpdating() {
         Task t = vr.createTask(testUser);
         
         //---------------------------------
@@ -143,7 +143,7 @@ public class TaskTests extends BaseSetup {
         
     }
     
-    public void testFulfillments() {
+    public void _testFulfillments() {
         
         //Prepare a personal Task with all three types of Requirements
         String ownError = "Users cannot add fulfillments to their own Requirements";

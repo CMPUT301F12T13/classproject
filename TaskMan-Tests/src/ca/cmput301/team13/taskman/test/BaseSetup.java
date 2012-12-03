@@ -19,15 +19,10 @@
 
 package ca.cmput301.team13.taskman.test;
 
-import utils.Identifiers;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import ca.cmput301.team13.taskman.RootActivity;
 import ca.cmput301.team13.taskman.TaskMan;
-import ca.cmput301.team13.taskman.model.Requirement;
-import ca.cmput301.team13.taskman.model.Task;
-import ca.cmput301.team13.taskman.model.TaskFilter;
 import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
 

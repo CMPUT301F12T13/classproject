@@ -30,20 +30,29 @@ import ca.cmput301.team13.taskman.model.Task;
 import ca.cmput301.team13.taskman.model.TaskFilter;
 import ca.cmput301.team13.taskman.model.User;
 import ca.cmput301.team13.taskman.model.VirtualRepository;
+import ca.cmput301.team13.taskman.model.Requirement.contentType;
 
 public class RequirementTests extends BaseSetup {
+    private Task task;
     public RequirementTests() {
         super();
     }
     
     public void setUp() {
         super.setUp();
+        task = vr.createTask(testUser);
     }
     
     public void testCreation() {
+    	//vr.addRequirementToTask(testUser, task, contentType.text);
+    	//vr.getRequirement(requirementId)
+    }
+    public void testDeletion() {
     }
     
-    public void testDeletion() {
+    public void date_creation() {
+    }
+    public void date_modification() {
     }
     
     public void tearDown() { }

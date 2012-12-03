@@ -97,7 +97,7 @@ abstract class BackedObject implements Parcelable, Comparable<BackedObject> {
      * Access the ID of this object.
      * @return the id
      */
-    String getId() {
+    public String getId() {
         return id;
     }
 
