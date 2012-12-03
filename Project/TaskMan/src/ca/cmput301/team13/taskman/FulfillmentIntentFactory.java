@@ -26,6 +26,7 @@
 package ca.cmput301.team13.taskman;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import ca.cmput301.team13.taskman.model.Fulfillment;
 import ca.cmput301.team13.taskman.model.Requirement;
@@ -36,15 +37,15 @@ import ca.cmput301.team13.taskman.model.Requirement;
  */
 public class FulfillmentIntentFactory {
 
-    private Activity source;
+    private Context context;
 
     /**
      * Creates an instance of FulfillmentIntentFactory.
      * @param src The intent that owns the factory; is
      * used to create the intents.
      */
-    FulfillmentIntentFactory(Activity src) {
-        source = src;
+    FulfillmentIntentFactory(Context src) {
+        context = src;
     }
 
     /**
@@ -58,13 +59,13 @@ public class FulfillmentIntentFactory {
 
         switch(req.getContentType()) {
         case image:
-            intent = new Intent(source, ImageCaptureActivity.class); break;
+            intent = new Intent(context, ImageCaptureActivity.class); break;
         case audio:
-            intent = new Intent(source, AudioCaptureActivity.class); break;
+            intent = new Intent(context, AudioCaptureActivity.class); break;
         case text:
-            intent = new Intent(source, TextCaptureActivity.class); break;
+            intent = new Intent(context, TextCaptureActivity.class); break;
         case video:
-            intent = new Intent(source, VideoCaptureActivity.class);
+            intent = new Intent(context, VideoCaptureActivity.class);
         }
 
         return intent.putExtra("requirement", req);
