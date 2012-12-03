@@ -236,6 +236,24 @@ public class CrowdSourcerObject {
 							created,
 							lastModified,
 							audioBytes,
+							contentType,
+							user,
+							vr
+						);
+					break;
+					case video:
+						//Convert the JSON int[] into short[]
+						JSONArray videoByteArray = data.getJSONArray("data");
+						short[] videoBytes = new short[videoByteArray.length()];
+						for(int i=0; i<videoByteArray.length(); i++) {
+							videoBytes[i] = (short)videoByteArray.getInt(i);
+						}
+						f = new Fulfillment(
+							id,
+							created,
+							lastModified,
+							videoBytes,
+							contentType,
 							user,
 							vr
 						);
