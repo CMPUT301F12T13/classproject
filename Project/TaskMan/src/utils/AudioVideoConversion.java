@@ -17,7 +17,7 @@
  * along with TaskMan.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.cmput301.team13.taskman;
+package utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,18 +26,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 public class AudioVideoConversion {
-
-    /**
-     * Instantiates a new {@link AudioVideoConversion} object.
-     */
-    public AudioVideoConversion() {
-        
-    }
     
     /**
      * Resolves a Uri to an absolute file path.
@@ -46,7 +40,7 @@ public class AudioVideoConversion {
      * @param uri           The Uri to resolve
      * @return              The resolved Uri
      */
-    public String resolvePath(Context context, Uri uri) {
+    public static String resolvePath(Context context, Uri uri) {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             Cursor cursor = cursor(context, uri);
             try {
@@ -70,7 +64,7 @@ public class AudioVideoConversion {
      * @param uri       The Uri to resolve
      * @return          The cursor
      */
-    public Cursor cursor(Context context, Uri uri) {
+    public static Cursor cursor(Context context, Uri uri) {
         String[] projection = { "_data" };
         Cursor cursor = null;
         cursor = context.getContentResolver().query(uri, projection, null,
@@ -83,7 +77,7 @@ public class AudioVideoConversion {
      * @param path      The path to the audio file
      * @return          The short[] representing the audio data
      */
-    public short[] getShort(String path) {
+    public static short[] getShort(String path) {
         File file;
         FileInputStream stream = null;
         byte[] bytes = null;
@@ -115,15 +109,15 @@ public class AudioVideoConversion {
      * Gets the short array of audio data
      * @param audioFileUri
      * @param fileName
-     * @param audioCaptureActivity
+     * @param context
      * @return  audio data
      */
-    public short[] audioShorts(Uri audioFileUri, String fileName,
-            AudioCaptureActivity audioCaptureActivity) {
+    public static short[] audioShorts(Uri audioFileUri, String fileName,
+            Context ctx) {
         short[] audioShorts = null;
         if (audioFileUri != null) {
             audioShorts = getShort(resolvePath(
-                    audioCaptureActivity.getBaseContext(), audioFileUri));
+                    ctx, audioFileUri));
         } else {
             if (fileName != null) {
                 audioShorts = getShort(fileName);
