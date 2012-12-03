@@ -26,4 +26,15 @@
         android:background="#FFFFFF"
         android:src="@drawable/playbtn" />
 
+    <ImageButton
+        android:id="@+id/audio_ful_img"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/video_play_btn"
+        android:contentDescription="Vidicon"
+        android:layout_marginRight="15dp"
+        android:background="#FFFFFF"
+        android:src="@drawable/vidicon" />
+    
 </RelativeLayout>
